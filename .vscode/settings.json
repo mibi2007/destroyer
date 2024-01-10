@@ -1,0 +1,23 @@
+{
+  "dart.runPubGetOnPubspecChanges": "never",
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#054083",
+    "activityBar.background": "#054083",
+    "activityBar.foreground": "#e7e7e7",
+    "activityBar.inactiveForeground": "#e7e7e799",
+    "activityBarBadge.background": "#000000",
+    "activityBarBadge.foreground": "#e7e7e7",
+    "commandCenter.border": "#e7e7e799",
+    "sash.hoverBorder": "#054083",
+    "statusBar.background": "#032852",
+    "statusBar.foreground": "#e7e7e7",
+    "statusBarItem.hoverBackground": "#054083",
+    "statusBarItem.remoteBackground": "#032852",
+    "statusBarItem.remoteForeground": "#e7e7e7",
+    "titleBar.activeBackground": "#032852",
+    "titleBar.activeForeground": "#e7e7e7",
+    "titleBar.inactiveBackground": "#03285299",
+    "titleBar.inactiveForeground": "#e7e7e799"
+  },
+  "peacock.color": "#032852"
+}
