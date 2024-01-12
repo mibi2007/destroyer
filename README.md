@@ -4,6 +4,7 @@ This is a starter Flutter and Flame project with an endless runner game built
 in Flutter & Flame, it includes the following features:
 
 Flutter features:
+
 - A `FlameGame` base
 - Main menu screen
 - Basic navigation
@@ -12,6 +13,7 @@ Flutter features:
 - Sound
 
 Flame features:
+
 - Player steering
 - Collision detection
 - Parallax
@@ -23,7 +25,6 @@ You can jump directly into building your game in `lib/flame_game/`.
 When you're ready for things like ads, in-app purchases, achievements,
 analytics, crash reporting, and so on, there are resources ready for you
 at [flutter.dev/games](https://flutter.dev/games).
-
 
 # Getting started
 
@@ -43,7 +44,6 @@ When building a new game, this is likely everything you first need.
 When you're ready to enable more advanced integrations, like ads
 and in-app payments, read the _Integrations_ section below.
 
-
 # Development
 
 Usually you will open the template in your favorite IDE, like Android Studio
@@ -62,7 +62,6 @@ For example, you can run `flutter run -d macOS`, and get the same UI
 in a desktop window on a Mac. That way, you don't need to use a
 simulator/emulator or attach a mobile device. This template supports
 desktop development by disabling integrations like AdMob for desktop.
-
 
 ## Code organization
 
@@ -89,7 +88,6 @@ take this project and run with it, without having to learn new paradigms, or hav
 to remember to run `flutter pub run build_runner watch`. You are,
 of course, encouraged to use whatever paradigm, helper package or code generation
 scheme that you prefer.
-
 
 ## Building for production
 
@@ -125,7 +123,6 @@ Lastly, it is of course possible to build your game for desktop platforms:
 Windows, Linux and macOS.
 Follow the [standard instructions](https://docs.flutter.dev/platform-integration/desktop).
 
-
 # Integrations
 
 Focus on making your core gameplay fun first. Don't worry about
@@ -138,7 +135,6 @@ before you start any of the deeper integrations.
 [StackOverflow has instructions](https://stackoverflow.com/a/51550358/1416886)
 for this, and the [`rename`](https://pub.dev/packages/rename) tool
 (on pub.dev) automates the process.
-
 
 ## Audio
 
@@ -157,7 +153,6 @@ The repository also includes a few sound effect samples in `assets/sfx`.
 These are public domain (CC0) and you will almost surely want to replace
 them because they're just recordings of a developer doing silly sounds
 with their mouth.
-
 
 ## Logging
 
@@ -190,7 +185,6 @@ when appropriate.
 See [`firebase_crashlytics`](https://pub.dev/packages/firebase_crashlytics)
 for more information.
 
-
 ## Settings
 
 The settings page is enabled by default, and accessible both
@@ -201,7 +195,6 @@ Settings are saved to local storage using the
 package.
 To change what preferences are saved and how, edit files in
 `lib/settings/persistence`.
-
 
 # Icon
 
@@ -215,7 +208,6 @@ flutter pub run flutter_launcher_icons:main
 
 You can [configure](https://github.com/fluttercommunity/flutter_launcher_icons#book-guide)
 the look of the icon in the `flutter_icons:` section of `pubspec.yaml`.
-
 
 # Troubleshooting
 
@@ -241,6 +233,7 @@ If this doesn't help, here are some more methods:
   ```
 
   (Substitute `ios` for `macos` when appropriate.)
+
 - Open the project in Xcode,
   [increase the build target](https://stackoverflow.com/a/38602597/1416886),
   then select _Product_ > _Clean Build Folder_.
@@ -257,3 +250,5 @@ or
 
 These warning come from the various plugins that are used by the template. They are not harmful
 and can be ignored. The warnings are meant for the plugin authors, not for you, the game developer.
+
+Female samurai who can walk, run, jump high, flip and attack using big sword
