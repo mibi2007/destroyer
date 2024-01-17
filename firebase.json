@@ -8,6 +8,14 @@
         {
           "source": "**",
           "destination": "/index.html"
+        },
+        {
+          "source": "/character/**",
+          "destination": "/character/index.html"
+        },
+        {
+          "source": "/rive-animation-test/**",
+          "destination": "/rive-animation-test/aindex.html"
         }
       ]
     }
