@@ -1,4 +1,4 @@
-import 'package:endless_runner/level_selection/instructions_dialog.dart';
+import 'package:destroyer/level_selection/instructions_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nes_ui/nes_ui.dart';
@@ -7,8 +7,8 @@ import 'package:provider/provider.dart';
 import '../audio/audio_controller.dart';
 import '../audio/sounds.dart';
 import '../player_progress/player_progress.dart';
-import '../style/wobbly_button.dart';
 import '../style/palette.dart';
+import '../style/wobbly_button.dart';
 import 'levels.dart';
 
 class LevelSelectionScreen extends StatelessWidget {
@@ -18,8 +18,7 @@ class LevelSelectionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = context.watch<Palette>();
     final playerProgress = context.watch<PlayerProgress>();
-    final levelTextStyle =
-        Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.4);
+    final levelTextStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.4);
 
     return Scaffold(
       backgroundColor: palette.backgroundLevelSelection.color,
@@ -53,7 +52,7 @@ class LevelSelectionScreen extends StatelessWidget {
           const SizedBox(height: 50),
           Expanded(
             child: SizedBox(
-              width: 450,
+              width: 600,
               child: ListView(
                 children: [
                   for (final level in gameLevels)
@@ -63,8 +62,7 @@ class LevelSelectionScreen extends StatelessWidget {
                         final audioController = context.read<AudioController>();
                         audioController.playSfx(SfxType.buttonTap);
 
-                        GoRouter.of(context)
-                            .go('/play/session/${level.number}');
+                        GoRouter.of(context).go('/play/session/${level.number}');
                       },
                       leading: Text(
                         level.number.toString(),
@@ -73,15 +71,13 @@ class LevelSelectionScreen extends StatelessWidget {
                       title: Row(
                         children: [
                           Text(
-                            'Level #${level.number}',
+                            level.title,
                             style: levelTextStyle,
                           ),
-                          if (playerProgress.levels.length <
-                              level.number - 1) ...[
+                          if (playerProgress.levels.length < level.number - 1) ...[
                             const SizedBox(width: 10),
                             const Icon(Icons.lock, size: 20),
-                          ] else if (playerProgress.levels.length >=
-                              level.number) ...[
+                          ] else if (playerProgress.levels.length >= level.number) ...[
                             const SizedBox(width: 50),
                             Text(
                               '${playerProgress.levels[level.number - 1]}s',

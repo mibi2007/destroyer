@@ -1,8 +1,9 @@
-import 'flame_game/game_screen.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:provider/provider.dart' hide Provider;
 
+import 'flame_game/game_screen.dart';
 import 'level_selection/level_selection_screen.dart';
 import 'level_selection/levels.dart';
 import 'main_menu/main_menu_screen.dart';
@@ -52,3 +53,10 @@ final router = GoRouter(
     ),
   ],
 );
+
+final navigationProvider = Provider<Function>((ref) {
+  // This function can be used to navigate using go_router
+  return (BuildContext context, String sessionId) {
+    GoRouter.of(context).go('/session/$sessionId');
+  };
+});

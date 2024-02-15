@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="32" height="14" tilewidth="32" tileheight="32" infinite="0" nextlayerid="5" nextobjectid="52">
+ <tileset firstgid="1" source="Spritesheet.tsx"/>
+ <layer id="1" name="Tile Layer 1" width="32" height="14">
+  <data encoding="base64">
+   AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAAAAGAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADQAAAA4AAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAAAAGAAAABgAAAAYAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANAAAADgAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABEAAKAJAABgCQAAYAkAAGAJAABgCQAAYAkAAGAJAABgFQAAAA4AAAAOAAAADgAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA0AAAAfAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAdAAAAHgAAAB4AAAAeAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABQAAAAYAAAAGAAAABgAAAAYAAAAGAAAABgAAAAYAAAAGAAAABgAAAAYAAAAGAAAABgAAAAYAAAAGAAAABgAAAAYAAAAGAAAABgAAAAYAAAAGAAAABgAAAAYAAAAGAAAABgAAAAYAAAAGAAAABgAAAAYAAAAIAAAAAAAAAAAAAAANAAAADgAAAA4AAAAOAAAADgAAAA4AAAAOAAAADgAAAA4AAAAOAAAADgAAAA4AAAAOAAAADgAAAA4AAAAOAAAADgAAAA4AAAAOAAAADgAAAA4AAAAOAAAADgAAAA4AAAAOAAAADgAAAA4AAAAOAAAADgAAABAAAAAAAAAAAAAAAA0AAAAOAAAADgAAAA4AAAAOAAAADgAAAA4AAAAOAAAADgAAAA4AAAAOAAAADgAAAA4AAAAOAAAADgAAAA4AAAAOAAAADgAAAA4AAAAOAAAADgAAAA4AAAAOAAAADgAAAA4AAAAOAAAADgAAAA4AAAAOAAAAEAAAAAAAAAAAAAAAHQAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAfAAAAHwAAAB8AAAAgAAAAAAAAAA==
+  </data>
+ </layer>
+ <objectgroup id="4" name="Platforms">
+  <object id="40" x="32" y="320" width="960" height="128"/>
+  <object id="41" x="32" y="192" width="96" height="128"/>
+  <object id="42" x="224" y="0" width="32" height="192"/>
+  <object id="43" x="384.333" y="256" width="256" height="32"/>
+  <object id="44" x="640" y="224.333" width="160" height="95.6667"/>
+  <object id="47" x="0" y="0" width="32" height="448"/>
+  <object id="49" x="992" y="0" width="32" height="448"/>
+  <object id="50" x="32" y="320" width="960" height="128"/>
+  <object id="51" x="32" y="192" width="96" height="128"/>
+ </objectgroup>
+ <objectgroup id="3" name="SpawnPoints">
+  <object id="26" type="Player" gid="1" x="81" y="160.583" width="32" height="32"/>
+  <object id="27" type="Coin" gid="4" x="191" y="193" width="32" height="32"/>
+  <object id="28" type="Coin" gid="4" x="320" y="226" width="32" height="32"/>
+  <object id="29" type="Coin" gid="4" x="416" y="320" width="32" height="32"/>
+  <object id="30" type="Coin" gid="4" x="480" y="320" width="32" height="32"/>
+  <object id="31" type="Coin" gid="4" x="544" y="320" width="32" height="32"/>
+  <object id="32" type="Coin" gid="4" x="672.5" y="192" width="32" height="32"/>
+  <object id="33" type="Coin" gid="4" x="736.5" y="192.25" width="32" height="32"/>
+  <object id="34" type="Coin" gid="4" x="832" y="191.333" width="32" height="32"/>
+  <object id="35" type="Coin" gid="4" x="864.667" y="255.333" width="32" height="32"/>
+  <object id="36" type="Coin" gid="4" x="864" y="320.667" width="32" height="32"/>
+  <object id="37" type="Enemy" gid="2" x="736.25" y="224.25" width="32" height="32">
+   <properties>
+    <property name="Target" type="object" value="46"/>
+   </properties>
+  </object>
+  <object id="48" type="Enemy" gid="2" x="639.583" y="224.333" width="32" height="32">
+   <properties>
+    <property name="Target" type="object" value="46"/>
+   </properties>
+  </object>
+  <object id="38" type="Enemy" gid="2" x="128" y="320" width="32" height="32">
+   <properties>
+    <property name="Target" type="object" value="45"/>
+   </properties>
+  </object>
+  <object id="47" type="Enemy" gid="2" x="352.121" y="320.242" width="32" height="32">
+   <properties>
+    <property name="Target" type="object" value="45"/>
+   </properties>
+  </object>
+  <object id="39" type="Door" gid="3" x="928" y="320" width="64" height="64">
+   <properties>
+    <property name="NextLevel" value="Level2.tmx"/>
+   </properties>
+  </object>
+  <object id="45" x="624.333" y="288">
+   <point/>
+  </object>
+  <object id="46" x="784.833" y="188.917">
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="4" name="Settings">
+  <properties>
+   <property name="Gravity" value="800"/>
+  </properties>
+ </objectgroup>
+</map>

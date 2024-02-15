@@ -1,21 +1,21 @@
-import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart' show ProviderScope;
 import 'package:nes_ui/nes_ui.dart';
 import 'package:provider/provider.dart';
 
-import 'router.dart';
 import 'app_lifecycle/app_lifecycle.dart';
 import 'audio/audio_controller.dart';
 import 'player_progress/player_progress.dart';
+import 'router.dart';
 import 'settings/settings.dart';
 import 'style/palette.dart';
+import 'utils/disabler.dart';
 
 void main() async {
+  disableRightClick();
   WidgetsFlutterBinding.ensureInitialized();
-  await Flame.device.setLandscape();
-  await Flame.device.fullScreen();
-  runApp(const MyGame());
+  runApp(const ProviderScope(child: MyGame()));
 }
 
 class MyGame extends StatelessWidget {
@@ -30,8 +30,7 @@ class MyGame extends StatelessWidget {
           ChangeNotifierProvider(create: (context) => PlayerProgress()),
           Provider(create: (context) => SettingsController()),
           // Set up audio.
-          ProxyProvider2<SettingsController, AppLifecycleStateNotifier,
-              AudioController>(
+          ProxyProvider2<SettingsController, AppLifecycleStateNotifier, AudioController>(
             // Ensures that music starts immediately.
             lazy: false,
             create: (context) => AudioController(),
@@ -46,7 +45,7 @@ class MyGame extends StatelessWidget {
           final palette = context.watch<Palette>();
 
           return MaterialApp.router(
-            title: 'Endless Runner',
+            title: 'Destroyer',
             theme: flutterNesTheme().copyWith(
               colorScheme: ColorScheme.fromSeed(
                 seedColor: palette.seed.color,

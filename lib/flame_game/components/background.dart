@@ -1,25 +1,28 @@
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/parallax.dart';
+import 'package:flutter/widgets.dart';
 
 /// The [Background] is a component that is composed of multiple scrolling
 /// images which form a parallax, a way to simulate movement and depth in the
 /// background.
 class Background extends ParallaxComponent {
-  Background({required this.speed});
+  Background();
 
-  final double speed;
-
+  double speed = 0;
   @override
   Future<void> onLoad() async {
     final layers = [
-      ParallaxImageData('scenery/background.png'),
-      ParallaxImageData('scenery/clouds.png'),
-      ParallaxImageData('scenery/cliffs.png'),
-      ParallaxImageData('scenery/trees.png'),
-      ParallaxImageData('scenery/ground.png'),
+      // ParallaxImageData('scenery/background.png'),
+      // ParallaxImageData('scenery/clouds.png'),
+      // ParallaxImageData('scenery/cliffs.png'),
+      // ParallaxImageData('scenery/trees.png'),
+      ParallaxImageData('scenery/background1.png'),
+      ParallaxImageData('scenery/background2.png'),
+      ParallaxImageData('scenery/background3.png'),
+      ParallaxImageData('scenery/background4a.png'),
+      // ParallaxImageData('scenery/ground.png'),
     ];
 
     // The base velocity sets the speed of the layer the farthest to the back.
@@ -34,12 +37,12 @@ class Background extends ParallaxComponent {
     // want our layers to move in the X-axis, we multiply by something larger
     // than 1.0 here so that the speed of each layer is higher the closer to the
     // screen it is.
-    final velocityMultiplierDelta = Vector2(2.0, 0.0);
+    // final velocityMultiplierDelta = baseVelocity;
 
     parallax = await game.loadParallax(
       layers,
-      baseVelocity: baseVelocity,
-      velocityMultiplierDelta: velocityMultiplierDelta,
+      baseVelocity: Vector2(0, 0),
+      velocityMultiplierDelta: Vector2(1.8, 1.8),
       filterQuality: FilterQuality.none,
     );
   }

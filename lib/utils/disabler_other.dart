@@ -1,0 +1,3 @@
+void disableRightClick() {
+  //do nothing
+}

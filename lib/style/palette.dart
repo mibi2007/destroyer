@@ -1,4 +1,5 @@
 import 'package:flame/palette.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// A palette of colors to be used in the game.
 ///
@@ -19,9 +20,9 @@ class Palette {
   PaletteEntry get seed => const PaletteEntry(Color(0xFF0050bc));
   PaletteEntry get text => const PaletteEntry(Color(0xee352b42));
   PaletteEntry get backgroundMain => const PaletteEntry(Color(0xffa2fff3));
-  PaletteEntry get backgroundLevelSelection =>
-      const PaletteEntry(Color(0xffffcd75));
-  PaletteEntry get backgroundPlaySession =>
-      const PaletteEntry(Color(0xffa2fff3));
+  PaletteEntry get backgroundLevelSelection => const PaletteEntry(Color(0xffffcd75));
+  PaletteEntry get backgroundPlaySession => const PaletteEntry(Color(0xffa2fff3));
   PaletteEntry get backgroundSettings => const PaletteEntry(Color(0xffbfc8e3));
 }
+
+final paletteProvier = Provider((_) => Palette());
