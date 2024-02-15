@@ -14,6 +14,11 @@ class Direction {
     isright = direction.x == 1;
     x = direction.x;
   }
+
+  @override
+  String toString() {
+    return 'Direction: left: $isleft, right: $isright';
+  }
 }
 
 class PlayerData {
@@ -25,7 +30,6 @@ class PlayerData {
   final sword = ValueNotifier<Sword>(Sword.desolator());
   final lastSword = ValueNotifier<Sword>(Sword.desolator());
   final skills = ValueNotifierList<Skill>([]);
-  // final selectedSkill = ValueNotifier<Skill?>(null);
   final position = ValueNotifier<Vector2>(Vector2.zero());
   final aim = ValueNotifier<double>(0);
   final direction = ValueNotifier<Direction>(Direction(Vector2(1, 0)));

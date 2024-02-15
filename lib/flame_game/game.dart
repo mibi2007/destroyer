@@ -38,9 +38,10 @@ class DestroyerGame extends FlameGame
   /// that only needs to be set once when the level starts up.
 
   final GameLevel level;
+  final int sceneIndex;
   late BuildContext context;
 
-  DestroyerGame(this.level);
+  DestroyerGame(this.level, this.sceneIndex);
   late Image spriteSheet;
 
   final playerData = PlayerData();
@@ -142,5 +143,12 @@ class DestroyerGame extends FlameGame
   void navigate(String path) {
     print('Navigating to $path');
     context.go(path);
+  }
+
+  @override
+  void onRemove() {
+    rightClick.removeListener(rightClickHandler);
+    leftClick.removeListener(leftClickHandler);
+    super.onRemove();
   }
 }

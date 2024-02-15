@@ -20,7 +20,8 @@ final GlobalKey<RiverpodAwareGameWidgetState<DestroyerGame>> gameWidgetKey =
 /// the gets the [AudioController] from the context and passes it in to the
 /// [DestroyerGame] class so that it can play audio.
 class GameScreen extends StatelessWidget {
-  const GameScreen({required this.level, super.key});
+  final int sceneIndex;
+  const GameScreen({required this.level, this.sceneIndex = 0, super.key});
 
   final GameLevel level;
 
@@ -29,7 +30,7 @@ class GameScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final myGame = DestroyerGame(level);
+    final myGame = DestroyerGame(level, sceneIndex);
     myGame.context = context;
     double width;
     double height;

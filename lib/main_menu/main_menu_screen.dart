@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:rive/rive.dart';
 
 import '../audio/audio_controller.dart';
 import '../audio/sounds.dart';
 import '../settings/settings.dart';
-import '../style/wobbly_button.dart';
 import '../style/palette.dart';
 import '../style/responsive_screen.dart';
+import '../style/wobbly_button.dart';
 
 class MainMenuScreen extends StatelessWidget {
   const MainMenuScreen({super.key});
@@ -25,9 +26,14 @@ class MainMenuScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(
-                'assets/images/banner.png',
-                filterQuality: FilterQuality.none,
+              const SizedBox(
+                width: 600,
+                height: 600,
+                child: RiveAnimation.network(
+                  'http://localhost:12345/assets/assets/animations/character.riv',
+                  fit: BoxFit.cover,
+                  placeHolder: Center(child: CircularProgressIndicator()),
+                ),
               ),
               _gap,
               Transform.rotate(
@@ -35,7 +41,7 @@ class MainMenuScreen extends StatelessWidget {
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 500),
                   child: const Text(
-                    'A Flutter game template.',
+                    'A Flutter game.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'Press Start 2P',
@@ -78,6 +84,7 @@ class MainMenuScreen extends StatelessWidget {
             ),
             _gap,
             const Text('Built with Flame'),
+            const Text('and Rive'),
           ],
         ),
       ),

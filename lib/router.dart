@@ -30,14 +30,15 @@ final router = GoRouter(
           ),
           routes: [
             GoRoute(
-              path: 'session/:level',
+              path: 'session/:level/:scene',
               pageBuilder: (context, state) {
                 final levelNumber = int.parse(state.pathParameters['level']!);
+                final sceneIndex = int.parse(state.pathParameters['scene']!);
                 final level = gameLevels[levelNumber - 1];
                 return buildPageTransition<void>(
                   key: const ValueKey('level'),
                   color: context.watch<Palette>().backgroundPlaySession.color,
-                  child: GameScreen(level: level),
+                  child: GameScreen(level: level, sceneIndex: sceneIndex),
                 );
               },
             ),

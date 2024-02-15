@@ -2,7 +2,6 @@ import 'package:destroyer/utils/tileset.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame_rive/flame_rive.dart';
-import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/services.dart';
 
@@ -19,12 +18,7 @@ import 'levels.dart';
 
 // Represents a level in game. Should only be added as child of DestroyerGameWorld
 class SceneComponent extends Component
-    with
-        HasGameReference<DestroyerGame>,
-        ParentIsA<DestroyerGameWorld>,
-        TapCallbacks,
-        KeyboardHandler,
-        RiverpodComponentMixin {
+    with HasGameReference<DestroyerGame>, ParentIsA<DestroyerGameWorld>, TapCallbacks, KeyboardHandler {
   final GameLevel level;
   late PlayerComponent _player;
   late Artboard artboard;
@@ -32,39 +26,43 @@ class SceneComponent extends Component
   int lastRightClickCount = 0;
   // double _timer = 0;
   TapDownEvent? lastTapDownEvent;
-  GameLevel nextLevel = GameLevel.intro;
 
   int? sceneIndex;
 
   SceneComponent(this.level, {this.sceneIndex = 0});
 
-  @override
-  bool containsLocalPoint(Vector2 point) => true;
+  // @override
+  // bool containsLocalPoint(Vector2 point) => true;
 
   @override
   Future<void> onLoad() async {
-    super.onLoad();
     print('Loading level: ${level.title}');
+    // if (sceneIndex == 0) {
+    _setupStartLevel();
+    // }
 
     artboard = await loadArtboard(RiveFile.asset('assets/animations/character.riv'));
     mapTiled = await TiledComponent.load(
       level.scenes[sceneIndex!].mapTiled,
       Vector2.all(32),
     );
-    await add(mapTiled);
+    add(mapTiled);
 
-    await _spawnActors();
-    leftClick.addListener(() {
-      _player.animation.isAutoAttack = false;
-      _player.animation.attack();
+    _spawnActors();
+
+    // Wait until the _player is added to the scene
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      _setupCamera();
     });
-    _setupCamera();
-    _setupAllLevels();
-
-    nextLevel = level.next();
+    leftClick.addListener(_onLeftClickHander);
   }
 
-  void _setupAllLevels() {
+  _onLeftClickHander() {
+    _player.animation.isAutoAttack = false;
+    _player.animation.attack();
+  }
+
+  void _setupStartLevel() {
     print('_setupAllLevels');
     game.playerData.skills.value = [];
     game.playerData.skillCountdown.value = [];
@@ -116,14 +114,14 @@ class SceneComponent extends Component
   // all the actors in the game world.
   Future<void> _spawnActors() async {
     final platformsLayer = mapTiled.tileMap.getLayer<ObjectGroup>('Platforms');
-    final settings = mapTiled.tileMap.getLayer<ObjectGroup>('Settings');
+    // final settings = mapTiled.tileMap.getLayer<ObjectGroup>('Settings');
 
     for (final platformObject in platformsLayer!.objects) {
       final platform = Platform(
         position: Vector2(platformObject.x, platformObject.y),
         size: Vector2(platformObject.width, platformObject.height),
       );
-      await add(platform);
+      add(platform);
     }
 
     final spawnPointsLayer = mapTiled.tileMap.getLayer<ObjectGroup>('SpawnPoints');
@@ -164,12 +162,11 @@ class SceneComponent extends Component
           //   //   ),
           //   // ],
           // );
-          Future.delayed(const Duration(milliseconds: 500)).then((_) async {
-            add(_player);
-          });
-          if (settings != null) {
-            _player.animation.gravity = double.parse(settings.properties.first.value.toString());
-          }
+          add(_player);
+          parent.camera.follow(_player, maxSpeed: 200, snap: true);
+          // if (settings != null) {
+          // _player.animation.gravity = double.parse(settings.properties.first.value.toString());
+          // }
           break;
 
         case 'Coin':
@@ -184,7 +181,6 @@ class SceneComponent extends Component
 
         case 'Enemy':
           // Find the target object.
-          print('Find the target object');
           final targetObjectId = spawnPoint.properties.getValue<int>('Target');
           final flip = spawnPoint.properties.getValue<bool>('Flip');
           final type = spawnPoint.properties.getValue<String>('Type');
@@ -208,7 +204,7 @@ class SceneComponent extends Component
             position: position,
             size: size,
             onPlayerEnter: () {
-              parent.nextScene(level, currentIndex: sceneIndex!);
+              parent.nextScene();
             },
           );
           add(door);
@@ -222,7 +218,7 @@ class SceneComponent extends Component
   // the camera within level bounds.
   /// NOTE: Call only after [_spawnActors].
   void _setupCamera() {
-    parent.camera.follow(_player, maxSpeed: 200, snap: true);
+    // parent.camera.follow(_player, maxSpeed: 200, snap: true);
     // parent.camera.setBounds(
     //   Rectangle.fromLTRB(
     //     game.fixedResolution.x / 2,
@@ -243,9 +239,23 @@ class SceneComponent extends Component
   bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     if (event is RawKeyDownEvent) {
       if (event.logicalKey == LogicalKeyboardKey.keyN) {
-        game.navigate('/play/session/${nextLevel.number}');
+        print(level.title);
+        print(level.number);
+        // game.navigate('/play/session/${level.number}/${sceneIndex! + 1}');
+        parent.nextScene();
+      } else if (event.logicalKey == LogicalKeyboardKey.keyM) {
+        parent.nextLevel();
+        // game.navigate('/play/session/${level.next().number}/0');
       }
     }
     return true;
+  }
+
+  @override
+  void onRemove() {
+    print('SceneComponent onRemove');
+    leftClick.removeListener(_onLeftClickHander);
+
+    super.onRemove();
   }
 }

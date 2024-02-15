@@ -25,27 +25,41 @@ import 'weapon.dart';
 const double jumpSpeed = 300;
 const double defaultMoveSpeed = 150;
 const double flySpeed = 75;
+const double g = 800;
 
 class PlayerComponent extends PositionComponent {
   final Artboard artboard;
   late PlayerAnimationComponent animation;
 
-  PlayerComponent({required this.artboard, super.position, super.size, super.anchor = Anchor.center}) {
+  PlayerComponent({required this.artboard, super.position, super.size, super.anchor = Anchor.center})
+      : super(
+          scale: Vector2.all(3),
+        );
+
+  @override
+  Future<FutureOr<void>> onLoad() async {
     animation = PlayerAnimationComponent(
       artboard,
       position: Vector2(size.x / 2, size.y / 2),
       size: size,
       priority: 1,
     );
-  }
-  @override
-  Future<FutureOr<void>> onLoad() async {
+    print('PlayerComponent onLoad');
     await add(animation);
+  }
+
+  @override
+  bool get debugMode => false;
+
+  @override
+  void onRemove() {
+    print('PlayerComponent onRemove');
+    super.onRemove();
   }
 }
 
 class PlayerAnimationComponent extends RiveComponent
-    with HasGameRef<DestroyerGame>, CollisionCallbacks, KeyboardHandler, HasPaint {
+    with HasGameRef<DestroyerGame>, CollisionCallbacks, KeyboardHandler, HasPaint, ParentIsA<PlayerComponent> {
   int _hAxisInput = 0;
   int _vAxisInput = 0;
   bool _jumpInput = false;
@@ -126,11 +140,11 @@ class PlayerAnimationComponent extends RiveComponent
   double? selectDistance;
 
   @override
-  get position => (parent as PlayerComponent).position;
+  get position => parent.position;
 
   @override
   set position(Vector2 value) {
-    (parent as PlayerComponent).position = value;
+    parent.position = value;
   }
 
   Vector2 collisionNormal = Vector2.zero();
@@ -142,9 +156,7 @@ class PlayerAnimationComponent extends RiveComponent
     super.priority,
     super.children,
   }) : super(
-          key: ComponentKey.named('player'),
           artboard: artboard,
-          scale: Vector2.all(3),
           anchor: Anchor.center,
         );
 
@@ -190,6 +202,7 @@ class PlayerAnimationComponent extends RiveComponent
 
   @override
   Future<void> onLoad() async {
+    print('PlayerAnimationComponent onLoad');
     // add(test1);
     // add(test2);
     // add(test3);
@@ -201,12 +214,6 @@ class PlayerAnimationComponent extends RiveComponent
     game.playerData.casting.addListener(_onCastingHandler);
     game.playerData.effects.addListener(_onEffectsChangeHandler);
     _onEquipmentsChangeHandler();
-
-    // For super hero landing animation
-    gravity = 0;
-    Future.delayed(const Duration(milliseconds: 500)).then((value) {
-      gravity = 10 * 80;
-    });
 
     // game.playerData.sword.addListener(_onSwordChangeHandler);
     // rightClick.addListener(rightClickHandler);
@@ -291,17 +298,23 @@ class PlayerAnimationComponent extends RiveComponent
     lookingConstraint = artboard.component('LookingConstraint');
 
     // Start with the first sword, trigger _changeToSword after all animations are initialized
-    print(game.playerData.sword.value);
+    // print(game.playerData.sword.value);
+
+    // For super hero landing animation
+    gravity = 0;
+    // Future.delayed(const Duration(milliseconds: 100)).then((_) {
     final sword = game.playerData.equipments.value.firstWhere((e) => e is Sword) as Sword;
-    print('inited sword: $sword');
+    // });
     _changeToSword(sword.type);
+    Future.delayed(const Duration(milliseconds: 1000)).then((_) {
+      gravity = g;
+    });
   }
 
   @override
   void flipHorizontally() {
     game.playerData.direction.value = Direction(Vector2(-game.playerData.direction.value.x, 0));
     super.flipHorizontally();
-    // artboard.x = -artboard.x;
   }
 
   @override
@@ -506,8 +519,8 @@ class PlayerAnimationComponent extends RiveComponent
     );
     add(slash);
     Future.delayed(const Duration(milliseconds: 200), () {
-      // if (!slash.isRemoved) remove(slash);
-      slash.removeFromParent();
+      if (!slash.isRemoved) remove(slash);
+      // slash.removeFromParent();
     });
     if (game.playerData.effects.value.contains(SkillEffects.fireball)) {
       final firePosition = Vector2(position.x, position.y);
@@ -539,11 +552,13 @@ class PlayerAnimationComponent extends RiveComponent
 
   @override
   void onRemove() {
+    print('PlayerAnimationComponent onRemove');
     game.playerData.credit.removeListener(_onMousePositionChanged);
     game.playerData.equipments.removeListener(_onEquipmentsChangeHandler);
     game.playerData.casting.removeListener(_onCastingHandler);
     game.playerData.effects.removeListener(_onEffectsChangeHandler);
     if (interval != null) interval!.stop();
+    if (_savePositionTimer != null) _savePositionTimer!.stop();
     super.onRemove();
   }
 
@@ -600,7 +615,7 @@ class PlayerAnimationComponent extends RiveComponent
   }
 
   void _changeToSword(SwordType type) {
-    print('_changeToSword: $type');
+    // print('_changeToSword: $type');
     if (game.playerData.sword.value.type == type) return;
     game.playerData.lastSword.value = game.playerData.sword.value;
     final removeEffects = game.playerData.sword.value.skills.map((e) => e.effect).whereType<SkillEffect>().toList();
@@ -619,12 +634,12 @@ class PlayerAnimationComponent extends RiveComponent
   }
 
   void _onEffectsChangeHandler() {
-    print('_onEffectsChangeHandler');
+    // print('_onEffectsChangeHandler');
     _effectsTriggers[0]?.fire();
     final effects = game.playerData.effects.value;
-    print('effects: $effects');
+    // print('effects: $effects');
     for (var e in effects) {
-      print(e);
+      // print(e);
       if (e.name == 'purified') {
         game.playerData.health.value =
             game.playerData.health.value + 30 < 100 ? game.playerData.health.value + 30 : 100;
@@ -637,12 +652,8 @@ class PlayerAnimationComponent extends RiveComponent
 class HalfCircleHitbox extends CircleComponent {
   final Sword sword;
   HalfCircleHitbox(
-      {required this.sword, required double radius, required Vector2 position, Paint? paint, double? angle})
+      {required this.sword, required double super.radius, required Vector2 super.position, super.paint, super.angle})
       : super(
-          position: position,
-          radius: radius,
-          paint: paint,
-          angle: angle,
           anchor: Anchor.centerLeft,
         );
 

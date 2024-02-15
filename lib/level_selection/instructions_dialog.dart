@@ -54,29 +54,13 @@ class _InstructionsDialogState extends State<InstructionsDialog> {
                   });
                 },
                 children: [
-                  Row(
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Flexible(
-                        flex: 3,
-                        child: SizedBox(
-                          width: 100,
-                          height: 100,
-                          child: SpriteAnimationWidget.asset(
-                            path: 'dash/dash_spritesheet.png',
-                            data: SpriteAnimationData.sequenced(
-                              amount: 3,
-                              stepTime: 0.15,
-                              textureSize: Vector2.all(16),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 20),
-                      const Flexible(
                         flex: 7,
                         child: Text(
-                          'Tap/click on the screen to jump in that direction, tap again to double jump.',
+                          'Move using A, W, S and D, jump with Space and attack with left click.',
                         ),
                       ),
                     ],
@@ -87,7 +71,7 @@ class _InstructionsDialogState extends State<InstructionsDialog> {
                       const Flexible(
                         flex: 7,
                         child: Text(
-                          'You have to save as many Embers as possible to clear the level.',
+                          'Use 1, 2 ,3 and 4 or Tab to switch between your swords.',
                         ),
                       ),
                       const SizedBox(width: 20),
@@ -97,36 +81,27 @@ class _InstructionsDialogState extends State<InstructionsDialog> {
                           width: 60,
                           height: 60,
                           child: SpriteAnimationWidget.asset(
-                            path: 'ember.png',
+                            path: 'switch-swords.png',
                             data: SpriteAnimationData.sequenced(
                               amount: 4,
-                              stepTime: 0.15,
-                              textureSize: Vector2.all(16),
+                              stepTime: 1,
+                              textureSize: Vector2.all(16 * 4),
                             ),
                           ),
                         ),
                       ),
                     ],
                   ),
-                  Row(
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      SizedBox(width: 30),
                       Flexible(
-                        flex: 4,
-                        child: SizedBox(
-                          width: 200,
-                          height: 100,
-                          child:
-                              SpriteWidget.asset(path: 'enemies/obstacles.png'),
+                        flex: 7,
+                        child: Text(
+                          'Optional right click can select target and then press Q, E or R to use your skills.',
                         ),
                       ),
-                      const SizedBox(width: 20),
-                      const Flexible(
-                        flex: 6,
-                        child: Text(
-                          'Watch out for these, they will make you drop your Embers.',
-                        ),
-                      )
                     ],
                   ),
                 ],

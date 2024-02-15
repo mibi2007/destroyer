@@ -34,15 +34,17 @@ class GameLevel {
     mapTiled: 'intro.tmx',
     equipments: [Sword.desolator()],
     scenes: [
-      Scene(1, mapTiled: 'intro.tmx'),
+      Scene(0, mapTiled: 'Level2.tmx'),
+      Scene(1, mapTiled: 'Level2.tmx'),
+      Scene(2, mapTiled: 'Level2.tmx'),
     ],
   );
   static GameLevel lv1 = GameLevel(number: 2, title: 'Purge the Phantom Garbage', mapTiled: 'Level1.tmx', equipments: [
     Sword.purifier(3),
     Sword.flame(3)
   ], scenes: [
+    Scene(0, mapTiled: 'Level2.tmx'),
     Scene(1, mapTiled: 'Level1.tmx'),
-    Scene(2, mapTiled: 'Level2.tmx'),
   ]);
   static GameLevel lv2 = GameLevel(number: 3, title: 'Purge the Phantom Garbage', mapTiled: 'Level1.tmx', equipments: [
     Sword.purifier(3),
@@ -50,8 +52,8 @@ class GameLevel {
     Sword.flame(3),
     Sword.lightning(3),
   ], scenes: [
-    Scene(1, mapTiled: 'Level1.tmx'),
-    Scene(2, mapTiled: 'Level2.tmx'),
+    Scene(0, mapTiled: 'Level1.tmx'),
+    Scene(1, mapTiled: 'Level2.tmx'),
   ]);
 
   factory GameLevel.fromTiled(String mapTiled) {
@@ -71,8 +73,8 @@ class GameLevel {
 }
 
 class Scene {
-  final int number;
+  final int index;
   final String mapTiled;
 
-  Scene(this.number, {required this.mapTiled});
+  Scene(this.index, {required this.mapTiled});
 }

@@ -1,5 +1,3 @@
-import 'dart:ui' as ui;
-
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/text.dart';
@@ -238,7 +236,7 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
   }
 
   Future<void> onSwordChange() async {
-    print('update sword');
+    // print('update sword');
     final newIndex = equipments.indexWhere(((c) => (c.item as Sword).type == game.playerData.sword.value.type));
 
     // Make sure the selected sword has been changed completely before adding the effect
@@ -267,18 +265,18 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
     updateSkill();
 
     final autoCasts = game.playerData.sword.value.skills.where((s) => s.autoCast).toList();
-    print(autoCasts);
+    // print(autoCasts);
     if (autoCasts.isNotEmpty) {
       for (final skill in autoCasts) {
         final index = game.playerData.sword.value.skills.indexOf(skill);
-        print(index);
+        // print(index);
         _castSkill(index);
       }
     }
   }
 
   Future<void> renderSkills() async {
-    print('remove skills');
+    // print('remove skills');
     children.whereType<SkillFrame>().forEach((e) => remove(e));
     for (var i = 0; i < skills.length; i++) {
       final com = skills[i];
@@ -293,7 +291,7 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
   }
 
   Future<void> updateSkill() async {
-    print('update skills');
+    // print('update skills');
     for (var i = 0; i < skills.length; i++) {
       final com = skills[i].iconComponent;
 
@@ -311,10 +309,10 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
   }
 
   void onEffectsChange() {
-    print('update effects');
+    // print('update effects');
     children.whereType<EffectComponent>().forEach((e) => remove(e));
     final effects = game.playerData.effects.value;
-    print(effects);
+    // print(effects);
     for (var i = 0; i < effects.length; i++) {
       // if (effects.length < i + 1) {
       // final position = Vector2(x + i * (skillSize + skillGap), game.fixedResolution.y - skillSize / 2 - 7);
@@ -322,7 +320,6 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
       final effectComp = EffectComponent(effects[i], position: effectPosition, size: Vector2.all(effectSize));
       add(effectComp);
       if (effects[i].duration > 0) {
-        print('start countdown');
         effectComp.startCountdown(effects[i].duration);
       }
       // }
@@ -377,9 +374,8 @@ class SelectAndActiveEffect extends ColorEffect {
 }
 
 class SkillFrame extends SpriteComponent with HasGameRef<DestroyerGame> {
-  SkillFrame(ui.Image image)
+  SkillFrame(super.image)
       : super.fromImage(
-          image,
           srcSize: Vector2.all(88),
           anchor: Anchor.center,
           size: Vector2.all(skillSize + 6),

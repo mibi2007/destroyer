@@ -1,7 +1,4 @@
-import 'dart:math';
-
 import 'package:destroyer/flame_game/game.dart';
-import 'package:destroyer/level_selection/levels.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
@@ -24,11 +21,7 @@ import 'game_screen.dart';
 ///  `game`, which is a reference to the game class that the world is attached
 ///  to.
 class DestroyerGameWorld extends World with HasGameReference<DestroyerGame> {
-  DestroyerGameWorld({
-    // required this.level,
-    // required this.playerProgress,
-    Random? random,
-  }) : _random = random ?? Random();
+  DestroyerGameWorld();
 
   /// The properties of the current level.
   SceneComponent? _currentScene;
@@ -49,9 +42,6 @@ class DestroyerGameWorld extends World with HasGameReference<DestroyerGame> {
   // late final DateTime timeStarted;
   Vector2 get size => (parent as FlameGame).size;
   int levelCompletedIn = 0;
-
-  /// The random number generator that is used to spawn periodic components.
-  final Random _random;
 
   double speed = 100;
 
@@ -133,8 +123,7 @@ class DestroyerGameWorld extends World with HasGameReference<DestroyerGame> {
     );
     camera.viewfinder.position = game.fixedResolution / 2;
     await game.add(camera);
-
-    nextScene(game.level);
+    loadScene();
   }
 
   @override
@@ -164,16 +153,21 @@ class DestroyerGameWorld extends World with HasGameReference<DestroyerGame> {
   // static double _calculateSpeed(int level) => 200 + (level * 200);
   // static double _calculateSpeed(int level) => 0;
 
-  void nextScene(GameLevel level, {int currentIndex = -1}) {
-    print('level.scenes.length: ${level.scenes.length} currentIndex:${currentIndex}');
-    if (level.scenes.length > currentIndex + 1) {
-      _currentScene?.removeFromParent();
-      _currentScene = SceneComponent(level, sceneIndex: currentIndex + 1);
-      add(_currentScene!);
+  void nextScene() {
+    print('level.scenes.length: ${game.level.scenes.length} sceneIndex:${game.sceneIndex}');
+    if (game.level.scenes.length > game.sceneIndex + 1) {
+      game.navigate('/play/session/${game.level.number}/${game.sceneIndex + 1}');
     } else {
-      print('level.next().number');
-      print(level.next().number);
-      game.navigate('/play/session/${level.next().number}');
+      nextLevel();
     }
+  }
+
+  void nextLevel() {
+    game.navigate('/play/session/${game.level.next().number}/0');
+  }
+
+  void loadScene() {
+    _currentScene = SceneComponent(game.level, sceneIndex: game.sceneIndex);
+    add(_currentScene!);
   }
 }

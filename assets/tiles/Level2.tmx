@@ -26,7 +26,7 @@
  </objectgroup>
  <objectgroup id="5" name="Settings">
   <properties>
-   <property name="Gravity" value="800"/>
+   <property name="Gravity" type="int" value="800"/>
   </properties>
  </objectgroup>
 </map>
