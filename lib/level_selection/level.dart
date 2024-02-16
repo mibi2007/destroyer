@@ -1,3 +1,5 @@
+import 'package:destroyer/flame_game/components/weapon.dart';
+import 'package:destroyer/flame_game/scripts/intro.dart';
 import 'package:destroyer/utils/tileset.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
@@ -20,14 +22,16 @@ import 'levels.dart';
 class SceneComponent extends Component
     with HasGameReference<DestroyerGame>, ParentIsA<DestroyerGameWorld>, TapCallbacks, KeyboardHandler {
   final GameLevel level;
-  late PlayerComponent _player;
-  late Artboard artboard;
-  late TiledComponent mapTiled;
+  late final PlayerComponent _player;
+  late final Artboard artboard;
+  late final TiledComponent mapTiled;
   int lastRightClickCount = 0;
   // double _timer = 0;
   TapDownEvent? lastTapDownEvent;
 
   int? sceneIndex;
+  void Function(EnemySpriteComponent boss)? onBossKilled;
+  void Function(EquipmentComponent item)? onRewardPicked;
 
   SceneComponent(this.level, {this.sceneIndex = 0});
 
@@ -37,9 +41,8 @@ class SceneComponent extends Component
   @override
   Future<void> onLoad() async {
     print('Loading level: ${level.title}');
-    // if (sceneIndex == 0) {
+
     _setupStartLevel();
-    // }
 
     artboard = await loadArtboard(RiveFile.asset('assets/animations/character.riv'));
     mapTiled = await TiledComponent.load(
@@ -49,12 +52,13 @@ class SceneComponent extends Component
     add(mapTiled);
 
     _spawnActors();
+    leftClick.addListener(_onLeftClickHander);
 
     // Wait until the _player is added to the scene
     Future.delayed(const Duration(milliseconds: 1000), () {
       _setupCamera();
+      _startScript();
     });
-    leftClick.addListener(_onLeftClickHander);
   }
 
   _onLeftClickHander() {
@@ -184,7 +188,7 @@ class SceneComponent extends Component
           final targetObjectId = spawnPoint.properties.getValue<int>('Target');
           final flip = spawnPoint.properties.getValue<bool>('Flip');
           final type = spawnPoint.properties.getValue<String>('Type');
-          final health = type == 'Boss' ? 8000.0 : 100.0;
+          final health = type == 'Boss' ? 7000.0 : 100.0;
           TiledObject? target = getObjectFromTargetById(spawnPointsLayer.objects, targetObjectId);
           final enemy = EnemySpriteComponent(
             Garbage(maxHealth: health),
@@ -195,6 +199,11 @@ class SceneComponent extends Component
           );
           if (flip == true) enemy.flipHorizontally();
           add(enemy);
+          if (type == 'Boss') {
+            enemy.onKilled = () {
+              onBossKilled?.call(enemy);
+            };
+          }
 
           break;
 
@@ -257,5 +266,14 @@ class SceneComponent extends Component
     leftClick.removeListener(_onLeftClickHander);
 
     super.onRemove();
+  }
+
+  void _startScript() {
+    if (level.number == 1) {
+      final introScript = IntroScript();
+      add(introScript);
+      onBossKilled = introScript.onBossKilled;
+      onRewardPicked = introScript.onRewardPicked;
+    }
   }
 }

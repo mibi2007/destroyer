@@ -26,6 +26,7 @@ class EnemySpriteComponent extends SpriteComponent with CollisionCallbacks, HasG
   final Enemy enemy;
   SequenceEffect? effect;
   final double damage;
+  void Function()? onKilled;
 
   EnemySpriteComponent(
     this.enemy,
@@ -230,5 +231,11 @@ class EnemySpriteComponent extends SpriteComponent with CollisionCallbacks, HasG
     }
 
     super.onCollisionStart(intersectionPoints, other);
+  }
+
+  @override
+  removeFromParent() {
+    onKilled?.call();
+    super.removeFromParent();
   }
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:destroyer/level_selection/level.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_rive/flame_rive.dart';
@@ -27,7 +28,7 @@ const double defaultMoveSpeed = 150;
 const double flySpeed = 75;
 const double g = 800;
 
-class PlayerComponent extends PositionComponent {
+class PlayerComponent extends PositionComponent with ParentIsA<SceneComponent> {
   final Artboard artboard;
   late PlayerAnimationComponent animation;
 
@@ -473,7 +474,12 @@ class PlayerAnimationComponent extends RiveComponent
     }
 
     if (other is EquipmentComponent) {
-      game.playerData.equipments.value.add(other.item);
+      game.playerData.equipments.addAll([other.item]);
+      if (other is SwordComponent) {
+        final newSword = other.item as Sword;
+        _changeToSword(newSword.type);
+        parent.parent.onRewardPicked?.call(other);
+      }
       other.removeFromParent();
     }
 
@@ -528,7 +534,7 @@ class PlayerAnimationComponent extends RiveComponent
       final fireballVelocity = Vector2(sin(fireAngle) * fireSpeed, cos(fireAngle) * fireSpeed);
       Fireball bullet = Fireball(
           position: firePosition, velocity: fireballVelocity, angle: game.playerData.aim.value, speed: fireSpeed);
-      if (parent != null && parent!.parent != null) parent!.parent!.add(bullet);
+      if (parent.parent != null) parent.parent!.add(bullet);
     }
   }
 
@@ -634,16 +640,18 @@ class PlayerAnimationComponent extends RiveComponent
   }
 
   void _onEffectsChangeHandler() {
-    // print('_onEffectsChangeHandler');
+    print('_onEffectsChangeHandler');
     _effectsTriggers[0]?.fire();
     final effects = game.playerData.effects.value;
-    // print('effects: $effects');
+    print('effects: $effects');
     for (var e in effects) {
       // print(e);
       if (e.name == 'purified') {
         game.playerData.health.value =
             game.playerData.health.value + 30 < 100 ? game.playerData.health.value + 30 : 100;
       }
+      print(_effectsTriggers[e.triggerIndex!]);
+
       if (e.triggerIndex != null) _effectsTriggers[e.triggerIndex!]?.fire();
     }
   }

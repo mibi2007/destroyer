@@ -147,6 +147,8 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
       if (game.playerData.casting.value != null && game.playerData.casting.value!.effect != null) {
         final effect = game.playerData.casting.value!.effect!;
         game.playerData.effects.addAll([effect]);
+        // print(effect);
+        // print(game.playerData.effects.value);
         Future.delayed(Duration(milliseconds: (effect.duration * 1000).toInt()), () {
           // print('removed effect');
           game.playerData.effects.remove(effect);

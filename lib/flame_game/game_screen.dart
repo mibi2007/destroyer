@@ -7,6 +7,7 @@ import '../audio/audio_controller.dart';
 import '../level_selection/levels.dart';
 import 'game.dart';
 import 'game_win_dialog.dart';
+import 'scripts/intro.dart';
 
 final GlobalKey<RiverpodAwareGameWidgetState<DestroyerGame>> gameWidgetKey =
     GlobalKey<RiverpodAwareGameWidgetState<DestroyerGame>>();
@@ -68,6 +69,7 @@ class GameScreen extends StatelessWidget {
                     level: level,
                   );
                 },
+                PurifySwordPickedDialog.id: (context, game) => PurifySwordPickedDialog(game: game),
               },
             ),
           ),

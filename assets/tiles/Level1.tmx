@@ -51,7 +51,7 @@
   </object>
   <object id="39" type="Door" gid="3" x="928" y="320" width="64" height="64">
    <properties>
-    <property name="NextLevel" value="Level2.tmx"/>
+    <property name="NextLevel" type="bool" value="true"/>
    </properties>
   </object>
   <object id="45" x="624.333" y="288">

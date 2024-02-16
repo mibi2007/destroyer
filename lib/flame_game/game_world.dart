@@ -39,7 +39,7 @@ class DestroyerGameWorld extends World with HasGameReference<DestroyerGame> {
   /// can listen to it and act on the updated value.
   final scoreNotifier = ValueNotifier(0);
   // late final Player player;
-  // late final DateTime timeStarted;
+  late final DateTime timeStarted;
   Vector2 get size => (parent as FlameGame).size;
   int levelCompletedIn = 0;
 
@@ -60,7 +60,7 @@ class DestroyerGameWorld extends World with HasGameReference<DestroyerGame> {
     print('Level loaded');
     // Used to keep track of when the level started, so that we later can
     // calculate how long time it took to finish the level.
-    // timeStarted = DateTime.now();
+    timeStarted = DateTime.now();
 
     // // The player is the component that we control when we tap the screen, the
     // // Dash in this case.
@@ -162,7 +162,16 @@ class DestroyerGameWorld extends World with HasGameReference<DestroyerGame> {
     }
   }
 
+  void finishedLevel() {
+    final levelTime = (DateTime.now().millisecondsSinceEpoch - timeStarted.millisecondsSinceEpoch) / 1000;
+
+    levelCompletedIn = levelTime.round();
+
+    game.setLevelFinished(game.level.number, levelCompletedIn);
+  }
+
   void nextLevel() {
+    finishedLevel();
     game.navigate('/play/session/${game.level.next().number}/0');
   }
 

@@ -29,8 +29,8 @@ class MainMenuScreen extends StatelessWidget {
               const SizedBox(
                 width: 600,
                 height: 600,
-                child: RiveAnimation.network(
-                  'http://localhost:12345/assets/assets/animations/character.riv',
+                child: RiveAnimation.asset(
+                  'assets/animations/character.riv',
                   fit: BoxFit.cover,
                   placeHolder: Center(child: CircularProgressIndicator()),
                 ),

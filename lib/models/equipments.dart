@@ -1,6 +1,10 @@
 import 'skills.dart';
 
-abstract class Equipment {}
+abstract class Equipment {
+  final String name;
+
+  Equipment({required this.name});
+}
 
 enum SwordType {
   desolator,
@@ -20,6 +24,7 @@ class Sword extends Equipment {
   final int triggerIndex;
   final String iconAsset;
   Sword({
+    required super.name,
     required this.triggerIndex,
     required this.damage,
     required this.level,
@@ -30,6 +35,7 @@ class Sword extends Equipment {
   });
 
   factory Sword.desolator() => Sword(
+        name: 'Desolator Sword lvl 5',
         damage: 8000,
         attackSpeed: _getAttackSpeed(SwordType.desolator, 5),
         level: 5,
@@ -39,6 +45,7 @@ class Sword extends Equipment {
         iconAsset: 'equipments/swords/desolator-sprite.png',
       );
   factory Sword.purifier(int level) => Sword(
+        name: 'Purifier Sword lvl $level',
         damage: _getPurifierDmg(level),
         attackSpeed: _getAttackSpeed(SwordType.purifier, level),
         level: level,
@@ -48,6 +55,7 @@ class Sword extends Equipment {
         iconAsset: 'equipments/swords/purifier-sprite.png',
       );
   factory Sword.time(int level) => Sword(
+        name: 'Time Sword lvl $level',
         damage: _getOtherDmg(level),
         attackSpeed: _getAttackSpeed(SwordType.time, level),
         level: level,
@@ -57,6 +65,7 @@ class Sword extends Equipment {
         iconAsset: 'equipments/swords/time-sprite.png',
       );
   factory Sword.flame(int level) => Sword(
+        name: 'Flame Sword lvl $level',
         damage: _getFlameDmg(level),
         attackSpeed: _getAttackSpeed(SwordType.flame, level),
         level: level,
@@ -66,6 +75,7 @@ class Sword extends Equipment {
         iconAsset: 'equipments/swords/flame-sprite.png',
       );
   factory Sword.lightning(int level) => Sword(
+        name: 'Lightning Sword lvl $level',
         damage: _getOtherDmg(level),
         attackSpeed: _getAttackSpeed(SwordType.lightning, level),
         level: level,

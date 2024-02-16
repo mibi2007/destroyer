@@ -8,8 +8,10 @@ import 'package:flame/game.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/widgets.dart' hide Image;
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 import '../models/player_data/player_data.dart';
+import '../player_progress/player_progress.dart';
 import '../utils/disabler.dart';
 import 'components/background.dart';
 import 'components/enemy.dart';
@@ -143,6 +145,11 @@ class DestroyerGame extends FlameGame
   void navigate(String path) {
     print('Navigating to $path');
     context.go(path);
+  }
+
+  setLevelFinished(int level, int time) {
+    final playerProgress = context.read<PlayerProgress>();
+    playerProgress.setLevelFinished(level, time);
   }
 
   @override

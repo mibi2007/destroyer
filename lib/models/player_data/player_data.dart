@@ -46,7 +46,9 @@ class ValueNotifierList<T> extends ValueNotifier<List<T>> {
   ValueNotifierList(super.value);
 
   addAll(Iterable<T> newValues) {
-    value.addAll(newValues);
+    for (final newValue in newValues) {
+      if (!value.contains(newValue)) value.add(newValue);
+    }
     notifyListeners();
   }
 

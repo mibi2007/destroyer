@@ -1,3 +1,4 @@
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 
 import '../../models/equipments.dart';
@@ -19,7 +20,7 @@ class EquipmentComponent extends SpriteComponent with HasGameRef<DestroyerGame> 
   }
 }
 
-class SwordComponent extends EquipmentComponent {
+class SwordComponent extends EquipmentComponent with CollisionCallbacks {
   SwordComponent({
     required super.item,
     required super.sprite,
@@ -29,6 +30,7 @@ class SwordComponent extends EquipmentComponent {
 
   @override
   Future<void> onLoad() async {
+    add(CircleHitbox());
     // Load your sword sprite and set up animations here
   }
 
