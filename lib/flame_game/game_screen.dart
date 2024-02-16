@@ -31,7 +31,7 @@ class GameScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final myGame = DestroyerGame(level, sceneIndex);
+    final myGame = DestroyerGame(level, sceneIndex, screenSize: MediaQuery.of(context).size);
     myGame.context = context;
     double width;
     double height;

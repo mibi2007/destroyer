@@ -345,6 +345,7 @@ class PlayerAnimationComponent extends RiveComponent
       _velocity.y = _vAxisInput * flySpeed;
       position.x += _velocity.x * dt;
       position.y += _velocity.y * dt;
+      moveBackgound(_velocity);
       return;
     }
 
@@ -387,16 +388,20 @@ class PlayerAnimationComponent extends RiveComponent
     }
     // delta movement = velocity * time
     position += _velocity * dt;
+    moveBackgound(_velocity);
+  }
+
+  void moveBackgound(Vector2 v) {
     if (collisionNormal.x > -0.9 && collisionNormal.x < 0.9) {
-      game.background.parallax!.baseVelocity.x = _velocity.x / 50;
+      game.background.parallax!.baseVelocity.x = v.x / 50;
     } else {
       game.background.parallax!.baseVelocity.x = 0;
     }
-    // if (collisionNormal.y > -0.9 && collisionNormal.y < 0.9) {
-    //   game.background.parallax!.baseVelocity.y = _velocity.y;
-    // } else {
-    //   game.background.parallax!.baseVelocity.y = 0;
-    // }
+    if (collisionNormal.y > -0.9 && collisionNormal.y < 0.9) {
+      game.background.parallax!.baseVelocity.y = v.y / 50;
+    } else {
+      game.background.parallax!.baseVelocity.y = 0;
+    }
   }
 
   @override
@@ -643,16 +648,16 @@ class PlayerAnimationComponent extends RiveComponent
     print('_onEffectsChangeHandler');
     _effectsTriggers[0]?.fire();
     final effects = game.playerData.effects.value;
-    print('effects: $effects');
     for (var e in effects) {
       // print(e);
       if (e.name == 'purified') {
         game.playerData.health.value =
             game.playerData.health.value + 30 < 100 ? game.playerData.health.value + 30 : 100;
       }
-      print(_effectsTriggers[e.triggerIndex!]);
-
-      if (e.triggerIndex != null) _effectsTriggers[e.triggerIndex!]?.fire();
+      if (e.triggerIndex != null) {
+        print(_effectsTriggers[e.triggerIndex!]);
+        _effectsTriggers[e.triggerIndex!]?.fire();
+      }
     }
   }
 }

@@ -41,9 +41,10 @@ class DestroyerGame extends FlameGame
 
   final GameLevel level;
   final int sceneIndex;
+  final Size screenSize;
   late BuildContext context;
 
-  DestroyerGame(this.level, this.sceneIndex);
+  DestroyerGame(this.level, this.sceneIndex, {required this.screenSize});
   late Image spriteSheet;
 
   final playerData = PlayerData();
@@ -55,10 +56,18 @@ class DestroyerGame extends FlameGame
 
   @override
   void onMouseMove(PointerHoverInfo info) {
-    if (_timer > 0.045) {
+    if (_timer > 0.045 && isMounted) {
       _timer = 0;
-      // print(info.eventPosition.global);
-      playerData.currentMousePosition.value = info.eventPosition.global;
+
+      // Fix bug where the mouse position is not correct with different screen sizes and resolutions
+      double x = info.eventPosition.global.x;
+      double y = info.eventPosition.global.y;
+      if (screenSize.width > size.x) {
+        x = x - (screenSize.width - size.x) / 2;
+      } else if (screenSize.height > size.y) {
+        y = y - (screenSize.height - size.y) / 2;
+      }
+      playerData.currentMousePosition.value = Vector2(x, y);
     }
   }
 

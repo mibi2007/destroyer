@@ -26,16 +26,20 @@ class MainMenuScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const Text(
+                'Destroyer',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontFamily: 'Press Start 2P', fontSize: 32, height: 1, color: Colors.black),
+              ),
               const SizedBox(
-                width: 600,
-                height: 600,
+                width: 500,
+                height: 500,
                 child: RiveAnimation.asset(
                   'assets/animations/character.riv',
                   fit: BoxFit.cover,
                   placeHolder: Center(child: CircularProgressIndicator()),
                 ),
               ),
-              _gap,
               Transform.rotate(
                 angle: -0.1,
                 child: ConstrainedBox(
