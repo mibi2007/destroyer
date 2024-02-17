@@ -25,9 +25,6 @@ class SceneComponent extends Component
   late final PlayerComponent _player;
   late final Artboard artboard;
   late final TiledComponent mapTiled;
-  int lastRightClickCount = 0;
-  // double _timer = 0;
-  TapDownEvent? lastTapDownEvent;
 
   int? sceneIndex;
   void Function(EnemySpriteComponent boss)? onBossKilled;
@@ -42,7 +39,7 @@ class SceneComponent extends Component
   Future<void> onLoad() async {
     print('Loading level: ${level.title}');
 
-    _setupStartLevel();
+    _setupStartLevel(game.isTesting);
 
     artboard = await loadArtboard(RiveFile.asset('assets/animations/character.riv'));
     mapTiled = await TiledComponent.load(
@@ -66,36 +63,17 @@ class SceneComponent extends Component
     _player.animation.attack();
   }
 
-  void _setupStartLevel() {
-    print('_setupAllLevels');
+  void _setupStartLevel(bool initLevelEquipments) {
     game.playerData.skills.value = [];
     game.playerData.skillCountdown.value = [];
     game.playerData.effects.value = [];
     game.playerData.casting.value = null;
     game.playerData.skillCountdown.value = [];
-    game.playerData.equipments.value = level.equipments;
-    // if (level.mapTiled == 'Level1.tmx') {
-    //   game.level.value = 1;
-    //   game.playerData.equipments.value = [
-    //     // Sword.desolator(1),
-    //     Sword.purifier(4),
-    //     Sword.time(4),
-    //     Sword.flame(4),
-    //     Sword.lightning(4),
-    //   ];
-    // } else if (level.mapTiled == 'Level2.tmx') {
-    //   game.level.value = 2;
-    //   game.playerData.equipments.value = [
-    //     // Sword.desolator(),
-    //     // Sword.purifier(4),
-    //     Sword.flame(2),
-    //   ];
-    // }
-    // add(SpriteComponent(
-    //   sprite: Sprite(game.images.fromCache('skills-and-effects/Chronosphere_icon.webp'), srcSize: Vector2(500, 500)),
-    //   position: Vector2(0, 0),
-    //   size: Vector2(32, 32),
-    // ));
+    print('initLevelEquipments');
+    print(initLevelEquipments);
+    if (initLevelEquipments || game.getEquipments().isEmpty) {
+      game.setEquipments(level.equipments);
+    }
   }
 
   @override

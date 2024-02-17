@@ -63,20 +63,6 @@ class IntroScript extends Component
   // }
 }
 
-class EquipmentPickedDialog extends StatelessWidget {
-  static const id = 'EquipmentPickedDialog';
-  final DestroyerGame game;
-
-  const EquipmentPickedDialog({super.key, required this.game});
-
-  @override
-  Widget build(BuildContext context) {
-    return const NesDialog(
-      child: Text('Picked'),
-    );
-  }
-}
-
 class PurifySwordPickedDialog extends StatelessWidget {
   static const id = 'PurifySwordPickedDialog';
   final DestroyerGame game;

@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flame/components.dart';
 import 'package:flame/parallax.dart';
 import 'package:flutter/widgets.dart';
@@ -30,7 +28,7 @@ class Background extends ParallaxComponent {
     // front, where the player is, we have to calculate what speed the layer in
     // the back should have and then the parallax will take care of setting the
     // speeds for the rest of the layers.
-    final baseVelocity = Vector2(speed / pow(2, layers.length), 0);
+    // final baseVelocity = Vector2(speed / pow(2, layers.length), 0);
 
     // The multiplier delta is used by the parallax to multiply the speed of
     // each layer compared to the last, starting from the back. Since we only

@@ -100,7 +100,7 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
       priority: 0,
     ));
     creditTextComponent = TextComponent(
-        text: 'x0',
+        text: 'x${game.getCredits()}',
         position: Vector2(18, 4),
         textRenderer: TextPaint(style: const TextStyle(fontSize: 8, color: Color(0xFFFFFFFF))));
     await add(SpriteComponent.fromImage(
@@ -111,7 +111,7 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
       size: Vector2.all(16),
     )..add(creditTextComponent));
 
-    game.playerData.credit.addListener(onCreditChange);
+    game.playerData.credits.addListener(onCreditChange);
     game.playerData.health.addListener(onHealthChange);
     game.playerData.sword.addListener(onSwordChange);
     game.playerData.equipments.addListener(onEquipmentsChange);
@@ -183,7 +183,7 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
   @override
   void onRemove() {
     print('onRemove');
-    game.playerData.credit.removeListener(onCreditChange);
+    game.playerData.credits.removeListener(onCreditChange);
     game.playerData.health.removeListener(onHealthChange);
     game.playerData.sword.removeListener(onSwordChange);
     game.playerData.equipments.removeListener(onEquipmentsChange);
@@ -193,7 +193,7 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
 
   // Updates score text on hud.
   void onCreditChange() {
-    creditTextComponent.text = 'x${game.playerData.credit.value}';
+    creditTextComponent.text = 'x${game.getCredits()}';
   }
 
   // Updates health text on hud.
@@ -214,8 +214,8 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
     equipments.clear();
     skills.clear();
     int index = 0;
-    if (game.playerData.equipments.value.isEmpty) return;
-    for (var equipment in game.playerData.equipments.value) {
+    if (game.getEquipments().isEmpty) return;
+    for (var equipment in game.getEquipments()) {
       if (equipment is Sword) {
         final swordImage = game.images.fromCache(equipment.iconAsset);
         final swordComp = SwordComponent(

@@ -24,8 +24,9 @@ final router = GoRouter(
           pageBuilder: (context, state) => buildPageTransition<void>(
             key: const ValueKey('play'),
             color: context.watch<Palette>().backgroundLevelSelection.color,
-            child: const LevelSelectionScreen(
+            child: LevelSelectionScreen(
               key: Key('level selection'),
+              isTesting: state.uri.queryParameters['test'] == 'true',
             ),
           ),
           routes: [
@@ -38,7 +39,11 @@ final router = GoRouter(
                 return buildPageTransition<void>(
                   key: const ValueKey('level'),
                   color: context.watch<Palette>().backgroundPlaySession.color,
-                  child: GameScreen(level: level, sceneIndex: sceneIndex),
+                  child: GameScreen(
+                    level: level,
+                    sceneIndex: sceneIndex,
+                    isTesting: state.uri.queryParameters['test'] == 'true',
+                  ),
                 );
               },
             ),

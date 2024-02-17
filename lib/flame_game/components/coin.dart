@@ -62,7 +62,7 @@ class Coin extends SpriteComponent with CollisionCallbacks, HasGameReference<Des
         ),
       );
 
-      game.playerData.credit.value += 1;
+      game.setCredits(game.getCredits() + 1);
     }
     super.onCollisionStart(intersectionPoints, other);
   }

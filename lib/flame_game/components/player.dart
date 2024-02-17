@@ -164,7 +164,7 @@ class PlayerAnimationComponent extends RiveComponent
   // @override
   // void onMount() {
   //   super.onMount();
-  //   game.playerData.sword.value = game.playerData.equipments.value.firstWhere((e) => e is Sword) as Sword;
+  //   game.playerData.sword.value = game.getEquipments().firstWhere((e) => e is Sword) as Sword;
   // }
 
   // Updates score text on hud.
@@ -304,7 +304,8 @@ class PlayerAnimationComponent extends RiveComponent
     // For super hero landing animation
     gravity = 0;
     // Future.delayed(const Duration(milliseconds: 100)).then((_) {
-    final sword = game.playerData.equipments.value.firstWhere((e) => e is Sword) as Sword;
+    print('run2');
+    final sword = game.getEquipments().firstWhere((e) => e is Sword) as Sword;
     // });
     _changeToSword(sword.type);
     Future.delayed(const Duration(milliseconds: 1000)).then((_) {
@@ -479,7 +480,7 @@ class PlayerAnimationComponent extends RiveComponent
     }
 
     if (other is EquipmentComponent) {
-      game.playerData.equipments.addAll([other.item]);
+      game.addEquipment(other.item);
       if (other is SwordComponent) {
         final newSword = other.item as Sword;
         _changeToSword(newSword.type);
@@ -492,7 +493,7 @@ class PlayerAnimationComponent extends RiveComponent
   }
 
   void _onEquipmentsChangeHandler() {
-    final equipments = game.playerData.equipments.value;
+    final equipments = game.getEquipments();
     for (var e in equipments) {
       if (e is Sword) {
         if (e.type == SwordType.desolator) {
@@ -539,7 +540,7 @@ class PlayerAnimationComponent extends RiveComponent
       final fireballVelocity = Vector2(sin(fireAngle) * fireSpeed, cos(fireAngle) * fireSpeed);
       Fireball bullet = Fireball(
           position: firePosition, velocity: fireballVelocity, angle: game.playerData.aim.value, speed: fireSpeed);
-      if (parent.parent != null) parent.parent!.add(bullet);
+      parent.parent.add(bullet);
     }
   }
 
@@ -551,7 +552,7 @@ class PlayerAnimationComponent extends RiveComponent
 
   void switchNextSword() {
     final sword = game.playerData.sword.value;
-    final equipments = game.playerData.equipments.value;
+    final equipments = game.getEquipments();
     final currentIndex = equipments.indexWhere((element) => (element as Sword).type == sword.type);
     final nextIndex = (currentIndex + 1) % equipments.length;
     final nextSword = equipments[nextIndex] as Sword;
@@ -564,7 +565,7 @@ class PlayerAnimationComponent extends RiveComponent
   @override
   void onRemove() {
     print('PlayerAnimationComponent onRemove');
-    game.playerData.credit.removeListener(_onMousePositionChanged);
+    game.playerData.credits.removeListener(_onMousePositionChanged);
     game.playerData.equipments.removeListener(_onEquipmentsChangeHandler);
     game.playerData.casting.removeListener(_onCastingHandler);
     game.playerData.effects.removeListener(_onEffectsChangeHandler);
@@ -633,7 +634,7 @@ class PlayerAnimationComponent extends RiveComponent
     for (var element in removeEffects) {
       game.playerData.effects.value.remove(element);
     }
-    final newSword = game.playerData.equipments.value.firstWhere((e) => e is Sword && e.type == type) as Sword;
+    final newSword = game.getEquipments().firstWhere((e) => e is Sword && e.type == type) as Sword;
     game.playerData.sword.value = newSword;
 
     final passiveEffects = newSword.skills.where((s) => s.passive).map((e) => e.effect).whereType<SkillEffect>();

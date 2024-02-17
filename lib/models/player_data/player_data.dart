@@ -22,11 +22,13 @@ class Direction {
 }
 
 class PlayerData {
-  final credit = ValueNotifier<int>(0);
+  // Store credits and equipments to storage, here is just a notifier
+  final credits = CreditNotifier();
+  final equipments = EquipmentsNotifier();
+
   final health = ValueNotifier<int>(100);
   final armor = ValueNotifier<int>(5);
   final inventory = ValueNotifierList<Equipment>([]);
-  final equipments = ValueNotifierList<Equipment>([]);
   final sword = ValueNotifier<Sword>(Sword.desolator());
   final lastSword = ValueNotifier<Sword>(Sword.desolator());
   final skills = ValueNotifierList<Skill>([]);
@@ -59,6 +61,18 @@ class ValueNotifierList<T> extends ValueNotifier<List<T>> {
 
   void remove(T indexValue) {
     value.remove(indexValue);
+    notifyListeners();
+  }
+}
+
+class CreditNotifier extends ChangeNotifier {
+  void change() {
+    notifyListeners();
+  }
+}
+
+class EquipmentsNotifier extends ChangeNotifier {
+  void change() {
     notifyListeners();
   }
 }

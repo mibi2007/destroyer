@@ -1,11 +1,13 @@
 import 'dart:ui';
 
 import 'package:destroyer/level_selection/levels.dart';
+import 'package:destroyer/models/equipments.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart' hide Image;
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -43,8 +45,9 @@ class DestroyerGame extends FlameGame
   final int sceneIndex;
   final Size screenSize;
   late BuildContext context;
+  late bool isTesting;
 
-  DestroyerGame(this.level, this.sceneIndex, {required this.screenSize});
+  DestroyerGame(this.level, this.sceneIndex, {required this.screenSize, this.isTesting = false});
   late Image spriteSheet;
 
   final playerData = PlayerData();
@@ -82,7 +85,7 @@ class DestroyerGame extends FlameGame
     final enemyList = componentsAtPoint(clickPosition).whereType<EnemySpriteComponent>().toList();
     if (enemyList.isNotEmpty) {
       playerData.selectedTarget.value = enemyList.first;
-      // print(objectRuntimeType(playerData.selectedTarget.value, 'selectedTarget'));
+      print(objectRuntimeType(playerData.selectedTarget.value, 'selectedTarget'));
     }
   }
 
@@ -153,12 +156,45 @@ class DestroyerGame extends FlameGame
 
   void navigate(String path) {
     print('Navigating to $path');
-    context.go(path);
+    context.go(path + (isTesting ? '?test=true' : ''));
   }
 
   setLevelFinished(int level, int time) {
     final playerProgress = context.read<PlayerProgress>();
     playerProgress.setLevelFinished(level, time);
+  }
+
+  setCredits(int newCredits) {
+    final playerProgress = context.read<PlayerProgress>();
+    playerProgress.setCredits(newCredits);
+    // Notify the playerData that the credits have changed
+    playerData.credits.change();
+  }
+
+  int getCredits() {
+    final playerProgress = context.read<PlayerProgress>();
+    return playerProgress.credits;
+  }
+
+  setEquipments(List<Equipment> newEquipments) {
+    final playerProgress = context.read<PlayerProgress>();
+    print(newEquipments);
+    final success = playerProgress.setEquipments(newEquipments);
+    // Notify the playerData that the credits have changed
+    print('setEquipments success: $success');
+    if (success) playerData.equipments.change();
+  }
+
+  addEquipment(Equipment equipment) {
+    final playerProgress = context.read<PlayerProgress>();
+    final success = playerProgress.addEquipment(equipment);
+    // Notify the playerData that the credits have changed
+    if (success) playerData.equipments.change();
+  }
+
+  List<Equipment> getEquipments() {
+    final playerProgress = context.read<PlayerProgress>();
+    return playerProgress.getEquipments();
   }
 
   @override

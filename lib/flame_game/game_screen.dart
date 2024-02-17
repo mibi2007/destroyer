@@ -22,7 +22,8 @@ final GlobalKey<RiverpodAwareGameWidgetState<DestroyerGame>> gameWidgetKey =
 /// [DestroyerGame] class so that it can play audio.
 class GameScreen extends StatelessWidget {
   final int sceneIndex;
-  const GameScreen({required this.level, this.sceneIndex = 0, super.key});
+  final bool isTesting;
+  const GameScreen({required this.level, this.sceneIndex = 0, this.isTesting = false, super.key});
 
   final GameLevel level;
 
@@ -33,6 +34,9 @@ class GameScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final myGame = DestroyerGame(level, sceneIndex, screenSize: MediaQuery.of(context).size);
     myGame.context = context;
+    if (isTesting) {
+      myGame.isTesting = true;
+    }
     double width;
     double height;
     if ((MediaQuery.of(context).size.width / 640 * 454) > MediaQuery.of(context).size.height) {

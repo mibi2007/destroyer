@@ -2,8 +2,23 @@ import 'skills.dart';
 
 abstract class Equipment {
   final String name;
+  final String iconAsset;
 
-  Equipment({required this.name});
+  Equipment({required this.iconAsset, required this.name});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+    };
+  }
+
+  static Equipment fromJson<T>(Map<String, dynamic> json) {
+    if (T == Sword) {
+      return Sword.fromJson(json);
+    } else {
+      throw Exception('Unknown type');
+    }
+  }
 }
 
 enum SwordType {
@@ -11,7 +26,27 @@ enum SwordType {
   purifier,
   time,
   flame,
-  lightning,
+  lightning;
+
+  String toJson() {
+    return toString().split('.').last;
+  }
+
+  static SwordType fromJson(String json) {
+    switch (json) {
+      case 'desolator':
+        return SwordType.desolator;
+      case 'purifier':
+        return SwordType.purifier;
+      case 'time':
+        return SwordType.time;
+      case 'flame':
+        return SwordType.flame;
+      case 'lightning':
+        return SwordType.lightning;
+    }
+    return SwordType.desolator;
+  }
 }
 
 class Sword extends Equipment {
@@ -22,15 +57,14 @@ class Sword extends Equipment {
   final double attackSpeed;
   // The index of the trigger in the animation
   final int triggerIndex;
-  final String iconAsset;
   Sword({
     required super.name,
+    required super.iconAsset,
     required this.triggerIndex,
     required this.damage,
     required this.level,
     required this.skills,
     required this.type,
-    required this.iconAsset,
     required this.attackSpeed,
   });
 
@@ -103,6 +137,31 @@ class Sword extends Equipment {
   @override
   String toString() {
     return 'Sword: $type lvl: $level';
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'sword_type': type.toJson(),
+      'level': level,
+    };
+  }
+
+  factory Sword.fromJson(Map<String, dynamic> json) {
+    final type = SwordType.fromJson(json['sword_type'] as String);
+    final level = json['level'] as int;
+    switch (type) {
+      case SwordType.desolator:
+        return Sword.desolator();
+      case SwordType.purifier:
+        return Sword.purifier(level);
+      case SwordType.time:
+        return Sword.time(level);
+      case SwordType.flame:
+        return Sword.flame(level);
+      case SwordType.lightning:
+        return Sword.lightning(level);
+    }
   }
 }
 
