@@ -47,7 +47,9 @@ class DestroyerGame extends FlameGame
   late BuildContext context;
   late bool isTesting;
 
-  DestroyerGame(this.level, this.sceneIndex, {required this.screenSize, this.isTesting = false});
+  DestroyerGame(this.level, this.sceneIndex, {required this.screenSize, this.isTesting = false}) {
+    images.prefix = '';
+  }
   late Image spriteSheet;
 
   final playerData = PlayerData();
@@ -56,6 +58,9 @@ class DestroyerGame extends FlameGame
   double _timer = 0;
   late Background background;
   // late TiledComponent mapTiled;
+
+  Vector2 cameraSpeed = Vector2.zero();
+  Vector2 cameraMaxSpeed = Vector2.all(200);
 
   @override
   void onMouseMove(PointerHoverInfo info) {
@@ -113,36 +118,43 @@ class DestroyerGame extends FlameGame
 
     // Loads all the audio assets
     // await AudioManager.init();
-    spriteSheet = await images.load('Spritesheet.png');
-    await images.load('hud/hud.png');
-    await images.load('hud/avatar-frame.png');
+    spriteSheet = await images.load('assets/tiles/Spritesheet.png');
+    await images.load('assets/images/hud/hud.png');
+    await images.load('assets/images/hud/avatar-frame.png');
 
     // Swords
-    await images.load('equipments/swords/desolator-sprite.png');
-    await images.load('equipments/swords/purifier-sprite.png');
-    await images.load('equipments/swords/time-sprite.png');
-    await images.load('equipments/swords/flame-sprite.png');
-    await images.load('equipments/swords/lightning-sprite.png');
-    await images.load('equipments/swords/fireball.png');
-    await images.load('equipments/swords/slash-on-enemy.png');
+    await images.load('assets/images/equipments/swords/desolator-sprite.png');
+    await images.load('assets/images/equipments/swords/purifier-sprite.png');
+    await images.load('assets/images/equipments/swords/time-sprite.png');
+    await images.load('assets/images/equipments/swords/flame-sprite.png');
+    await images.load('assets/images/equipments/swords/lightning-sprite.png');
+    await images.load('assets/images/equipments/swords/fireball.png');
+    await images.load('assets/images/equipments/swords/slash-on-enemy.png');
+
+    // Armors
+    await images.load('assets/images/equipments/armors/Helmet.webp');
+    await images.load('assets/images/equipments/armors/Chestpiece.webp');
+    await images.load('assets/images/equipments/armors/Gauntlets.webp');
+    await images.load('assets/images/equipments/armors/Leggings.webp');
+    await images.load('assets/images/equipments/armors/Boots.webp');
 
     // Skills and effects
-    await images.load('skills-and-effects/skill-frame.png');
-    await images.load('skills-and-effects/boom.png');
-    await images.load('skills-and-effects/Repel_icon.webp');
-    await images.load('skills-and-effects/Guardian_Angel_icon.webp');
-    await images.load('skills-and-effects/Time_Walk_icon.webp');
-    await images.load('skills-and-effects/Chronosphere_icon.webp');
-    await images.load('skills-and-effects/Fireblast_icon.webp');
-    await images.load('skills-and-effects/Flame_Cloak_icon.webp');
-    await images.load('skills-and-effects/Requiem_of_Souls_icon.webp');
-    await images.load('skills-and-effects/Ball_Lightning_icon.webp');
-    await images.load('skills-and-effects/Thunder_Strike_icon.webp');
-    await images.load('skills-and-effects/Cold_Feet_icon.webp');
-    await images.load('skills-and-effects/Spell_Immunity_icon.webp');
+    await images.load('assets/images/skills-and-effects/skill-frame.png');
+    await images.load('assets/images/skills-and-effects/boom.png');
+    await images.load('assets/images/skills-and-effects/Repel_icon.webp');
+    await images.load('assets/images/skills-and-effects/Guardian_Angel_icon.webp');
+    await images.load('assets/images/skills-and-effects/Time_Walk_icon.webp');
+    await images.load('assets/images/skills-and-effects/Chronosphere_icon.webp');
+    await images.load('assets/images/skills-and-effects/Fireblast_icon.webp');
+    await images.load('assets/images/skills-and-effects/Flame_Cloak_icon.webp');
+    await images.load('assets/images/skills-and-effects/Requiem_of_Souls_icon.webp');
+    await images.load('assets/images/skills-and-effects/Ball_Lightning_icon.webp');
+    await images.load('assets/images/skills-and-effects/Thunder_Strike_icon.webp');
+    await images.load('assets/images/skills-and-effects/Cold_Feet_icon.webp');
+    await images.load('assets/images/skills-and-effects/Spell_Immunity_icon.webp');
 
     // Negative effects
-    await images.load('skills-and-effects/Kinetic_Field_icon.webp');
+    await images.load('assets/images/skills-and-effects/Kinetic_Field_icon.webp');
     add(FpsTextComponent());
 
     add(DestroyerGameWorld());
@@ -152,6 +164,8 @@ class DestroyerGame extends FlameGame
   void update(double dt) {
     super.update(dt);
     _timer += dt;
+
+    // camera.
   }
 
   void navigate(String path) {

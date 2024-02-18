@@ -19,11 +19,12 @@ import '../../models/player_data/player_data.dart';
 import '../../models/skills.dart';
 import '../../skills/chronosphere.dart';
 import '../game.dart';
+import 'equipment.dart';
+import 'equipments/weapon.dart';
 import 'platform.dart';
 import 'skills.dart';
-import 'weapon.dart';
 
-const double jumpSpeed = 300;
+const double jumpSpeed = 250;
 const double defaultMoveSpeed = 150;
 const double flySpeed = 75;
 const double g = 800;
@@ -65,8 +66,8 @@ class PlayerAnimationComponent extends RiveComponent
   int _vAxisInput = 0;
   bool _jumpInput = false;
   bool _isOnGround = false;
-  double moveSpeed = defaultMoveSpeed;
-  LogicalKeyboardKey? lastKeyPress;
+  double _moveSpeed = defaultMoveSpeed;
+  int _jumpCount = 0;
   // Direction direction = Direction(Vector2(1, 0));
   // double aim = 0;
   // double angleToSigned = 0;
@@ -361,15 +362,20 @@ class PlayerAnimationComponent extends RiveComponent
     }
     // Modify components of velocity based on
     // inputs and gravity.
-    _velocity.x = _hAxisInput * moveSpeed;
+    _velocity.x = _hAxisInput * _moveSpeed;
     // Allow jump only if jump input is pressed
     // and player is already on ground.
     if (_jumpInput) {
-      if (_isOnGround) {
+      if (_isOnGround && _jumpCount == 0) {
         _isOnGround = false;
+        _jumpCount++;
         // AudioManager.playSfx('Jump_15.wav');
         _velocity.y = -jumpSpeed;
         // _controller.findInput<double>('Level')?.value = 1;
+        _jumpTrigger?.fire();
+      } else if (!_isOnGround && _jumpCount == 1) {
+        _jumpCount++;
+        _velocity.y = -jumpSpeed;
         _jumpTrigger?.fire();
       } else {
         _landTrigger?.fire();
@@ -406,7 +412,7 @@ class PlayerAnimationComponent extends RiveComponent
   }
 
   @override
-  bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+  bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     if (game.playerData.casting.value != null) return false;
     _hAxisInput = 0;
     _vAxisInput = 0;
@@ -416,7 +422,7 @@ class PlayerAnimationComponent extends RiveComponent
     _vAxisInput += keysPressed.contains(LogicalKeyboardKey.keyW) ? -1 : 0;
     _vAxisInput += keysPressed.contains(LogicalKeyboardKey.keyS) ? 1 : 0;
 
-    if (event is RawKeyDownEvent) {
+    if (event is KeyDownEvent) {
       if (keysPressed.contains(LogicalKeyboardKey.keyA)) {
         if (game.playerData.direction.value.isleft) {
           _walkTrigger?.fire();
@@ -446,7 +452,11 @@ class PlayerAnimationComponent extends RiveComponent
         _swordTriggers[5]?.fire();
       }
 
-      _jumpInput = keysPressed.contains(LogicalKeyboardKey.space);
+      if (keysPressed.contains(LogicalKeyboardKey.space)) {
+        if (_jumpCount < 2) {
+          _jumpInput = true;
+        }
+      }
 
       if (keysPressed.contains(LogicalKeyboardKey.tab)) {
         switchNextSword();
@@ -470,6 +480,7 @@ class PlayerAnimationComponent extends RiveComponent
         // player must be on ground.
         if (_up.dot(newCollisionNormal) > 0.7) {
           _isOnGround = true;
+          _jumpCount = 0;
         }
 
         // Resolve collision by moving player along
@@ -601,6 +612,8 @@ class PlayerAnimationComponent extends RiveComponent
             // _velocity.y = last2SecondPositions.last.y;
             position = last2SecondPositions.last;
             last2SecondPositions.removeLast();
+            game.playerData.health.value = last2SecondHealth.last;
+            last2SecondHealth.removeLast();
             if (last2SecondPositions.isEmpty) interval!.stop();
           }, // Callback function to execute
           repeat: true, // Whether the timer should repeat

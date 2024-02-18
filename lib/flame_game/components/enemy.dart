@@ -113,7 +113,7 @@ class EnemySpriteComponent extends SpriteComponent with CollisionCallbacks, HasG
     const columns = 8;
     const rows = 8;
     const frames = columns * rows;
-    final spriteImage = game.images.fromCache('skills-and-effects/boom.png');
+    final spriteImage = game.images.fromCache('assets/images/skills-and-effects/boom.png');
     final spriteSheet = SpriteSheet.fromColumnsAndRows(
       image: spriteImage,
       columns: columns,
@@ -193,7 +193,7 @@ class EnemySpriteComponent extends SpriteComponent with CollisionCallbacks, HasG
         );
       } else {
         final slash = SpriteComponent(
-          sprite: Sprite(game.images.fromCache('equipments/swords/slash-on-enemy.png')),
+          sprite: Sprite(game.images.fromCache('assets/images/equipments/swords/slash-on-enemy.png')),
           size: Vector2(50, 50),
           position: Vector2(width / 2, height / 2),
           anchor: Anchor.center,

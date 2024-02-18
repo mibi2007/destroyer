@@ -59,8 +59,8 @@ class GameScreen extends StatelessWidget {
               overlayBuilderMap: {
                 backButtonKey: (BuildContext context, DestroyerGame game) {
                   return Positioned(
-                    top: 20,
-                    right: 10,
+                    bottom: 7,
+                    left: 14,
                     child: NesButton(
                       type: NesButtonType.normal,
                       onPressed: GoRouter.of(context).pop,

@@ -76,7 +76,7 @@ class Sword extends Equipment {
         skills: [],
         type: SwordType.desolator,
         triggerIndex: 0,
-        iconAsset: 'equipments/swords/desolator-sprite.png',
+        iconAsset: 'assets/images/equipments/swords/desolator-sprite.png',
       );
   factory Sword.purifier(int level) => Sword(
         name: 'Purifier Sword lvl $level',
@@ -86,7 +86,7 @@ class Sword extends Equipment {
         skills: _getSkills(SwordType.purifier, level),
         type: SwordType.purifier,
         triggerIndex: 1,
-        iconAsset: 'equipments/swords/purifier-sprite.png',
+        iconAsset: 'assets/images/equipments/swords/purifier-sprite.png',
       );
   factory Sword.time(int level) => Sword(
         name: 'Time Sword lvl $level',
@@ -96,7 +96,7 @@ class Sword extends Equipment {
         skills: _getSkills(SwordType.time, level),
         type: SwordType.time,
         triggerIndex: 2,
-        iconAsset: 'equipments/swords/time-sprite.png',
+        iconAsset: 'assets/images/equipments/swords/time-sprite.png',
       );
   factory Sword.flame(int level) => Sword(
         name: 'Flame Sword lvl $level',
@@ -106,7 +106,7 @@ class Sword extends Equipment {
         skills: _getSkills(SwordType.flame, level),
         type: SwordType.flame,
         triggerIndex: 3,
-        iconAsset: 'equipments/swords/flame-sprite.png',
+        iconAsset: 'assets/images/equipments/swords/flame-sprite.png',
       );
   factory Sword.lightning(int level) => Sword(
         name: 'Lightning Sword lvl $level',
@@ -116,7 +116,7 @@ class Sword extends Equipment {
         skills: _getSkills(SwordType.lightning, level),
         type: SwordType.lightning,
         triggerIndex: 4,
-        iconAsset: 'equipments/swords/lightning-sprite.png',
+        iconAsset: 'assets/images/equipments/swords/lightning-sprite.png',
       );
 
   double get delay {
@@ -265,5 +265,73 @@ double _getAttackSpeed(SwordType type, int level) {
       return level == 3 ? 1 : 2;
     case SwordType.lightning:
       return 3;
+  }
+}
+
+class Armor extends Equipment {
+  Armor({required super.name}) : super(iconAsset: 'assets/images/equipments/armors/$name.webp');
+
+  factory Armor.helmet() => Armor(name: 'Helmet');
+  factory Armor.chestpiece() => Armor(name: 'Chestpiece');
+  factory Armor.gauntlets() => Armor(name: 'Gauntlets');
+  factory Armor.leggings() => Armor(name: 'Leggings');
+  factory Armor.boots() => Armor(name: 'Boots');
+
+  factory Armor.fromName(String name) {
+    switch (name) {
+      case 'Helmet':
+        return Armor.helmet();
+      case 'Chestpiece':
+        return Armor.chestpiece();
+      case 'Gauntlets':
+        return Armor.gauntlets();
+      case 'Leggings':
+        return Armor.leggings();
+      case 'Boots':
+        return Armor.boots();
+      default:
+        return Armor.helmet();
+    }
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (other is Armor) {
+      return name == other.name;
+    }
+    return false;
+  }
+
+  @override
+  int get hashCode => name.hashCode;
+
+  @override
+  String toString() {
+    return 'Armor: $name';
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'armor_type': name.toLowerCase(),
+    };
+  }
+
+  factory Armor.fromJson(Map<String, dynamic> json) {
+    final type = json['armor_type'] as String;
+    switch (type) {
+      case 'helmet':
+        return Armor.helmet();
+      case 'chestpiece':
+        return Armor.chestpiece();
+      case 'gauntlets':
+        return Armor.gauntlets();
+      case 'leggings':
+        return Armor.leggings();
+      case 'boots':
+        return Armor.boots();
+      default:
+        return Armor.helmet();
+    }
   }
 }

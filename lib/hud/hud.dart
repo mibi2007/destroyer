@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/text.dart';
@@ -5,8 +7,9 @@ import 'package:flame_rive/flame_rive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../flame_game/components/equipment.dart';
+import '../flame_game/components/equipments/weapon.dart';
 import '../flame_game/components/skills.dart';
-import '../flame_game/components/weapon.dart';
 import '../flame_game/game.dart';
 import '../models/equipments.dart';
 import '../overlays/game_over.dart';
@@ -40,7 +43,7 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
   Future<void> onLoad() async {
     // print('Loading hud');
     add(SpriteComponent.fromImage(
-      game.images.fromCache('hud/hud.png'),
+      game.images.fromCache('assets/images/hud/hud.png'),
       size: Vector2(game.fixedResolution.x, 240 * 330 / 640),
       position: Vector2(0, game.fixedResolution.y - 240 * 330 / 640),
       priority: 2,
@@ -71,7 +74,7 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
     await add(healthTextComponent);
     add(RectangleComponent(size: Vector2(width / 2, 10), position: Vector2(0, 0), priority: 0));
     add(SpriteComponent.fromImage(
-      game.images.fromCache('hud/avatar-frame.png'),
+      game.images.fromCache('assets/images/hud/avatar-frame.png'),
       srcSize: Vector2(200, 200),
       size: Vector2(70, 70),
       position: Vector2(-5, 2),
@@ -121,8 +124,8 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
   }
 
   @override
-  bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    if (event is RawKeyDownEvent) {
+  bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    if (event is KeyDownEvent) {
       if (keysPressed.contains(LogicalKeyboardKey.escape)) {
         game.pauseEngine();
         game.overlays.add(PauseMenu.id);
@@ -287,7 +290,19 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
       final x = (game.fixedResolution.x - (skills.length - 1) * skillGap - skillSize * skills.length) / 2;
       com.position = Vector2(x + i * (skillSize + skillGap), game.fixedResolution.y - skillSize / 2 - 7);
       // add(skillFrame..position = com.position);
-      add(SkillFrame(game.images.fromCache('skills-and-effects/skill-frame.png'))..position = com.position);
+      add(SkillFrame(game.images.fromCache('assets/images/skills-and-effects/skill-frame.png'), skillKey: 'A')
+            ..position = com.position
+          // ..priority = 1,
+          );
+      // final skillKey = 'A';
+      // if (skillKey != null) {
+      //   parent!.add(TextComponent(
+      //     text: skillKey,
+      //     position: com.position - Vector2(0, 30),
+      //     textRenderer: TextPaint(style: const TextStyle(fontSize: 100, color: Color(0xFFFFFFFF))),
+      //     priority: 2,
+      //   ));
+      // }
     }
     await addAll(skills);
   }
@@ -376,7 +391,8 @@ class SelectAndActiveEffect extends ColorEffect {
 }
 
 class SkillFrame extends SpriteComponent with HasGameRef<DestroyerGame> {
-  SkillFrame(super.image)
+  final String? skillKey;
+  SkillFrame(super.image, {this.skillKey})
       : super.fromImage(
           srcSize: Vector2.all(88),
           anchor: Anchor.center,
@@ -384,4 +400,35 @@ class SkillFrame extends SpriteComponent with HasGameRef<DestroyerGame> {
           position: Vector2.all(300),
           priority: 1,
         );
+
+  @override
+  FutureOr<void> onLoad() {
+    if (skillKey != null) {
+      add(TextComponent(
+        text: skillKey,
+        position: Vector2(width - 10, height - 16),
+        textRenderer: TextPaint(
+          style: const TextStyle(
+            fontSize: 13,
+            color: Color.fromRGBO(0, 0, 0, 0.5),
+            fontWeight: FontWeight.bold,
+            // shadows: [Shadow(blurRadius: 5, color: Color(0xFF000000), offset: Offset(5, 5))],
+          ),
+        ),
+        priority: 4,
+      ));
+      add(TextComponent(
+        text: skillKey,
+        position: Vector2(width - 10, height - 15),
+        textRenderer: TextPaint(
+          style: const TextStyle(
+            fontSize: 12,
+            color: Color(0xFFFFFFFF),
+            // shadows: [Shadow(blurRadius: 5, color: Color(0xFF000000), offset: Offset(5, 5))],
+          ),
+        ),
+        priority: 5,
+      ));
+    }
+  }
 }

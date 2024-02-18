@@ -145,13 +145,13 @@ class EquipmentPickedDialog extends StatelessWidget {
         itemBuilder: (context, index) {
           return ListTile(
             leading: Image.asset(
-              'images/${equipments[index].iconAsset}',
+              equipments[index].iconAsset,
               filterQuality: FilterQuality.none,
               fit: BoxFit.contain,
             ),
             title: Text(
               equipments[index].name,
-              style: TextStyle(fontSize: 12),
+              style: const TextStyle(fontSize: 12),
             ),
           );
         },

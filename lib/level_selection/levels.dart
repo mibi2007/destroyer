@@ -45,12 +45,13 @@ class GameLevel {
     Scene(1, mapTiled: 'Level2.tmx'),
   ]);
   static GameLevel lv2 = GameLevel(number: 3, title: 'Cleanup the IO Transporter', mapTiled: 'Level1.tmx', equipments: [
-    Sword.purifier(3),
-    Sword.time(3),
-    Sword.flame(3),
-    Sword.lightning(3),
+    Sword.purifier(4),
+    Sword.time(4),
+    Sword.flame(4),
+    Sword.lightning(4),
+    Sword.desolator(),
   ], scenes: [
-    Scene(0, mapTiled: 'Level1.tmx'),
+    Scene(0, mapTiled: 'Level2.tmx'),
   ]);
 
   factory GameLevel.fromTiled(String mapTiled) {

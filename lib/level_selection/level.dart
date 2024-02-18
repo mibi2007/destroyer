@@ -1,4 +1,3 @@
-import 'package:destroyer/flame_game/components/weapon.dart';
 import 'package:destroyer/flame_game/scripts/intro.dart';
 import 'package:destroyer/utils/tileset.dart';
 import 'package:flame/components.dart';
@@ -10,11 +9,14 @@ import 'package:flutter/services.dart';
 import '../flame_game/components/coin.dart';
 import '../flame_game/components/door.dart';
 import '../flame_game/components/enemy.dart';
+import '../flame_game/components/equipment.dart';
+import '../flame_game/components/equipments/armor.dart';
 import '../flame_game/components/platform.dart';
 import '../flame_game/components/player.dart';
 import '../flame_game/game.dart';
 import '../flame_game/game_world.dart';
 import '../models/enemies.dart';
+import '../models/equipments.dart';
 import '../utils/disabler.dart';
 import 'levels.dart';
 
@@ -108,7 +110,7 @@ class SceneComponent extends Component
 
     final spawnPointsLayer = mapTiled.tileMap.getLayer<ObjectGroup>('SpawnPoints');
 
-    for (final spawnPoint in spawnPointsLayer!.objects) {
+    for (final TiledObject spawnPoint in spawnPointsLayer!.objects) {
       final position = Vector2(spawnPoint.x, spawnPoint.y - spawnPoint.height);
       final size = Vector2(spawnPoint.width, spawnPoint.height);
 
@@ -186,15 +188,35 @@ class SceneComponent extends Component
           break;
 
         case 'Door':
+          final nextDoor = spawnPoint.properties.getValue<int>('Target');
+          final nextLevel = spawnPoint.properties.getValue<bool>('NextLevel');
           final door = Door(
             game.spriteSheet,
             position: position,
             size: size,
             onPlayerEnter: () {
-              parent.nextScene();
+              if (nextDoor != null) {
+                final targetObjectId = spawnPoint.properties.getValue<int>('Target');
+                TiledObject target = getObjectFromTargetById(spawnPointsLayer.objects, targetObjectId)!;
+                _player.position = Vector2(target.x, target.y - 30);
+                parent.camera.moveTo(_player.position);
+                parent.camera.follow(_player, maxSpeed: 200, snap: true);
+              }
+              if (nextLevel == true) parent.nextScene();
             },
           );
           add(door);
+          break;
+
+        case 'Equipment':
+          final equipment = Armor.fromName(spawnPoint.name);
+          final equipmentComponent = ArmorComponent(
+            item: equipment,
+            sprite: Sprite(game.images.fromCache(equipment.iconAsset)),
+            position: position,
+            size: size,
+          );
+          add(equipmentComponent);
           break;
       }
     }
@@ -223,8 +245,8 @@ class SceneComponent extends Component
   // }
 
   @override
-  bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    if (event is RawKeyDownEvent) {
+  bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    if (event is KeyDownEvent) {
       if (event.logicalKey == LogicalKeyboardKey.keyN) {
         print(level.title);
         print(level.number);

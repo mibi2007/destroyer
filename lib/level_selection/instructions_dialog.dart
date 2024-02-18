@@ -1,6 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flame/widgets.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nes_ui/nes_ui.dart';
 

@@ -16,10 +16,10 @@ class Background extends ParallaxComponent {
       // ParallaxImageData('scenery/clouds.png'),
       // ParallaxImageData('scenery/cliffs.png'),
       // ParallaxImageData('scenery/trees.png'),
-      ParallaxImageData('scenery/background1.png'),
-      ParallaxImageData('scenery/background2.png'),
-      ParallaxImageData('scenery/background3.png'),
-      ParallaxImageData('scenery/background4a.png'),
+      ParallaxImageData('assets/images/scenery/background1.png'),
+      ParallaxImageData('assets/images/scenery/background2.png'),
+      ParallaxImageData('assets/images/scenery/background3.png'),
+      ParallaxImageData('assets/images/scenery/background4a.png'),
       // ParallaxImageData('scenery/ground.png'),
     ];
 

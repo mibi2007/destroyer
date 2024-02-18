@@ -6,23 +6,6 @@ import 'disabler.dart';
 
 MutationObserver? observer;
 
-void startObserving() {
-  observer = MutationObserver((mutations, observer) {
-    final canvas = querySelector('flutter-view');
-    if (canvas != null) {
-      window.console.log('Canvas is now available');
-      // Do something with the canvas
-      observer.disconnect(); // Stop observing once the canvas is available
-    }
-  });
-
-  observer!.observe(
-    document.querySelector('flutter-view')!,
-    childList: true,
-    subtree: true,
-  );
-}
-
 void disableRightClick() {
   print('disableRightClick');
   document.onContextMenu.listen((event) => event.preventDefault());

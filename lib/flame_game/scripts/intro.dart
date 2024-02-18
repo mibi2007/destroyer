@@ -9,7 +9,8 @@ import 'package:nes_ui/nes_ui.dart';
 
 import '../../level_selection/level.dart';
 import '../components/enemy.dart';
-import '../components/weapon.dart';
+import '../components/equipment.dart';
+import '../components/equipments/weapon.dart';
 import '../game.dart';
 import '../game_world.dart';
 

@@ -7,6 +7,7 @@ class Skill {
   final double casttime;
   final bool autoCast;
   final String sprite;
+  final String? keyboard;
   double duration;
   SkillEffect? effect;
   int? triggerIndex;
@@ -25,6 +26,7 @@ class Skill {
     this.effect,
     this.triggerIndex,
     this.passive = false,
+    this.keyboard,
   });
 
   // Define equality operator for 2 skills
@@ -50,7 +52,7 @@ class Skills {
   // Purifier Sword's skills
   static final repel = Skill(
     name: 'Repel',
-    sprite: 'skills-and-effects/Repel_icon.webp',
+    sprite: 'assets/images/skills-and-effects/Repel_icon.webp',
     description: 'Heal you and detoxify poison',
     requirement: 'Purifier Sword Lv.3',
     countdown: 10,
@@ -58,10 +60,11 @@ class Skills {
     damage: 0,
     effect: SkillEffects.purified,
     triggerIndex: 0,
+    keyboard: 'Q',
   );
 
   static final guardianEngel = Skill(
-    sprite: 'skills-and-effects/Guardian_Angel_icon.webp',
+    sprite: 'assets/images/skills-and-effects/Guardian_Angel_icon.webp',
     name: 'Guardian Engel',
     description: 'Purify all objects on screen',
     requirement: 'Purifier Sword Lv.4',
@@ -70,11 +73,12 @@ class Skills {
     damage: 0,
     effect: SkillEffects.purified,
     triggerIndex: 1,
+    keyboard: 'E',
   );
 
   // Time Sword's skills
   static final timeWalk = Skill(
-    sprite: 'skills-and-effects/Time_Walk_icon.webp',
+    sprite: 'assets/images/skills-and-effects/Time_Walk_icon.webp',
     name: 'Time Walk',
     description: 'Backtracking the last 2 seconds for you or revert lifetime of a destroyed object',
     requirement: 'Time Sword Lv.3',
@@ -84,10 +88,11 @@ class Skills {
     duration: 0.5,
     triggerIndex: 2,
     effect: SkillEffects.invincible0s5,
+    keyboard: 'Q',
   );
 
   static final chronosphere = Skill(
-    sprite: 'skills-and-effects/Chronosphere_icon.webp',
+    sprite: 'assets/images/skills-and-effects/Chronosphere_icon.webp',
     name: 'Chronosphere',
     description:
         'Creates a blister in spacetime, trapping all units caught in its sphere of influence and causes you to move very quickly inside it',
@@ -98,10 +103,11 @@ class Skills {
     damage: 0,
     triggerIndex: 3,
     effect: SkillEffects.invincible5s,
+    keyboard: 'E',
   );
 
   static final fireball = Skill(
-    sprite: 'skills-and-effects/Fireblast_icon.webp',
+    sprite: 'assets/images/skills-and-effects/Fireblast_icon.webp',
     name: 'Fireball',
     description: 'Your sword will release a fireball to attack the target',
     requirement: 'Flame Sword Lv.2',
@@ -113,7 +119,7 @@ class Skills {
   );
 
   static final flameCloak = Skill(
-      sprite: 'skills-and-effects/Flame_Cloak_icon.webp',
+      sprite: 'assets/images/skills-and-effects/Flame_Cloak_icon.webp',
       name: 'Flame Cloak',
       description: 'Turn you into a flying unit upon use. You can fly over impassable terrain but not under the sea',
       requirement: 'Flame Sword Lv.3',
@@ -124,7 +130,7 @@ class Skills {
       effect: SkillEffects.fly);
 
   static final equiemOfSouls = Skill(
-    sprite: 'skills-and-effects/Requiem_of_Souls_icon.webp',
+    sprite: 'assets/images/skills-and-effects/Requiem_of_Souls_icon.webp',
     name: 'Requiem of Souls',
     description: 'Release souls hit all enemy in the screen and stun them for 3 seconds',
     requirement: 'Flame Sword Lv.4',
@@ -133,10 +139,11 @@ class Skills {
     casttime: 2,
     damage: 500,
     triggerIndex: 4,
+    keyboard: 'R',
   );
 
   static final ballLightning = Skill(
-    sprite: 'skills-and-effects/Ball_Lightning_icon.webp',
+    sprite: 'assets/images/skills-and-effects/Ball_Lightning_icon.webp',
     name: 'Ball Lightning',
     description: 'Becomes volatile electricity, charging across the battlefield until reaches your target',
     requirement: 'Lightning Sword Lv.3',
@@ -145,10 +152,11 @@ class Skills {
     duration: 1,
     damage: 100,
     triggerIndex: 5,
+    keyboard: 'Q',
   );
 
   static final thunderStrike = Skill(
-    sprite: 'skills-and-effects/Thunder_Strike_icon.webp',
+    sprite: 'assets/images/skills-and-effects/Thunder_Strike_icon.webp',
     name: 'Thunder Strike',
     description:
         'You will become the lightning, disapear and can select a place to land, it helps you find more things',
@@ -157,10 +165,11 @@ class Skills {
     casttime: 2,
     damage: 500,
     triggerIndex: 6,
+    keyboard: 'E',
   );
 
   static final coolFeet = Skill(
-    sprite: 'skills-and-effects/Cold_Feet_icon.webp',
+    sprite: 'assets/images/skills-and-effects/Cold_Feet_icon.webp',
     name: 'Cool Feet',
     description: 'It is used to clear the path you want to go by frezzing target, can use in deep sea',
     requirement: 'Ocean Stone',
@@ -168,6 +177,7 @@ class Skills {
     casttime: 1,
     damage: 0,
     duration: 10,
+    keyboard: 'Q',
   );
 }
 
@@ -210,7 +220,7 @@ class SkillEffect {
 
 class SkillEffects {
   static final purified = SkillEffect(
-    sprite: 'skills-and-effects/Purified_icon.webp',
+    sprite: 'assets/images/skills-and-effects/Repel_icon.webp',
     name: 'purified',
     description: 'Effect of Repel and Guardian Engel, receive 30 health points and detoxify poison',
     triggerIndex: 1,
@@ -218,7 +228,7 @@ class SkillEffects {
     duration: 0.5,
   );
   static final poisoned = SkillEffect(
-    sprite: 'skills-and-effects/Poison_Sting_icon.webp',
+    sprite: 'assets/images/skills-and-effects/Poison_Sting_icon.webp',
     name: 'poisoned',
     description: 'Effect of Poison, lose 5 health points per second',
     triggerIndex: 2,
@@ -227,7 +237,7 @@ class SkillEffects {
     slow: 0.8,
   );
   static final invincible0s5 = SkillEffect(
-    sprite: 'skills-and-effects/Spell_Immunity_icon.webp',
+    sprite: 'assets/images/skills-and-effects/Spell_Immunity_icon.webp',
     name: 'invincible',
     description:
         'Effect of Time Walk, backtracking the last 2 seconds for you or revert lifetime of a destroyed object',
@@ -235,7 +245,7 @@ class SkillEffects {
     triggerIndex: 3,
   );
   static final invincible5s = SkillEffect(
-    sprite: 'skills-and-effects/Spell_Immunity_icon.webp',
+    sprite: 'assets/images/skills-and-effects/Spell_Immunity_icon.webp',
     name: 'invincible',
     description:
         'Effect of Time Walk, backtracking the last 2 seconds for you or revert lifetime of a destroyed object',
@@ -243,7 +253,7 @@ class SkillEffects {
     triggerIndex: 3,
   );
   static final flash = SkillEffect(
-    sprite: 'skills-and-effects/Chronosphere_icon.webp',
+    sprite: 'assets/images/skills-and-effects/Chronosphere_icon.webp',
     name: 'flash',
     description:
         'Effect of Chronosphere, creates a blister in spacetime, trapping all units caught in its sphere of influence and causes you to move very quickly inside it',
@@ -251,14 +261,14 @@ class SkillEffects {
     triggerIndex: 4,
   );
   static final fly = SkillEffect(
-    sprite: 'skills-and-effects/Flame_Cloak_icon.webp',
+    sprite: 'assets/images/skills-and-effects/Flame_Cloak_icon.webp',
     name: 'fly',
     description: 'Effect of Flame Cloak, turn you into a flying unit for 10 seconds',
     triggerIndex: 5,
     duration: 10,
   );
   static final fireball = SkillEffect(
-    sprite: 'skills-and-effects/Fireblast_icon.webp',
+    sprite: 'assets/images/skills-and-effects/Fireblast_icon.webp',
     name: 'fireball',
     description: 'Effect of Fireball, your sword will release a fireball to attack the target',
     duration: 0,
