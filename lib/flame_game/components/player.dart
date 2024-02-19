@@ -18,6 +18,7 @@ import '../../models/equipments.dart';
 import '../../models/player_data/player_data.dart';
 import '../../models/skills.dart';
 import '../../skills/chronosphere.dart';
+import '../../skills/requiem_of_souls.dart';
 import '../game.dart';
 import 'equipment.dart';
 import 'equipments/weapon.dart';
@@ -110,7 +111,7 @@ class PlayerAnimationComponent extends RiveComponent
   SMITrigger? _guardianEngelTrigger;
   SMITrigger? _timeWalkTrigger;
   SMITrigger? _cronosphereTrigger;
-  SMITrigger? _equiemOfSoulsTrigger;
+  SMITrigger? _requiemOfSoulsTrigger;
   SMITrigger? _ballLightningTrigger;
   SMITrigger? _thunderStrikeTrigger;
   late List<SMITrigger?> _skillsTriggers = [];
@@ -264,7 +265,7 @@ class PlayerAnimationComponent extends RiveComponent
       _guardianEngelTrigger = _swordsController.findSMI('GuardianEngelTrigger');
       _timeWalkTrigger = _swordsController.findSMI('TimeWalkTrigger');
       _cronosphereTrigger = _swordsController.findSMI('CronosphereTrigger');
-      _equiemOfSoulsTrigger = _swordsController.findSMI('EquiemOfSoulsTrigger');
+      _requiemOfSoulsTrigger = _swordsController.findSMI('RequiemOfSoulsTrigger');
       _ballLightningTrigger = _swordsController.findSMI('BallLightningTrigger');
       _thunderStrikeTrigger = _swordsController.findSMI('ThunderStrikeTrigger');
       _skillsTriggers = [
@@ -272,7 +273,7 @@ class PlayerAnimationComponent extends RiveComponent
         _guardianEngelTrigger,
         _timeWalkTrigger,
         _cronosphereTrigger,
-        _equiemOfSoulsTrigger,
+        _requiemOfSoulsTrigger,
         _ballLightningTrigger,
         _thunderStrikeTrigger
       ];
@@ -648,13 +649,17 @@ class PlayerAnimationComponent extends RiveComponent
         final selectedLocation = game.playerData.selectedLocation.value != null
             ? game.camera.globalToLocal(game.playerData.selectedLocation.value!)
             : null;
-        final chrono = ChronosphereSkillComponent(
-            duration: 5,
-            delayCast: 0.5,
+        final skillCpmponent = ChronosphereSkillComponent(
+            duration: skill.duration,
+            delayCast: skill.casttime,
             position: selectedLocation != null ? position + selectedLocation / game.zoom : position);
-        parent.parent.add(chrono);
-      } else if (skill.name == 'Equiem Of Souls') {
-        print('Equiem Of Souls');
+        parent.parent.add(skillCpmponent);
+      } else if (skill.name == 'Requiem of Souls') {
+        final skillComponent =
+            RequiemOfSoulsSkillComponent(duration: skill.duration, delayCast: skill.casttime, position: position);
+        Future.delayed(Duration(milliseconds: skill.casttime.toInt() * 1000)).then((_) {
+          parent.parent.add(skillComponent);
+        });
       } else if (skill.name == 'Ball Lightning') {
         print('Ball Lightning');
       } else if (skill.name == 'Thunder Strike') {

@@ -43,6 +43,7 @@ class PlayerData {
   final skillCountdown = ValueNotifierList<bool>([]);
   final casting = ValueNotifier<Skill?>(null);
   final autoAttack = DoubleTapNotifier();
+  final souls = ValueNotifier<int>(0);
 }
 
 class ValueNotifierList<T> extends ValueNotifier<List<T>> {

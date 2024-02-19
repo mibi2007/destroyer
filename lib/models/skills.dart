@@ -97,7 +97,7 @@ class Skills {
     description:
         'Creates a blister in spacetime, trapping all units caught in its sphere of influence and causes you to move very quickly inside it',
     requirement: 'Time Sword Lv.4',
-    countdown: 1,
+    countdown: 60,
     casttime: 0.5,
     duration: 5,
     damage: 0,
@@ -131,19 +131,19 @@ class Skills {
     keyboard: 'E',
   );
 
-  static final equiemOfSouls = Skill(
+  static final requiemOfSouls = Skill(
     sprite: 'assets/images/skills-and-effects/Requiem_of_Souls_icon.webp',
     name: 'Requiem of Souls',
     description: 'Release souls hit all enemy in the screen with damage from all souls you have collected',
     requirement: 'Flame Sword Lv.4',
     duration: 3,
-    countdown: 60,
+    countdown: 1,
     casttime: 2,
-    damage: 500,
+    damage: 100,
     triggerIndex: 4,
     keyboard: 'R',
     passive: true,
-    effects: [],
+    effects: [SkillEffects.souls],
   );
 
   static final ballLightning = Skill(
@@ -288,6 +288,13 @@ class SkillEffects {
     sprite: 'assets/images/skills-and-effects/Fireblast_icon.webp',
     name: 'fireball',
     description: 'Effect of Fireball, your sword will release a fireball to attack the target',
+    duration: 0,
+  );
+  static final souls = SkillEffect(
+    sprite: 'assets/images/skills-and-effects/Requiem_of_Souls_icon.webp',
+    name: 'souls',
+    description:
+        'Effect of Requiem of Souls, release souls hit all enemy in the screen with damage from all souls you have collected',
     duration: 0,
   );
 }

@@ -166,6 +166,7 @@ class DestroyerGame extends FlameGame
     await images.load('assets/images/skills-and-effects/Thunder_Strike_icon.webp');
     await images.load('assets/images/skills-and-effects/Cold_Feet_icon.webp');
     await images.load('assets/images/skills-and-effects/Spell_Immunity_icon.webp');
+    await images.load('assets/images/skills-and-effects/Requiem_of_Souls_effect.png');
 
     // Negative effects
     await images.load('assets/images/skills-and-effects/Kinetic_Field_icon.webp');

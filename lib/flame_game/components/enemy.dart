@@ -9,6 +9,7 @@ import 'package:flame/text.dart';
 import '../../models/enemies.dart';
 import '../../models/equipments.dart';
 import '../../skills/chronosphere.dart';
+import '../../skills/requiem_of_souls.dart';
 import '../game.dart';
 import 'health_bar.dart';
 import 'player.dart';
@@ -154,87 +155,76 @@ class EnemySpriteComponent extends SpriteComponent with CollisionCallbacks, HasG
       if (other is Fireball) {
         dmg = (game.playerData.sword.value.damage / 2 - enemy.armor * 3);
       }
-      currentHealth -= dmg.toInt();
-      updateHealthBar(currentHealth);
-      if (currentHealth <= 0) {
-        add(
-          OpacityEffect.fadeOut(
-            LinearEffectController(0.2),
-            onComplete: () => removeFromParent(),
-          ),
-        );
-        // TODO: Play death sound
-      } else {
-        add(
-          OpacityEffect.fadeOut(
-            LinearEffectController(0.2),
-            onComplete: () => add(OpacityEffect.fadeIn(LinearEffectController(0.2), onComplete: () => isHit = false)),
-          ),
-        );
-        // if (swordDir.dot(_left) > 0.5) {
-        //   position -= Vector2(direction.x * 10, 0);
-        // }
-        // if (swordDir.dot(_right) > 0.5) {
-        //   position += Vector2(direction.x * 10, 0);
-        // }
-        // TODO: Play hit sound
-      }
-      if (game.playerData.sword.value.type == SwordType.flame) {
-        add(
-          ParticleSystemComponent(
-            anchor: Anchor.center,
-            particle: TranslatedParticle(
-              lifespan: 1,
-              offset: Vector2(width / 2, 0),
-              child: SpriteAnimationParticle(
-                animation: getBoomAnimation(),
-                size: Vector2(50, 50),
-              ),
-            ),
-          ),
-        );
-      } else {
-        final slash = SpriteComponent(
-          sprite: Sprite(game.images.fromCache('assets/images/equipments/swords/slash-on-enemy.png')),
-          size: Vector2(50, 50),
-          position: Vector2(width / 2, height / 2),
-          anchor: Anchor.center,
-          priority: 1,
-        );
-        add(slash
-          ..add(
-            OpacityEffect.fadeIn(
-              LinearEffectController(0.3),
-              onComplete: () => slash.removeFromParent(),
-            ),
-          ));
-      }
-
-      final textComp = TextComponent(
-        position: Vector2(position.x - (width - 5) / 2 * direction.x, position.y - 10),
-        textRenderer: TextPaint(
-            style: const TextStyle(
-          fontSize: 6,
-          color: Color(0xFFFF0000),
-        )),
-        size: Vector2(100, 10),
-        text: dmg.toString(),
-        anchor: Anchor.topCenter,
-      );
-
-      final moveEffect = MoveEffect.to(
-        Vector2(position.x - (width - 5) / 2 * direction.x, position.y - 15), // New position
-        EffectController(duration: 0.3),
-        onComplete: () => textComp.removeFromParent(),
-      );
-      parent!.add(
-        textComp..add(moveEffect),
-      );
     }
 
     if (other is ChronosphereSkillComponent) {
       isInsideChronosphere = true;
     }
+    if (other is RequiemOfSoulsSkillComponent) {
+      isHit = true;
+      dmg = other.skill.damage + other.skill.damage * game.playerData.souls.value - enemy.armor * 3;
+    }
+
+    currentHealth -= dmg.toInt();
+    updateHealthBar(currentHealth);
+    if (game.playerData.sword.value.type == SwordType.flame) {
+      add(
+        ParticleSystemComponent(
+          anchor: Anchor.center,
+          particle: TranslatedParticle(
+            lifespan: 1,
+            offset: Vector2(width / 2, 0),
+            child: SpriteAnimationParticle(
+              animation: getBoomAnimation(),
+              size: Vector2(50, 50),
+            ),
+          ),
+        ),
+      );
+      if (game.playerData.sword.value.level >= 3 && currentHealth <= 0) {
+        game.playerData.souls.value += 1;
+      }
+    } else {
+      final slash = SpriteComponent(
+        sprite: Sprite(game.images.fromCache('assets/images/equipments/swords/slash-on-enemy.png')),
+        size: Vector2(50, 50),
+        position: Vector2(width / 2, height / 2),
+        anchor: Anchor.center,
+        priority: 1,
+      );
+      add(slash
+        ..add(
+          OpacityEffect.fadeIn(
+            LinearEffectController(0.3),
+            onComplete: () => slash.removeFromParent(),
+          ),
+        ));
+    }
+
+    final textComp = TextComponent(
+      position: Vector2(position.x - (width - 5) / 2 * direction.x, position.y - 10),
+      textRenderer: TextPaint(
+          style: const TextStyle(
+        fontSize: 6,
+        color: Color(0xFFFF0000),
+      )),
+      size: Vector2(100, 10),
+      text: dmg.toString(),
+      anchor: Anchor.topCenter,
+    );
+
+    final moveEffect = MoveEffect.to(
+      Vector2(position.x - (width - 5) / 2 * direction.x, position.y - 15), // New position
+      EffectController(duration: 0.3),
+      onComplete: () {
+        textComp.removeFromParent();
+        isHit = false;
+        if (currentHealth <= 0) add(RemoveEffect());
+      },
+    );
+    parent!.add(
+      textComp..add(moveEffect),
+    );
 
     super.onCollisionStart(intersectionPoints, other);
   }

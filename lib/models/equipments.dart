@@ -242,7 +242,7 @@ List<Skill> _getSkills(SwordType type, int level) {
         skills.add(Skills.flameCloak);
       }
       if (level >= 4) {
-        skills.add(Skills.equiemOfSouls);
+        skills.add(Skills.requiemOfSouls);
       }
       return skills;
     case SwordType.lightning:

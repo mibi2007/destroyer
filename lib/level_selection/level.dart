@@ -66,7 +66,6 @@ class SceneComponent extends Component
   }
 
   _onLeftClickHander() {
-    print('left click');
     _player.animation.isAutoAttack = false;
     _player.animation.attack();
   }

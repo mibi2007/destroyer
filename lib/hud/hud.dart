@@ -146,7 +146,6 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
     if (game.playerData.casting.value != null) return;
     final skill = game.playerData.sword.value.skills[skillIndex];
     final index = game.playerData.skills.value.indexWhere((s) => s == skill);
-    if (skill.passive) return;
     if (skill.countdown == 0) return;
     if (game.playerData.skillCountdown.value[index]) return;
     Future.delayed(Duration(milliseconds: skill.casttime.toInt() * 1000)).then((_) {
