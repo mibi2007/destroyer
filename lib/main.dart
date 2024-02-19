@@ -13,7 +13,7 @@ import 'style/palette.dart';
 import 'utils/disabler.dart';
 
 void main() async {
-  disableRightClick();
+  customGameInput();
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const ProviderScope(child: MyGame()));
 }

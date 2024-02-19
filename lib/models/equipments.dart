@@ -13,8 +13,11 @@ abstract class Equipment {
   }
 
   static Equipment fromJson<T>(Map<String, dynamic> json) {
+    print(json);
     if (T == Sword) {
       return Sword.fromJson(json);
+    } else if (T == Armor) {
+      return Armor.fromJson(json);
     } else {
       throw Exception('Unknown type');
     }
@@ -319,6 +322,7 @@ class Armor extends Equipment {
 
   factory Armor.fromJson(Map<String, dynamic> json) {
     final type = json['armor_type'] as String;
+    print(type);
     switch (type) {
       case 'helmet':
         return Armor.helmet();

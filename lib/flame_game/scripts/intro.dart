@@ -48,6 +48,9 @@ class IntroScript extends Component
   }
 
   void onRewardPicked(EquipmentComponent equipment) {
+    final newEquipments = game.getEquipments();
+    newEquipments.removeWhere((item) => item is Sword && item.type == SwordType.desolator);
+    game.setEquipments(newEquipments);
     world.finishedLevel();
     Future.delayed(const Duration(milliseconds: 1000), () {
       game.overlays.add(PurifySwordPickedDialog.id);

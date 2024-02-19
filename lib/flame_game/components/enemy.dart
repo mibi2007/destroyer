@@ -8,6 +8,7 @@ import 'package:flame/text.dart';
 
 import '../../models/enemies.dart';
 import '../../models/equipments.dart';
+import '../../skills/chronosphere.dart';
 import '../game.dart';
 import 'health_bar.dart';
 import 'player.dart';
@@ -27,6 +28,7 @@ class EnemySpriteComponent extends SpriteComponent with CollisionCallbacks, HasG
   SequenceEffect? effect;
   final double damage;
   void Function()? onKilled;
+  bool isInsideChronosphere = false;
 
   EnemySpriteComponent(
     this.enemy,
@@ -87,7 +89,7 @@ class EnemySpriteComponent extends SpriteComponent with CollisionCallbacks, HasG
   void update(double dt) {
     super.update(dt);
 
-    if (isHit) {
+    if (isHit || isInsideChronosphere) {
       effect?.pause();
     } else {
       effect?.resume();
@@ -128,7 +130,7 @@ class EnemySpriteComponent extends SpriteComponent with CollisionCallbacks, HasG
     if (other is PlayerAnimationComponent) {
       if (game.playerData.health.value > 0 &&
           !isDamaging &&
-          !game.playerData.effects.value.any((effect) => effect.name == 'invincible')) {
+          !game.playerData.effects.value.any((effect) => effect.name == 'invincible' || effect.name == 'timeWalk')) {
         // print('hit');
         other.hit();
         isDamaging = true;
@@ -228,6 +230,10 @@ class EnemySpriteComponent extends SpriteComponent with CollisionCallbacks, HasG
       parent!.add(
         textComp..add(moveEffect),
       );
+    }
+
+    if (other is ChronosphereSkillComponent) {
+      isInsideChronosphere = true;
     }
 
     super.onCollisionStart(intersectionPoints, other);

@@ -64,6 +64,8 @@ class LocalStoragePlayerProgressPersistence extends PlayerProgressPersistence {
       final json = data as Map<String, dynamic>;
       if (json.containsKey('sword_type')) {
         return Equipment.fromJson<Sword>(json);
+      } else if (json.containsKey('armor_type')) {
+        return Equipment.fromJson<Armor>(json);
       } else {
         return Equipment.fromJson(json);
       }

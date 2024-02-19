@@ -22,7 +22,12 @@ import 'levels.dart';
 
 // Represents a level in game. Should only be added as child of DestroyerGameWorld
 class SceneComponent extends Component
-    with HasGameReference<DestroyerGame>, ParentIsA<DestroyerGameWorld>, TapCallbacks, KeyboardHandler {
+    with
+        HasGameReference<DestroyerGame>,
+        ParentIsA<DestroyerGameWorld>,
+        TapCallbacks,
+        DoubleTapCallbacks,
+        KeyboardHandler {
   final GameLevel level;
   late final PlayerComponent _player;
   late final Artboard artboard;
@@ -61,6 +66,7 @@ class SceneComponent extends Component
   }
 
   _onLeftClickHander() {
+    print('left click');
     _player.animation.isAutoAttack = false;
     _player.animation.attack();
   }
@@ -71,18 +77,26 @@ class SceneComponent extends Component
     game.playerData.effects.value = [];
     game.playerData.casting.value = null;
     game.playerData.skillCountdown.value = [];
-    print('initLevelEquipments');
-    print(initLevelEquipments);
     if (initLevelEquipments || game.getEquipments().isEmpty) {
       game.setEquipments(level.equipments);
     }
   }
 
-  @override
-  void onLongTapDown(TapDownEvent event) {
-    _player.animation.isAutoAttack = true;
-    _player.animation.onAttackDelay = true;
-  }
+  // @override
+  // void onLongTapDown(TapDownEvent event) {
+  //   print('onLongTapDown');
+  //   _player.animation.isAutoAttack = true;
+  //   _player.animation.onAttackDelay = true;
+  //   super.onLongTapDown(event);
+  // }
+
+  // @override
+  // void onDoubleTapDown(DoubleTapDownEvent event) {
+  //   print('onDoubleTapDown');
+  //   _player.animation.isAutoAttack = false;
+  //   _player.animation.onAttackDelay = false;
+  //   super.onDoubleTapDown(event);
+  // }
 
   // Remove PointerMoveCallbacks because of the performance issue, use
   // MouseMovementDetector instead
@@ -147,7 +161,7 @@ class SceneComponent extends Component
           //   // ],
           // );
           add(_player);
-          parent.camera.follow(_player, maxSpeed: 200, snap: true);
+          parent.camera.follow(_player, maxSpeed: timeWalkSpeed, snap: true);
           // if (settings != null) {
           // _player.animation.gravity = double.parse(settings.properties.first.value.toString());
           // }
@@ -200,7 +214,9 @@ class SceneComponent extends Component
                 TiledObject target = getObjectFromTargetById(spawnPointsLayer.objects, targetObjectId)!;
                 _player.position = Vector2(target.x, target.y - 30);
                 parent.camera.moveTo(_player.position);
-                parent.camera.follow(_player, maxSpeed: 200, snap: true);
+                // Not allow to go back
+                _player.animation.resetLast2Second();
+                parent.camera.follow(_player, maxSpeed: timeWalkSpeed, snap: true);
               }
               if (nextLevel == true) parent.nextScene();
             },

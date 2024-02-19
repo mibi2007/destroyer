@@ -6,8 +6,8 @@ import 'disabler.dart';
 
 MutationObserver? observer;
 
-void disableRightClick() {
-  print('disableRightClick');
+void customGameInput() {
+  print('customGameInput');
   document.onContextMenu.listen((event) => event.preventDefault());
   _afterRightClick();
   document.addEventListener('keydown', (e) {

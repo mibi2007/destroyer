@@ -27,6 +27,7 @@ import 'skills.dart';
 const double jumpSpeed = 250;
 const double defaultMoveSpeed = 150;
 const double flySpeed = 75;
+const double timeWalkSpeed = 350;
 const double g = 800;
 
 class PlayerComponent extends PositionComponent with ParentIsA<SceneComponent> {
@@ -132,8 +133,8 @@ class PlayerAnimationComponent extends RiveComponent
   bool has5 = false;
 
   bool onAttackDelay = false;
-  List<Vector2> last2SecondPositions = [];
-  List<int> last2SecondHealth = [];
+  List<Vector2> _last2SecondPositions = [];
+  List<int> _last2SecondHealth = [];
   Timer? _savePositionTimer;
   Timer? interval;
   final test1 = TextComponent();
@@ -150,6 +151,8 @@ class PlayerAnimationComponent extends RiveComponent
   }
 
   Vector2 collisionNormal = Vector2.zero();
+
+  bool isInsideChronosphere = false;
 
   PlayerAnimationComponent(
     Artboard artboard, {
@@ -191,13 +194,13 @@ class PlayerAnimationComponent extends RiveComponent
   void onTick() {
     if (game.playerData.casting.value != Skills.timeWalk) {
       // print(last2SecondPositions);
-      last2SecondPositions.add(Vector2(position.x, position.y));
+      _last2SecondPositions.add(Vector2(position.x, position.y));
       // print('first: ${last2SecondPositions.first} last: ${last2SecondPositions.last}');
       // print(last2SecondPositions.last);
-      last2SecondHealth.add(game.playerData.health.value);
-      if (last2SecondPositions.length > 20) {
-        last2SecondPositions.removeAt(0);
-        last2SecondHealth.removeAt(0);
+      _last2SecondHealth.add(game.playerData.health.value);
+      if (_last2SecondPositions.length > 20) {
+        _last2SecondPositions.removeAt(0);
+        _last2SecondHealth.removeAt(0);
       }
     }
   }
@@ -215,6 +218,7 @@ class PlayerAnimationComponent extends RiveComponent
     game.playerData.equipments.addListener(_onEquipmentsChangeHandler);
     game.playerData.casting.addListener(_onCastingHandler);
     game.playerData.effects.addListener(_onEffectsChangeHandler);
+    game.playerData.autoAttack.addListener(_onDoubleTapHandler);
     _onEquipmentsChangeHandler();
 
     // game.playerData.sword.addListener(_onSwordChangeHandler);
@@ -305,7 +309,6 @@ class PlayerAnimationComponent extends RiveComponent
     // For super hero landing animation
     gravity = 0;
     // Future.delayed(const Duration(milliseconds: 100)).then((_) {
-    print('run2');
     final sword = game.getEquipments().firstWhere((e) => e is Sword) as Sword;
     // });
     _changeToSword(sword.type);
@@ -345,6 +348,14 @@ class PlayerAnimationComponent extends RiveComponent
     if (game.playerData.effects.value.contains(SkillEffects.fly)) {
       _velocity.x = _hAxisInput * flySpeed;
       _velocity.y = _vAxisInput * flySpeed;
+      position.x += _velocity.x * dt;
+      position.y += _velocity.y * dt;
+      moveBackgound(_velocity);
+      return;
+    } else if (game.playerData.effects.value.contains(SkillEffects.timeWalk5s) &&
+        game.playerData.effects.value.contains(SkillEffects.chronosphere)) {
+      _velocity.x = _hAxisInput * timeWalkSpeed;
+      _velocity.y = _vAxisInput * timeWalkSpeed;
       position.x += _velocity.x * dt;
       position.y += _velocity.y * dt;
       moveBackgound(_velocity);
@@ -500,6 +511,10 @@ class PlayerAnimationComponent extends RiveComponent
       other.removeFromParent();
     }
 
+    if (other is ChronosphereSkillComponent) {
+      isInsideChronosphere = true;
+    }
+
     super.onCollision(intersectionPoints, other);
   }
 
@@ -580,6 +595,8 @@ class PlayerAnimationComponent extends RiveComponent
     game.playerData.equipments.removeListener(_onEquipmentsChangeHandler);
     game.playerData.casting.removeListener(_onCastingHandler);
     game.playerData.effects.removeListener(_onEffectsChangeHandler);
+    game.playerData.autoAttack.removeListener(_onDoubleTapHandler);
+
     if (interval != null) interval!.stop();
     if (_savePositionTimer != null) _savePositionTimer!.stop();
     super.onRemove();
@@ -610,25 +627,32 @@ class PlayerAnimationComponent extends RiveComponent
           onTick: () {
             // _velocity.x = last2SecondPositions.last.x;
             // _velocity.y = last2SecondPositions.last.y;
-            position = last2SecondPositions.last;
-            last2SecondPositions.removeLast();
-            game.playerData.health.value = last2SecondHealth.last;
-            last2SecondHealth.removeLast();
-            if (last2SecondPositions.isEmpty) interval!.stop();
+            position = _last2SecondPositions.last;
+            _last2SecondPositions.removeLast();
+            game.playerData.health.value = _last2SecondHealth.last;
+            _last2SecondHealth.removeLast();
+            if (_last2SecondPositions.isEmpty) interval!.stop();
           }, // Callback function to execute
           repeat: true, // Whether the timer should repeat
         );
-        if (skill.effect != null && skill.effect!.triggerIndex != null) {
-          _effectsTriggers[skill.effect!.triggerIndex!]?.fire();
+        if (skill.effects.isNotEmpty) {
+          for (var effect in skill.effects) {
+            if (effect.triggerIndex != null) _effectsTriggers[effect.triggerIndex!]?.fire();
+          }
         }
         // Future.delayed(Duration(milliseconds: skill.duration.toInt())).then((_) {
         //   print('reset time walk');
         //   _effectsTriggers[0]?.fire();
         // });
-      } else if (skill.name == 'Cronosphere') {
-        print('Cronosphere');
-        final selectedLocation = game.playerData.selectedLocation.value;
-        add(ChronosphereSkillComponent(5, position: selectedLocation ?? Vector2.zero()));
+      } else if (skill.name == 'Chronosphere') {
+        final selectedLocation = game.playerData.selectedLocation.value != null
+            ? game.camera.globalToLocal(game.playerData.selectedLocation.value!)
+            : null;
+        final chrono = ChronosphereSkillComponent(
+            duration: 5,
+            delayCast: 0.5,
+            position: selectedLocation != null ? position + selectedLocation / game.zoom : position);
+        parent.parent.add(chrono);
       } else if (skill.name == 'Equiem Of Souls') {
         print('Equiem Of Souls');
       } else if (skill.name == 'Ball Lightning') {
@@ -643,15 +667,8 @@ class PlayerAnimationComponent extends RiveComponent
     // print('_changeToSword: $type');
     if (game.playerData.sword.value.type == type) return;
     game.playerData.lastSword.value = game.playerData.sword.value;
-    final removeEffects = game.playerData.sword.value.skills.map((e) => e.effect).whereType<SkillEffect>().toList();
-    for (var element in removeEffects) {
-      game.playerData.effects.value.remove(element);
-    }
     final newSword = game.getEquipments().firstWhere((e) => e is Sword && e.type == type) as Sword;
     game.playerData.sword.value = newSword;
-
-    final passiveEffects = newSword.skills.where((s) => s.passive).map((e) => e.effect).whereType<SkillEffect>();
-    game.playerData.effects.addAll(passiveEffects.toList());
 
     final triggerIndex = newSword.triggerIndex;
     _sword?.value = triggerIndex.toDouble();
@@ -659,7 +676,6 @@ class PlayerAnimationComponent extends RiveComponent
   }
 
   void _onEffectsChangeHandler() {
-    print('_onEffectsChangeHandler');
     _effectsTriggers[0]?.fire();
     final effects = game.playerData.effects.value;
     for (var e in effects) {
@@ -673,6 +689,16 @@ class PlayerAnimationComponent extends RiveComponent
         _effectsTriggers[e.triggerIndex!]?.fire();
       }
     }
+  }
+
+  void resetLast2Second() {
+    _last2SecondHealth = [];
+    _last2SecondPositions = [];
+  }
+
+  void _onDoubleTapHandler() {
+    isAutoAttack = true;
+    onAttackDelay = true;
   }
 }
 

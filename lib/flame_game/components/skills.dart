@@ -8,6 +8,7 @@ import 'package:flame/flame.dart';
 import 'package:flame/particles.dart';
 import 'package:flutter/animation.dart';
 
+import '../../level_selection/level.dart';
 import '../../models/skills.dart';
 import '../game.dart';
 import 'enemy.dart';
@@ -112,11 +113,12 @@ class SkillComponent extends PositionComponent with HasGameReference<DestroyerGa
   }
 }
 
-class Fireball extends SpriteComponent with HasGameReference<DestroyerGame>, CollisionCallbacks {
+class Fireball extends SpriteComponent
+    with HasGameReference<DestroyerGame>, ParentIsA<SceneComponent>, CollisionCallbacks {
   final Vector2 velocity;
   Fireball({required Vector2 position, required double angle, required double speed, required this.velocity})
       : super(
-          sprite: Sprite(Flame.images.fromCache('equipments/swords/fireball.png')),
+          sprite: Sprite(Flame.images.fromCache('assets/images/equipments/swords/fireball.png')),
           position: position,
           size: Vector2(10, 10), // Set the size of the bullet
           anchor: Anchor.center,
@@ -161,24 +163,10 @@ class Fireball extends SpriteComponent with HasGameReference<DestroyerGame>, Col
         },
       ),
     );
-    parent!.add(particle);
+    parent.add(particle);
 
     // Check if the bullet is off-screen and remove it if necessary
-    if (position.x < 0 ||
-        position.x > (game.size.x + game.fixedResolution.x) ||
-        position.y < 0 ||
-        position.y > game.size.y) {
-      // addToParent(ParticleSystemComponent(
-      //   position: position,
-      //   particle: TranslatedParticle(
-      //     lifespan: 1,
-      //     offset: Vector2.all(0),
-      //     child: SpriteAnimationParticle(
-      //       animation: getBoomAnimation(),
-      //       size: Vector2(128, 128),
-      //     ),
-      //   ),
-      // ));
+    if (position.x < 0 || position.x > parent.mapTiled.width || position.y < 0 || position.y > parent.mapTiled.height) {
       particle.removeFromParent();
       removeFromParent();
     }
@@ -190,10 +178,6 @@ class Fireball extends SpriteComponent with HasGameReference<DestroyerGame>, Col
     if (other is Platform || other is EnemySpriteComponent) {
       // TODO: play explosion
       removeFromParent();
-      // add(OpacityEffect.fadeOut(
-      //   LinearEffectController(5),
-      //   onComplete: () => removeFromParent(),
-      // ));
     }
   }
 

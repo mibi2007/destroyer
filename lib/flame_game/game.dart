@@ -33,7 +33,12 @@ import 'game_world.dart';
 /// Note that both of the last are passed in to the super constructor, they
 /// could also be set inside of `onLoad` for example.
 class DestroyerGame extends FlameGame
-    with HasCollisionDetection, HasKeyboardHandlerComponents, MouseMovementDetector, TapCallbacks, RiverpodGameMixin {
+    with
+        HasCollisionDetection,
+        HasKeyboardHandlerComponents,
+        MouseMovementDetector,
+        LongPressDetector,
+        RiverpodGameMixin {
   /// What the properties of the level that is played has.
 
   /// A helper for playing sound effects and background audio.
@@ -46,6 +51,7 @@ class DestroyerGame extends FlameGame
   final Size screenSize;
   late BuildContext context;
   late bool isTesting;
+  late final double zoom;
 
   DestroyerGame(this.level, this.sceneIndex, {required this.screenSize, this.isTesting = false}) {
     images.prefix = '';
@@ -79,6 +85,11 @@ class DestroyerGame extends FlameGame
     }
   }
 
+  @override
+  void onLongPressEnd(LongPressEndInfo info) {
+    playerData.autoAttack.trigger();
+  }
+
   void leftClickHandler() {
     playerData.selectedLocation.value = null;
     playerData.selectedTarget.value = null;
@@ -96,6 +107,9 @@ class DestroyerGame extends FlameGame
 
   @override
   Future<void> onLoad() async {
+    zoom = (screenSize.width / 640 * 454) < screenSize.height
+        ? screenSize.width / fixedResolution.x
+        : screenSize.height / fixedResolution.y;
     // mapTiled = await TiledComponent.load(
     //   level.mapTiled,
     //   Vector2.all(32),

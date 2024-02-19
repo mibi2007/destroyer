@@ -26,6 +26,7 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
   late final RectangleComponent healthBarComponent;
   final List<EquipmentComponent> equipments = [];
   final List<SkillComponent> skills = [];
+  final List<EffectComponent> effects = [];
   final effect = GlowEffect(
     10.0,
     EffectController(duration: 3),
@@ -116,11 +117,11 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
 
     game.playerData.credits.addListener(onCreditChange);
     game.playerData.health.addListener(onHealthChange);
-    game.playerData.sword.addListener(onSwordChange);
-    game.playerData.equipments.addListener(onEquipmentsChange);
-    game.playerData.effects.addListener(onEffectsChange);
+    game.playerData.sword.addListener(_onSwordChangeHandler);
+    game.playerData.equipments.addListener(_onEquipmentsChangeHandler);
+    game.playerData.effects.addListener(_onEffectsChangeHandler);
 
-    onEquipmentsChange();
+    _onEquipmentsChangeHandler();
   }
 
   @override
@@ -145,17 +146,23 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
     if (game.playerData.casting.value != null) return;
     final skill = game.playerData.sword.value.skills[skillIndex];
     final index = game.playerData.skills.value.indexWhere((s) => s == skill);
-    // if (skill.triggerIndex != null) _skillsTriggers[skill.triggerIndex!]?.fire();
+    if (skill.passive) return;
+    if (skill.countdown == 0) return;
+    if (game.playerData.skillCountdown.value[index]) return;
     Future.delayed(Duration(milliseconds: skill.casttime.toInt() * 1000)).then((_) {
-      if (game.playerData.casting.value != null && game.playerData.casting.value!.effect != null) {
-        final effect = game.playerData.casting.value!.effect!;
-        game.playerData.effects.addAll([effect]);
+      if (skill.effects.isNotEmpty && !skill.passive) {
+        // print(skill.effects);
+        for (var effect in skill.effects) {
+          if (effect.duration != 0) {
+            game.playerData.effects.addAll([effect]);
+            Future.delayed(Duration(milliseconds: (effect.duration * 1000).toInt()), () {
+              // print('removed effect');
+              game.playerData.effects.remove(effect);
+            });
+          }
+        }
         // print(effect);
         // print(game.playerData.effects.value);
-        Future.delayed(Duration(milliseconds: (effect.duration * 1000).toInt()), () {
-          // print('removed effect');
-          game.playerData.effects.remove(effect);
-        });
       }
       game.playerData.casting.value = null;
       // print('set null');
@@ -163,9 +170,6 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
     Future.delayed(Duration(seconds: skill.countdown.toInt()), () {
       game.playerData.skillCountdown.updateAt(index, false);
     });
-    if (skill.passive) return;
-    if (skill.countdown == 0) return;
-    if (game.playerData.skillCountdown.value[index]) return;
     game.playerData.casting.value = skill;
     game.playerData.skillCountdown.updateAt(index, true);
 
@@ -188,9 +192,9 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
     print('onRemove');
     game.playerData.credits.removeListener(onCreditChange);
     game.playerData.health.removeListener(onHealthChange);
-    game.playerData.sword.removeListener(onSwordChange);
-    game.playerData.equipments.removeListener(onEquipmentsChange);
-    game.playerData.effects.removeListener(onEffectsChange);
+    game.playerData.sword.removeListener(_onSwordChangeHandler);
+    game.playerData.equipments.removeListener(_onEquipmentsChangeHandler);
+    game.playerData.effects.removeListener(_onEffectsChangeHandler);
     super.onRemove();
   }
 
@@ -212,7 +216,7 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
     }
   }
 
-  Future<void> onEquipmentsChange() async {
+  Future<void> _onEquipmentsChangeHandler() async {
     removeAll([...equipments, ...skills]);
     equipments.clear();
     skills.clear();
@@ -240,9 +244,10 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
     renderSkills();
   }
 
-  Future<void> onSwordChange() async {
+  Future<void> _onSwordChangeHandler() async {
     // print('update sword');
-    final newIndex = equipments.indexWhere(((c) => (c.item as Sword).type == game.playerData.sword.value.type));
+    final newSword = game.playerData.sword.value;
+    final newIndex = equipments.indexWhere(((c) => (c.item as Sword).type == newSword.type));
 
     // Make sure the selected sword has been changed completely before adding the effect
     // Future.delayed(const Duration(milliseconds: 500), () {
@@ -268,14 +273,36 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
     ));
     // });
     updateSkill();
+    if (game.playerData.lastSword.value != null && game.playerData.lastSword.value!.skills.isNotEmpty) {
+      final removeEffects = game.playerData.lastSword.value!.skills
+          .map((s) => s.effects)
+          .reduce((combine, effects) => [...combine, ...effects]);
+      if (removeEffects.isNotEmpty) {
+        print('removeEffects');
+        print(removeEffects);
+        for (var element in removeEffects) {
+          game.playerData.effects.remove(element);
+        }
+      }
+    }
 
-    final autoCasts = game.playerData.sword.value.skills.where((s) => s.autoCast).toList();
-    // print(autoCasts);
-    if (autoCasts.isNotEmpty) {
-      for (final skill in autoCasts) {
-        final index = game.playerData.sword.value.skills.indexOf(skill);
-        // print(index);
-        _castSkill(index);
+    if (newSword.skills.isNotEmpty) {
+      final passiveSkills = newSword.skills.where((s) => s.passive);
+      if (passiveSkills.isNotEmpty) {
+        final passiveEffects =
+            passiveSkills.map((e) => e.effects).reduce((combine, effects) => [...combine, ...effects]);
+        // print(passiveEffects);
+        game.playerData.effects.addAll(passiveEffects);
+      }
+
+      final autoCasts = game.playerData.sword.value.skills.where((s) => s.autoCast).toList();
+      // print(autoCasts);
+      if (autoCasts.isNotEmpty) {
+        for (final skill in autoCasts) {
+          final index = game.playerData.sword.value.skills.indexOf(skill);
+          // print(index);
+          _castSkill(index);
+        }
       }
     }
   }
@@ -290,7 +317,8 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
       final x = (game.fixedResolution.x - (skills.length - 1) * skillGap - skillSize * skills.length) / 2;
       com.position = Vector2(x + i * (skillSize + skillGap), game.fixedResolution.y - skillSize / 2 - 7);
       // add(skillFrame..position = com.position);
-      add(SkillFrame(game.images.fromCache('assets/images/skills-and-effects/skill-frame.png'), skillKey: 'A')
+      add(SkillFrame(game.images.fromCache('assets/images/skills-and-effects/skill-frame.png'),
+              skillKey: com.skill.keyboard)
             ..position = com.position
           // ..priority = 1,
           );
@@ -325,19 +353,20 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
     }
   }
 
-  void onEffectsChange() {
-    // print('update effects');
-    children.whereType<EffectComponent>().forEach((e) => remove(e));
-    final effects = game.playerData.effects.value;
-    // print(effects);
-    for (var i = 0; i < effects.length; i++) {
+  void _onEffectsChangeHandler() {
+    removeAll(effects);
+    effects.clear();
+    final skillEffects = game.playerData.effects.value;
+    if (skillEffects.isEmpty) return;
+    for (var i = 0; i < skillEffects.length; i++) {
       // if (effects.length < i + 1) {
       // final position = Vector2(x + i * (skillSize + skillGap), game.fixedResolution.y - skillSize / 2 - 7);
       final effectPosition = Vector2(76 + i * (effectSize + effectGap), 44);
-      final effectComp = EffectComponent(effects[i], position: effectPosition, size: Vector2.all(effectSize));
+      final effectComp = EffectComponent(skillEffects[i], position: effectPosition, size: Vector2.all(effectSize));
+      effects.add(effectComp);
       add(effectComp);
-      if (effects[i].duration > 0) {
-        effectComp.startCountdown(effects[i].duration);
+      if (skillEffects[i].duration > 0) {
+        effectComp.startCountdown(skillEffects[i].duration);
       }
       // }
     }

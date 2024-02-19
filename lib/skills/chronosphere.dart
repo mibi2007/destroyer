@@ -1,22 +1,67 @@
 import 'dart:ui' as ui;
 
+import 'package:destroyer/flame_game/components/player.dart';
+import 'package:destroyer/flame_game/game.dart';
+import 'package:destroyer/models/skills.dart';
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
+import 'package:flutter/animation.dart';
 
-class ChronosphereSkillComponent extends PositionComponent {
-  double radious = 0;
+import '../flame_game/components/enemy.dart';
+
+class ChronosphereSkillComponent extends CircleComponent with CollisionCallbacks, HasGameRef<DestroyerGame> {
+  // double radious = 100;
   final double duration;
+  final double delayCast;
 
-  late ui.Paint paint;
   late ui.Image image;
-  ChronosphereSkillComponent(this.duration, {required super.position}) : super(priority: 3);
+  ChronosphereSkillComponent({required this.duration, required this.delayCast, required super.position})
+      : super(priority: 3, anchor: Anchor.center);
+
+  @override
+  bool get debugMode => false;
 
   @override
   Future<void> onLoad() async {
-    // add()
-    print('onLoad');
+    super.onLoad();
+    final animationController = CurvedEffectController(delayCast, Curves.easeOutCubic);
+    size = Vector2(0, 0);
+    add(CircleHitbox(isSolid: true));
     paint = ui.Paint()
-      ..color = const ui.Color(0xFFFF0000)
-      ..style = ui.PaintingStyle.stroke
-      ..strokeWidth = 2;
+      ..color = const ui.Color(0xDDFF0000)
+      ..style = ui.PaintingStyle.fill;
+    add(SizeEffect.to(Vector2(200, 200), animationController));
+    Future.delayed(Duration(milliseconds: (duration * 1000).toInt()), () {
+      add(OpacityEffect.fadeOut(
+        animationController..duration = 2,
+        onComplete: () {
+          game.playerData.effects.removeAll([SkillEffects.chronosphere, SkillEffects.invincible5s]);
+          add(RemoveEffect());
+        },
+      ));
+    });
+  }
+
+  @override
+  void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
+    if (other is PlayerAnimationComponent) {
+      game.playerData.effects.add(SkillEffects.timeWalk5s);
+    }
+    if (other is EnemySpriteComponent) {
+      other.isInsideChronosphere = true;
+    }
+    super.onCollisionStart(intersectionPoints, other);
+  }
+
+  @override
+  void onCollisionEnd(PositionComponent other) {
+    if (other is PlayerAnimationComponent) {
+      game.playerData.effects.remove(SkillEffects.timeWalk5s);
+    }
+    if (other is EnemySpriteComponent) {
+      other.isInsideChronosphere = false;
+    }
+    super.onCollisionEnd(other);
   }
 }

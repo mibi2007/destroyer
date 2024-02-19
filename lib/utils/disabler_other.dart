@@ -1,3 +1,3 @@
-void disableRightClick() {
+void customGameInput() {
   //do nothing
 }

@@ -30,7 +30,7 @@ class PlayerData {
   final armor = ValueNotifier<int>(5);
   final inventory = ValueNotifierList<Equipment>([]);
   final sword = ValueNotifier<Sword>(Sword.desolator());
-  final lastSword = ValueNotifier<Sword>(Sword.desolator());
+  final lastSword = ValueNotifier<Sword?>(null);
   final skills = ValueNotifierList<Skill>([]);
   final position = ValueNotifier<Vector2>(Vector2.zero());
   final aim = ValueNotifier<double>(0);
@@ -42,6 +42,7 @@ class PlayerData {
   final selectedLocation = ValueNotifier<Vector2?>(null);
   final skillCountdown = ValueNotifierList<bool>([]);
   final casting = ValueNotifier<Skill?>(null);
+  final autoAttack = DoubleTapNotifier();
 }
 
 class ValueNotifierList<T> extends ValueNotifier<List<T>> {
@@ -60,8 +61,23 @@ class ValueNotifierList<T> extends ValueNotifier<List<T>> {
   }
 
   void remove(T indexValue) {
-    value.remove(indexValue);
+    final success = value.remove(indexValue);
+    if (success) notifyListeners();
+  }
+
+  void removeAll(List<T> indexValues) {
+    if (indexValues.isEmpty) return;
+    for (final indexValue in indexValues) {
+      value.remove(indexValue);
+    }
     notifyListeners();
+  }
+
+  void add(T newValue) {
+    if (!value.contains(newValue)) {
+      value.add(newValue);
+      notifyListeners();
+    }
   }
 }
 
@@ -73,6 +89,12 @@ class CreditNotifier extends ChangeNotifier {
 
 class EquipmentsNotifier extends ChangeNotifier {
   void change() {
+    notifyListeners();
+  }
+}
+
+class DoubleTapNotifier extends ChangeNotifier {
+  void trigger() {
     notifyListeners();
   }
 }

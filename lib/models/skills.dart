@@ -9,7 +9,7 @@ class Skill {
   final String sprite;
   final String? keyboard;
   double duration;
-  SkillEffect? effect;
+  List<SkillEffect> effects = [];
   int? triggerIndex;
   bool passive;
 
@@ -23,7 +23,7 @@ class Skill {
     required this.sprite,
     this.autoCast = false,
     this.duration = 0,
-    this.effect,
+    required this.effects,
     this.triggerIndex,
     this.passive = false,
     this.keyboard,
@@ -58,7 +58,7 @@ class Skills {
     countdown: 10,
     casttime: 1,
     damage: 0,
-    effect: SkillEffects.purified,
+    effects: [SkillEffects.purified],
     triggerIndex: 0,
     keyboard: 'Q',
   );
@@ -71,7 +71,7 @@ class Skills {
     countdown: 60,
     casttime: 2,
     damage: 0,
-    effect: SkillEffects.purified,
+    effects: [SkillEffects.purified],
     triggerIndex: 1,
     keyboard: 'E',
   );
@@ -82,12 +82,12 @@ class Skills {
     name: 'Time Walk',
     description: 'Backtracking the last 2 seconds for you or revert lifetime of a destroyed object',
     requirement: 'Time Sword Lv.3',
-    countdown: 2,
+    countdown: 20,
     casttime: 0,
     damage: 0,
     duration: 0.5,
     triggerIndex: 2,
-    effect: SkillEffects.invincible0s5,
+    effects: [SkillEffects.timeWalk0s5],
     keyboard: 'Q',
   );
 
@@ -97,12 +97,12 @@ class Skills {
     description:
         'Creates a blister in spacetime, trapping all units caught in its sphere of influence and causes you to move very quickly inside it',
     requirement: 'Time Sword Lv.4',
-    countdown: 60,
-    casttime: 0,
+    countdown: 1,
+    casttime: 0.5,
     duration: 5,
     damage: 0,
     triggerIndex: 3,
-    effect: SkillEffects.invincible5s,
+    effects: [SkillEffects.chronosphere],
     keyboard: 'E',
   );
 
@@ -115,24 +115,26 @@ class Skills {
     casttime: 0,
     damage: 0,
     passive: true,
-    effect: SkillEffects.fireball,
+    effects: [SkillEffects.fireball],
   );
 
   static final flameCloak = Skill(
-      sprite: 'assets/images/skills-and-effects/Flame_Cloak_icon.webp',
-      name: 'Flame Cloak',
-      description: 'Turn you into a flying unit upon use. You can fly over impassable terrain but not under the sea',
-      requirement: 'Flame Sword Lv.3',
-      countdown: 20,
-      casttime: 0,
-      damage: 0,
-      autoCast: true,
-      effect: SkillEffects.fly);
+    sprite: 'assets/images/skills-and-effects/Flame_Cloak_icon.webp',
+    name: 'Flame Cloak',
+    description: 'Turn you into a flying unit upon use. You can fly over impassable terrain but not under the sea',
+    requirement: 'Flame Sword Lv.3',
+    countdown: 20,
+    casttime: 0,
+    damage: 0,
+    autoCast: true,
+    effects: [SkillEffects.fly],
+    keyboard: 'E',
+  );
 
   static final equiemOfSouls = Skill(
     sprite: 'assets/images/skills-and-effects/Requiem_of_Souls_icon.webp',
     name: 'Requiem of Souls',
-    description: 'Release souls hit all enemy in the screen and stun them for 3 seconds',
+    description: 'Release souls hit all enemy in the screen with damage from all souls you have collected',
     requirement: 'Flame Sword Lv.4',
     duration: 3,
     countdown: 60,
@@ -140,6 +142,8 @@ class Skills {
     damage: 500,
     triggerIndex: 4,
     keyboard: 'R',
+    passive: true,
+    effects: [],
   );
 
   static final ballLightning = Skill(
@@ -153,6 +157,7 @@ class Skills {
     damage: 100,
     triggerIndex: 5,
     keyboard: 'Q',
+    effects: [],
   );
 
   static final thunderStrike = Skill(
@@ -166,6 +171,7 @@ class Skills {
     damage: 500,
     triggerIndex: 6,
     keyboard: 'E',
+    effects: [],
   );
 
   static final coolFeet = Skill(
@@ -178,6 +184,7 @@ class Skills {
     damage: 0,
     duration: 10,
     keyboard: 'Q',
+    effects: [],
   );
 }
 
@@ -252,13 +259,23 @@ class SkillEffects {
     duration: 5,
     triggerIndex: 3,
   );
-  static final flash = SkillEffect(
-    sprite: 'assets/images/skills-and-effects/Chronosphere_icon.webp',
-    name: 'flash',
-    description:
-        'Effect of Chronosphere, creates a blister in spacetime, trapping all units caught in its sphere of influence and causes you to move very quickly inside it',
+  static final timeWalk0s5 = SkillEffect(
+    sprite: 'assets/images/skills-and-effects/Time_Walk_icon.webp',
+    name: 'timeWalk',
+    description: 'Effect of Time Walk, causes you to move very quickly',
+    duration: 0.5,
+  );
+  static final timeWalk5s = SkillEffect(
+    sprite: 'assets/images/skills-and-effects/Time_Walk_icon.webp',
+    name: 'timeWalk',
+    description: 'Effect of inside a blister of Chronosphere, causes you to move very quickly',
     duration: 5,
-    triggerIndex: 4,
+  );
+  static final chronosphere = SkillEffect(
+    sprite: 'assets/images/skills-and-effects/Chronosphere_icon.webp',
+    name: 'chronosphere',
+    description: 'Effect of casting Chronosphere',
+    duration: 5,
   );
   static final fly = SkillEffect(
     sprite: 'assets/images/skills-and-effects/Flame_Cloak_icon.webp',
