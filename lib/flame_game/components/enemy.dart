@@ -8,6 +8,7 @@ import 'package:flame/text.dart';
 
 import '../../models/enemies.dart';
 import '../../models/equipments.dart';
+import '../../models/skills.dart';
 import '../../skills/chronosphere.dart';
 import '../../skills/requiem_of_souls.dart';
 import '../game.dart';
@@ -22,6 +23,7 @@ class EnemySpriteComponent extends SpriteComponent with CollisionCallbacks, HasG
   Vector2 direction = _left;
 
   bool isHit = false;
+  bool isShockElectric = false;
   bool isDamaging = false;
   double _timerDamaging = 0;
 
@@ -90,7 +92,7 @@ class EnemySpriteComponent extends SpriteComponent with CollisionCallbacks, HasG
   void update(double dt) {
     super.update(dt);
 
-    if (isHit || isInsideChronosphere) {
+    if (isHit || isInsideChronosphere || isShockElectric) {
       effect?.pause();
     } else {
       effect?.resume();
@@ -131,7 +133,8 @@ class EnemySpriteComponent extends SpriteComponent with CollisionCallbacks, HasG
     if (other is PlayerAnimationComponent) {
       if (game.playerData.health.value > 0 &&
           !isDamaging &&
-          !game.playerData.effects.value.any((effect) => effect.name == 'invincible' || effect.name == 'timeWalk')) {
+          !game.playerData.effects.value.any(
+              (effect) => effect.name == 'invincible' || effect.name == 'timeWalk' || effect.name == 'ballLightning')) {
         // print('hit');
         other.hit();
         isDamaging = true;
@@ -147,6 +150,10 @@ class EnemySpriteComponent extends SpriteComponent with CollisionCallbacks, HasG
     }
 
     double dmg = 0;
+    if (other is PlayerAnimationComponent && other.isLightning) {
+      isShockElectric = true;
+      dmg = Skills.thunderStrike.damage - enemy.armor * 3;
+    }
     if (other is Slash || other is Fireball) {
       isHit = true;
       if (other is Slash) {
@@ -164,7 +171,7 @@ class EnemySpriteComponent extends SpriteComponent with CollisionCallbacks, HasG
       isHit = true;
       dmg = other.skill.damage + other.skill.damage * game.playerData.souls.value - enemy.armor * 3;
     }
-    if (!isHit) return;
+    if (!isHit && !isShockElectric) return;
     currentHealth -= dmg.toInt();
     updateHealthBar(currentHealth);
     if (game.playerData.sword.value.type == SwordType.flame) {

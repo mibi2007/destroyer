@@ -137,7 +137,7 @@ class Skills {
     description: 'Release souls hit all enemy in the screen with damage from all souls you have collected',
     requirement: 'Flame Sword Lv.4',
     duration: 3,
-    countdown: 1,
+    countdown: 60,
     casttime: 2,
     damage: 100,
     triggerIndex: 4,
@@ -151,13 +151,12 @@ class Skills {
     name: 'Ball Lightning',
     description: 'Becomes volatile electricity, charging across the battlefield until reaches your target',
     requirement: 'Lightning Sword Lv.3',
-    countdown: 20,
+    countdown: 2,
     casttime: 0,
-    duration: 1,
     damage: 100,
     triggerIndex: 5,
     keyboard: 'Q',
-    effects: [],
+    effects: [SkillEffects.ballLightning],
   );
 
   static final thunderStrike = Skill(
@@ -167,7 +166,8 @@ class Skills {
         'You will become the lightning, disapear and can select a place to land, it helps you find more things',
     requirement: 'Lightning Sword Lv.4',
     countdown: 60,
-    casttime: 2,
+    casttime: 0,
+    duration: 2,
     damage: 500,
     triggerIndex: 6,
     keyboard: 'E',
@@ -296,5 +296,12 @@ class SkillEffects {
     description:
         'Effect of Requiem of Souls, release souls hit all enemy in the screen with damage from all souls you have collected',
     duration: 0,
+  );
+  static final ballLightning = SkillEffect(
+    sprite: 'assets/images/skills-and-effects/Ball_Lightning_icon.webp',
+    name: 'ballLightning',
+    description:
+        'Effect of Ball Lightning, becomes volatile electricity, charging across the battlefield until reaches your target',
+    duration: 1.5,
   );
 }

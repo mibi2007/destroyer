@@ -34,9 +34,9 @@ class GameScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final myGame = DestroyerGame(level, sceneIndex, screenSize: MediaQuery.of(context).size);
     myGame.context = context;
-    if (isTesting) {
-      myGame.isTesting = true;
-    }
+    // if (isTesting) {
+    myGame.isTesting = true;
+    // }
     double width;
     double height;
     if ((MediaQuery.of(context).size.width / 640 * 454) > MediaQuery.of(context).size.height) {

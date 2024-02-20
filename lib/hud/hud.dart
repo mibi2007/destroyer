@@ -207,7 +207,6 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
 
   @override
   void onRemove() {
-    print('onRemove');
     game.playerData.credits.removeListener(onCreditChange);
     game.playerData.health.removeListener(onHealthChange);
     game.playerData.sword.removeListener(_onSwordChangeHandler);
@@ -380,7 +379,6 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
       final effectPosition = Vector2(76 + i * (effectSize + effectGap), 44);
       final effectComp = EffectComponent(skillEffects[i], position: effectPosition, size: Vector2.all(effectSize));
       if (skillEffects[i].name == 'Requiem of Souls') {
-        print('run');
         effectComp.count = game.playerData.souls.value;
       }
       effects.add(effectComp);

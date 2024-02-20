@@ -57,7 +57,6 @@ class DestroyerGameWorld extends World with HasGameReference<DestroyerGame> {
 
   @override
   Future<void> onLoad() async {
-    print('Level loaded');
     // Used to keep track of when the level started, so that we later can
     // calculate how long time it took to finish the level.
     timeStarted = DateTime.now();
@@ -154,7 +153,6 @@ class DestroyerGameWorld extends World with HasGameReference<DestroyerGame> {
   // static double _calculateSpeed(int level) => 0;
 
   void nextScene() {
-    print('level.scenes.length: ${game.level.scenes.length} sceneIndex:${game.sceneIndex}');
     if (game.level.scenes.length > game.sceneIndex + 1) {
       game.navigate('/play/session/${game.level.number}/${game.sceneIndex + 1}');
     } else {

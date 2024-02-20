@@ -3,8 +3,10 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:destroyer/level_selection/level.dart';
+import 'package:destroyer/skills/lightning_particle.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
 import 'package:flame_rive/flame_rive.dart';
 import 'package:flutter/services.dart';
 import 'package:rive/components.dart';
@@ -29,6 +31,7 @@ const double jumpSpeed = 250;
 const double defaultMoveSpeed = 150;
 const double flySpeed = 75;
 const double timeWalkSpeed = 350;
+const double cameraSpeed = 200;
 const double g = 800;
 
 class PlayerComponent extends PositionComponent with ParentIsA<SceneComponent> {
@@ -154,6 +157,7 @@ class PlayerAnimationComponent extends RiveComponent
   Vector2 collisionNormal = Vector2.zero();
 
   bool isInsideChronosphere = false;
+  bool isLightning = false;
 
   PlayerAnimationComponent(
     Artboard artboard, {
@@ -399,7 +403,7 @@ class PlayerAnimationComponent extends RiveComponent
     }
     // Clamp velocity along y to avoid player tunneling
     // through platforms at very high velocities.
-    if (_isOnGround && isColliding) {
+    if (_isOnGround && isColliding || isLightning) {
       _velocity.y = 0;
       // _landTrigger?.fire();
     } else {
@@ -486,7 +490,7 @@ class PlayerAnimationComponent extends RiveComponent
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    if (other is Platform) {
+    if (other is Platform && !isLightning) {
       if (intersectionPoints.length == 2) {
         // Calculate the collision normal and separation distance.
         final mid = (intersectionPoints.elementAt(0) + intersectionPoints.elementAt(1)) / 2;
@@ -626,7 +630,6 @@ class PlayerAnimationComponent extends RiveComponent
       } else if (skill.name == 'Guardian Engel') {
         print('Guardian Engel');
       } else if (skill.name == 'Time Walk') {
-        print('unser null');
         game.playerData.casting.value = Skills.timeWalk;
 
         interval = Timer(
@@ -647,27 +650,23 @@ class PlayerAnimationComponent extends RiveComponent
             if (effect.triggerIndex != null) _effectsTriggers[effect.triggerIndex!]?.fire();
           }
         }
-        // Future.delayed(Duration(milliseconds: skill.duration.toInt())).then((_) {
-        //   print('reset time walk');
-        //   _effectsTriggers[0]?.fire();
-        // });
       } else if (skill.name == 'Chronosphere') {
         final selectedLocation = game.playerData.selectedLocation.value != null
             ? game.camera.globalToLocal(game.playerData.selectedLocation.value!)
             : null;
-        final skillCpmponent = ChronosphereSkillComponent(
+        final skillComponent = ChronosphereSkillComponent(
             duration: skill.duration,
             delayCast: skill.casttime,
             position: selectedLocation != null ? position + selectedLocation / game.zoom : position);
-        parent.parent.add(skillCpmponent);
+        parent.parent.add(skillComponent);
       } else if (skill.name == 'Requiem of Souls') {
         final skillComponent =
             RequiemOfSoulsSkillComponent(duration: skill.duration, delayCast: skill.casttime, position: position);
-        Future.delayed(Duration(milliseconds: skill.casttime.toInt() * 1000)).then((_) {
+        Future.delayed(Duration(milliseconds: (skill.casttime * 1000).toInt())).then((_) {
           parent.parent.add(skillComponent);
         });
       } else if (skill.name == 'Ball Lightning') {
-        print('Ball Lightning');
+        _castLightning(skill);
       } else if (skill.name == 'Thunder Strike') {
         print('Thunder Strike');
       }
@@ -709,6 +708,28 @@ class PlayerAnimationComponent extends RiveComponent
   void _onDoubleTapHandler() {
     isAutoAttack = true;
     onAttackDelay = true;
+  }
+
+  void _castLightning(Skill skill) {
+    final selectedLocation = game.playerData.selectedLocation.value != null
+        ? game.camera.globalToLocal(game.playerData.selectedLocation.value!)
+        : null;
+    final end =
+        selectedLocation != null ? (position + selectedLocation / game.zoom) : position; // Ending point of the line
+    // final Vector2 start = Vector2(position.x, position.y);
+    final lightningParticle = ParticleSystemComponent(
+        particle: LightningParticle(lifespan: 1, start: Vector2(position.x, position.y), end: position));
+    isLightning = true;
+
+    // Stay in Ball Lightning for 1.5 seconds then move to the end point
+    Future.delayed(const Duration(milliseconds: 500)).then((_) {
+      add(MoveEffect.to(end, LinearEffectController(1)));
+      parent.parent.add(lightningParticle);
+      Future.delayed(const Duration(milliseconds: 1000)).then((_) {
+        lightningParticle.removeFromParent();
+        isLightning = false;
+      });
+    });
   }
 }
 

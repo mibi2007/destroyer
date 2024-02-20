@@ -208,10 +208,8 @@ class DestroyerGame extends FlameGame
 
   setEquipments(List<Equipment> newEquipments) {
     final playerProgress = context.read<PlayerProgress>();
-    print(newEquipments);
     final success = playerProgress.setEquipments(newEquipments);
     // Notify the playerData that the credits have changed
-    print('setEquipments success: $success');
     if (success) playerData.equipments.change();
   }
 

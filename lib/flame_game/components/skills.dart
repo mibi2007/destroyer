@@ -45,6 +45,7 @@ mixin Countdown on PositionComponent {
 class CountdownComponent extends PositionComponent {
   double countdownTime;
   double currentTime = 0;
+  double _timeTick = 0;
 
   CountdownComponent({
     required this.countdownTime,
@@ -59,6 +60,8 @@ class CountdownComponent extends PositionComponent {
 
   @override
   void render(Canvas canvas) {
+    // Reduce the number of renders
+    if (_timeTick < 0.01) return;
     super.render(canvas);
     // Draw the skill icon
 
@@ -80,6 +83,7 @@ class CountdownComponent extends PositionComponent {
 
     // Draw the mask
     canvas.drawPath(path, Paint()..color = const Color(0x99000000));
+    _timeTick = 0;
   }
 
   @override
@@ -87,6 +91,7 @@ class CountdownComponent extends PositionComponent {
     super.update(dt);
     // Update the current time based on the countdown
     currentTime += dt;
+    _timeTick += dt;
     if (currentTime > countdownTime) {
       currentTime = countdownTime; // countdown is complete
     }

@@ -66,7 +66,7 @@ class SceneComponent extends Component
 
     // Wait until the _player is added to the scene
     Future.delayed(const Duration(milliseconds: 1000), () {
-      _setupCamera();
+      // _setupCamera();
       _startScript();
     });
   }
@@ -166,7 +166,7 @@ class SceneComponent extends Component
           //   // ],
           // );
           add(_player);
-          parent.camera.follow(_player, maxSpeed: timeWalkSpeed, snap: true);
+          parent.camera.follow(_player, maxSpeed: cameraSpeed, snap: true);
           // if (settings != null) {
           // _player.animation.gravity = double.parse(settings.properties.first.value.toString());
           // }
@@ -221,7 +221,7 @@ class SceneComponent extends Component
                 parent.camera.moveTo(_player.position);
                 // Not allow to go back
                 _player.animation.resetLast2Second();
-                parent.camera.follow(_player, maxSpeed: timeWalkSpeed, snap: true);
+                parent.camera.follow(_player, maxSpeed: cameraSpeed, snap: true);
               }
               if (nextLevel == true) parent.nextScene();
             },
@@ -247,17 +247,17 @@ class SceneComponent extends Component
   // follow the player component and also for keeping
   // the camera within level bounds.
   /// NOTE: Call only after [_spawnActors].
-  void _setupCamera() {
-    // parent.camera.follow(_player, maxSpeed: 200, snap: true);
-    // parent.camera.setBounds(
-    //   Rectangle.fromLTRB(
-    //     game.fixedResolution.x / 2,
-    //     game.fixedResolution.y / 2,
-    //     game.mapTiled.width - game.fixedResolution.x / 2,
-    //     game.mapTiled.height - game.fixedResolution.y / 4,
-    //   ),
-    // );
-  }
+  // void _setupCamera() {
+  // parent.camera.follow(_player, maxSpeed: 200, snap: true);
+  // parent.camera.setBounds(
+  //   Rectangle.fromLTRB(
+  //     game.fixedResolution.x / 2,
+  //     game.fixedResolution.y / 2,
+  //     game.mapTiled.width - game.fixedResolution.x / 2,
+  //     game.mapTiled.height - game.fixedResolution.y / 4,
+  //   ),
+  // );
+  // }
 
   // @override
   // void update(double dt) {
@@ -281,7 +281,6 @@ class SceneComponent extends Component
 
   @override
   void onRemove() {
-    print('SceneComponent onRemove');
     leftClick.removeListener(_onLeftClickHander);
 
     super.onRemove();

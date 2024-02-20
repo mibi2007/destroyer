@@ -49,7 +49,6 @@ class GameLevel {
     Sword.time(4),
     Sword.flame(4),
     Sword.lightning(4),
-    Sword.desolator(),
   ], scenes: [
     Scene(0, mapTiled: 'Level2.tmx'),
   ]);
