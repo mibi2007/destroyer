@@ -1,13 +1,15 @@
 import 'dart:async';
 import 'dart:math';
-import 'dart:ui';
+import 'dart:ui' hide TextStyle;
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/particles.dart';
+import 'package:flame/text.dart';
 import 'package:flutter/animation.dart';
 
+import '../../hud/hud.dart';
 import '../../level_selection/level.dart';
 import '../../models/skills.dart';
 import '../game.dart';
@@ -91,9 +93,10 @@ class CountdownComponent extends PositionComponent {
   }
 }
 
-class SkillComponent extends PositionComponent with HasGameReference<DestroyerGame>, Countdown {
+class SkillComponent extends PositionComponent with HasGameReference<DestroyerGame>, Countdown, CollisionCallbacks {
   final Skill skill;
   late SpriteComponent iconComponent;
+  late Component tooltip;
 
   SkillComponent(
     this.skill, {
@@ -108,8 +111,56 @@ class SkillComponent extends PositionComponent with HasGameReference<DestroyerGa
   @override
   FutureOr<void> onLoad() {
     super.onLoad();
+    add(RectangleHitbox(collisionType: CollisionType.passive, isSolid: true));
     iconComponent = SpriteComponent.fromImage(game.images.fromCache(skill.sprite), size: size);
     add(iconComponent);
+    tooltip = RectangleComponent(
+      size: Vector2(300, 150),
+      position: Vector2(0, -15),
+      anchor: Anchor.bottomCenter,
+      paint: Paint()..color = const Color(0xEE000000),
+      scale: Vector2.all(0.5),
+      children: [
+        TextBoxComponent(
+            text: skill.description,
+            position: Vector2(150, 75),
+            anchor: Anchor.center,
+            textRenderer: TextPaint(
+              style: const TextStyle(
+                color: Color(0xFFFFFFFF),
+                fontSize: 12,
+                fontFamily: 'Press Start 2P',
+                height: 1.5,
+              ),
+            ),
+            boxConfig: TextBoxConfig(
+              maxWidth: 300,
+              growingBox: true, // Set to true if you want the box to grow with the text
+            ))
+      ],
+    );
+  }
+
+  @override
+  void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
+    super.onCollisionStart(intersectionPoints, other);
+    if (other is HudCursor) {
+      showTooltip();
+    }
+  }
+
+  @override
+  void onCollisionEnd(PositionComponent other) {
+    if (other is HudCursor) hideTooltip();
+    super.onCollisionEnd(other);
+  }
+
+  void showTooltip() {
+    add(tooltip);
+  }
+
+  void hideTooltip() {
+    remove(tooltip);
   }
 }
 
@@ -193,7 +244,9 @@ class Fireball extends SpriteComponent
 
 class EffectComponent extends PositionComponent with HasGameRef<DestroyerGame>, Countdown {
   final SkillEffect effect;
+  int? count;
   late SpriteComponent iconComponent;
+
   EffectComponent(
     this.effect, {
     super.position,
@@ -208,5 +261,16 @@ class EffectComponent extends PositionComponent with HasGameRef<DestroyerGame>, 
   FutureOr<void> onLoad() {
     iconComponent = SpriteComponent.fromImage(game.images.fromCache(effect.sprite), size: size, priority: 0);
     add(iconComponent);
+    if (count != null) {
+      add(TextComponent(
+          text: count.toString(),
+          position: Vector2(0, 0),
+          size: size,
+          anchor: Anchor.center,
+          textRenderer: TextPaint(
+              style: const TextStyle(
+            fontFamily: 'Press Start 2P',
+          ))));
+    }
   }
 }

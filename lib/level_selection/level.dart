@@ -1,10 +1,12 @@
 import 'package:destroyer/flame_game/scripts/intro.dart';
 import 'package:destroyer/utils/tileset.dart';
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame_rive/flame_rive.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 
 import '../flame_game/components/coin.dart';
 import '../flame_game/components/door.dart';
@@ -32,6 +34,7 @@ class SceneComponent extends Component
   late final PlayerComponent _player;
   late final Artboard artboard;
   late final TiledComponent mapTiled;
+  late final Cursor cursor;
 
   int? sceneIndex;
   void Function(EnemySpriteComponent boss)? onBossKilled;
@@ -44,7 +47,9 @@ class SceneComponent extends Component
 
   @override
   Future<void> onLoad() async {
-    print('Loading level: ${level.title}');
+    cursor = Cursor();
+    // cursor.debugMode = true;
+    // add(cursor);
 
     _setupStartLevel(game.isTesting);
 
@@ -57,6 +62,7 @@ class SceneComponent extends Component
 
     _spawnActors();
     leftClick.addListener(_onLeftClickHander);
+    // game.playerData.currentMousePosition.addListener(_mouseMoveHadler);
 
     // Wait until the _player is added to the scene
     Future.delayed(const Duration(milliseconds: 1000), () {
@@ -263,8 +269,6 @@ class SceneComponent extends Component
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     if (event is KeyDownEvent) {
       if (event.logicalKey == LogicalKeyboardKey.keyN) {
-        print(level.title);
-        print(level.number);
         // game.navigate('/play/session/${level.number}/${sceneIndex! + 1}');
         parent.nextScene();
       } else if (event.logicalKey == LogicalKeyboardKey.keyM) {
@@ -290,5 +294,26 @@ class SceneComponent extends Component
       onBossKilled = introScript.onBossKilled;
       onRewardPicked = introScript.onRewardPicked;
     }
+  }
+
+  void _mouseMoveHadler() {
+    final cursorAbsolutePosition = game.camera.globalToLocal(game.playerData.currentMousePosition.value);
+    final cursorPosition = _player.position + cursorAbsolutePosition / game.zoom;
+    cursor.position = cursorPosition;
+  }
+}
+
+class Cursor extends CircleComponent with CollisionCallbacks {
+  Cursor()
+      : super(
+          radius: 5,
+          anchor: Anchor.center,
+          paint: Paint()..color = const Color(0x00000000),
+        );
+
+  @override
+  Future<void> onLoad() async {
+    super.onLoad();
+    add(CircleHitbox());
   }
 }

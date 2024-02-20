@@ -164,7 +164,7 @@ class EnemySpriteComponent extends SpriteComponent with CollisionCallbacks, HasG
       isHit = true;
       dmg = other.skill.damage + other.skill.damage * game.playerData.souls.value - enemy.armor * 3;
     }
-
+    if (!isHit) return;
     currentHealth -= dmg.toInt();
     updateHealthBar(currentHealth);
     if (game.playerData.sword.value.type == SwordType.flame) {

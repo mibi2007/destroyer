@@ -473,6 +473,12 @@ class PlayerAnimationComponent extends RiveComponent
       if (keysPressed.contains(LogicalKeyboardKey.tab)) {
         switchNextSword();
       }
+
+      if (keysPressed.contains(LogicalKeyboardKey.keyB)) {
+        for (var index = 0; index < game.playerData.skillCountdown.value.length; index++) {
+          game.playerData.skillCountdown.updateAt(index, false);
+        }
+      }
     }
 
     return true;
@@ -690,7 +696,6 @@ class PlayerAnimationComponent extends RiveComponent
             game.playerData.health.value + 30 < 100 ? game.playerData.health.value + 30 : 100;
       }
       if (e.triggerIndex != null) {
-        print(_effectsTriggers[e.triggerIndex!]);
         _effectsTriggers[e.triggerIndex!]?.fire();
       }
     }

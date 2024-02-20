@@ -1,5 +1,6 @@
 import 'dart:ui' as ui;
 
+import 'package:destroyer/flame_game/components/coin.dart';
 import 'package:destroyer/flame_game/components/player.dart';
 import 'package:destroyer/flame_game/game.dart';
 import 'package:destroyer/models/skills.dart';
@@ -10,12 +11,11 @@ import 'package:flutter/animation.dart';
 
 import '../flame_game/components/enemy.dart';
 
-class ChronosphereSkillComponent extends CircleComponent with CollisionCallbacks, HasGameRef<DestroyerGame> {
+class ChronosphereSkillComponent extends SpriteComponent with CollisionCallbacks, HasGameRef<DestroyerGame> {
   // double radious = 100;
   final double duration;
   final double delayCast;
 
-  late ui.Image image;
   ChronosphereSkillComponent({required this.duration, required this.delayCast, required super.position})
       : super(priority: 3, anchor: Anchor.center);
 
@@ -28,10 +28,12 @@ class ChronosphereSkillComponent extends CircleComponent with CollisionCallbacks
     final animationController = CurvedEffectController(delayCast, Curves.easeOutCubic);
     size = Vector2(0, 0);
     add(CircleHitbox(isSolid: true));
+    final image = game.images.fromCache('assets/images/skills-and-effects/Chronosphere_effect.png');
+    sprite = Sprite(image, srcPosition: Vector2.all(width));
     paint = ui.Paint()
-      ..color = const ui.Color(0xDDFF0000)
+      ..color = const ui.Color(0xcc000000)
       ..style = ui.PaintingStyle.fill;
-    add(SizeEffect.to(Vector2(200, 200), animationController));
+    add(SizeEffect.to(Vector2(250, 250), animationController));
     Future.delayed(Duration(milliseconds: (duration * 1000).toInt()), () {
       add(OpacityEffect.fadeOut(
         animationController..duration = 2,
@@ -51,6 +53,9 @@ class ChronosphereSkillComponent extends CircleComponent with CollisionCallbacks
     if (other is EnemySpriteComponent) {
       other.isInsideChronosphere = true;
     }
+    if (other is Coin) {
+      other.isInsideChronosphere = true;
+    }
     super.onCollisionStart(intersectionPoints, other);
   }
 
@@ -62,6 +67,15 @@ class ChronosphereSkillComponent extends CircleComponent with CollisionCallbacks
     if (other is EnemySpriteComponent) {
       other.isInsideChronosphere = false;
     }
+    if (other is Coin) {
+      other.isInsideChronosphere = false;
+    }
     super.onCollisionEnd(other);
+  }
+
+  @override
+  void update(double dt) {
+    // schrono.size = size;
+    super.update(dt);
   }
 }

@@ -29,7 +29,7 @@ class RequiemOfSoulsSkillComponent extends SpriteComponent with CollisionCallbac
     add(SizeEffect.to(Vector2(1200, 1200), animationController));
     Future.delayed(Duration(milliseconds: (duration * 1000).toInt()), () {
       add(OpacityEffect.fadeOut(
-        animationController..duration = 1,
+        LinearEffectController(0.5),
         onComplete: () {
           game.playerData.souls.value = 0;
           add(RemoveEffect());

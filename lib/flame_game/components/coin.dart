@@ -1,7 +1,6 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
-import 'package:flame/image_composition.dart';
 import 'package:flutter/animation.dart';
 
 import '../game.dart';
@@ -9,24 +8,19 @@ import 'player.dart';
 
 // Represents a collectable coin in the game world.
 class Coin extends SpriteComponent with CollisionCallbacks, HasGameReference<DestroyerGame> {
+  bool isInsideChronosphere = false;
+  late MoveEffect effect;
   Coin(
-    Image image, {
-    Vector2? position,
-    Vector2? size,
-    Vector2? scale,
-    double? angle,
-    Anchor? anchor,
-    int? priority,
+    super.image, {
+    super.position,
+    super.size,
+    super.scale,
+    super.angle,
+    super.anchor,
+    super.priority,
   }) : super.fromImage(
-          image,
           srcPosition: Vector2(3 * 32, 0),
           srcSize: Vector2.all(32),
-          position: position,
-          size: size,
-          scale: scale,
-          angle: angle,
-          anchor: anchor,
-          priority: priority,
         );
 
   @override
@@ -34,17 +28,16 @@ class Coin extends SpriteComponent with CollisionCallbacks, HasGameReference<Des
     add(CircleHitbox()..collisionType = CollisionType.passive);
 
     // Keeps the coin bouncing
-    await add(
-      MoveEffect.by(
-        Vector2(0, -4),
-        EffectController(
-          alternate: true,
-          infinite: true,
-          duration: 1,
-          curve: Curves.ease,
-        ),
+    effect = MoveEffect.by(
+      Vector2(0, -4),
+      EffectController(
+        alternate: true,
+        infinite: true,
+        duration: 1,
+        curve: Curves.ease,
       ),
     );
+    await add(effect);
   }
 
   @override
@@ -65,5 +58,15 @@ class Coin extends SpriteComponent with CollisionCallbacks, HasGameReference<Des
       game.setCredits(game.getCredits() + 1);
     }
     super.onCollisionStart(intersectionPoints, other);
+  }
+
+  @override
+  void update(double dt) {
+    if (isInsideChronosphere) {
+      effect.pause();
+    } else {
+      effect.resume();
+    }
+    super.update(dt);
   }
 }

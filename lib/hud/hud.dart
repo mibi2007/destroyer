@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/text.dart';
@@ -34,6 +35,7 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
 
   // Skill? selectedSkill;
   LogicalKeyboardKey? lastKeyPress;
+  late final HudCursor cursor;
 
   Hud({super.children, super.priority});
 
@@ -42,6 +44,8 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
 
   @override
   Future<void> onLoad() async {
+    cursor = HudCursor();
+    add(cursor);
     // print('Loading hud');
     add(SpriteComponent.fromImage(
       game.images.fromCache('assets/images/hud/hud.png'),
@@ -69,8 +73,13 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
 
     healthTextComponent = TextComponent(
       text: '100/100',
-      position: Vector2(110, 21),
-      textRenderer: TextPaint(style: const TextStyle(fontSize: 8, color: Color(0xFFFFFFFF))),
+      position: Vector2(100, 22),
+      textRenderer: TextPaint(
+          style: const TextStyle(
+        fontSize: 8,
+        color: Color(0xFFFFFFFF),
+        fontFamily: 'Press Start 2P',
+      )),
     );
     await add(healthTextComponent);
     add(RectangleComponent(size: Vector2(width / 2, 10), position: Vector2(0, 0), priority: 0));
@@ -106,7 +115,12 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
     creditTextComponent = TextComponent(
         text: 'x${game.getCredits()}',
         position: Vector2(18, 4),
-        textRenderer: TextPaint(style: const TextStyle(fontSize: 8, color: Color(0xFFFFFFFF))));
+        textRenderer: TextPaint(
+            style: const TextStyle(
+          fontSize: 8,
+          color: Color(0xFFFFFFFF),
+          fontFamily: 'Press Start 2P',
+        )));
     await add(SpriteComponent.fromImage(
       game.spriteSheet,
       srcPosition: Vector2(3 * 32, 0),
@@ -120,8 +134,13 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
     game.playerData.sword.addListener(_onSwordChangeHandler);
     game.playerData.equipments.addListener(_onEquipmentsChangeHandler);
     game.playerData.effects.addListener(_onEffectsChangeHandler);
+    game.playerData.currentMousePosition.addListener(_mouseMoveHandler);
 
     _onEquipmentsChangeHandler();
+  }
+
+  void _mouseMoveHandler() {
+    cursor.position = game.playerData.currentMousePosition.value / game.zoom;
   }
 
   @override
@@ -277,8 +296,6 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
           .map((s) => s.effects)
           .reduce((combine, effects) => [...combine, ...effects]);
       if (removeEffects.isNotEmpty) {
-        print('removeEffects');
-        print(removeEffects);
         for (var element in removeEffects) {
           game.playerData.effects.remove(element);
         }
@@ -362,6 +379,10 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
       // final position = Vector2(x + i * (skillSize + skillGap), game.fixedResolution.y - skillSize / 2 - 7);
       final effectPosition = Vector2(76 + i * (effectSize + effectGap), 44);
       final effectComp = EffectComponent(skillEffects[i], position: effectPosition, size: Vector2.all(effectSize));
+      if (skillEffects[i].name == 'Requiem of Souls') {
+        print('run');
+        effectComp.count = game.playerData.souls.value;
+      }
       effects.add(effectComp);
       add(effectComp);
       if (skillEffects[i].duration > 0) {
@@ -434,29 +455,46 @@ class SkillFrame extends SpriteComponent with HasGameRef<DestroyerGame> {
     if (skillKey != null) {
       add(TextComponent(
         text: skillKey,
-        position: Vector2(width - 10, height - 16),
+        position: Vector2(width - 10, height - 13),
         textRenderer: TextPaint(
           style: const TextStyle(
-            fontSize: 13,
+            fontSize: 9,
             color: Color.fromRGBO(0, 0, 0, 0.5),
             fontWeight: FontWeight.bold,
-            // shadows: [Shadow(blurRadius: 5, color: Color(0xFF000000), offset: Offset(5, 5))],
+            fontFamily: 'Press Start 2P',
           ),
         ),
         priority: 4,
       ));
       add(TextComponent(
         text: skillKey,
-        position: Vector2(width - 10, height - 15),
+        position: Vector2(width - 10, height - 12),
         textRenderer: TextPaint(
           style: const TextStyle(
-            fontSize: 12,
+            fontSize: 8,
             color: Color(0xFFFFFFFF),
-            // shadows: [Shadow(blurRadius: 5, color: Color(0xFF000000), offset: Offset(5, 5))],
+            fontFamily: 'Press Start 2P',
           ),
         ),
         priority: 5,
       ));
     }
+  }
+}
+
+class HudCursor extends CircleComponent with CollisionCallbacks {
+  HudCursor()
+      : super(
+          radius: 5,
+          anchor: Anchor.center,
+          paint: Paint()
+            ..color = const Color(0x00000000)
+            ..style = PaintingStyle.fill,
+        );
+
+  @override
+  Future<void> onLoad() async {
+    super.onLoad();
+    add(CircleHitbox());
   }
 }
