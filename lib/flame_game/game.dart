@@ -144,6 +144,9 @@ class DestroyerGame extends FlameGame
     await images.load('assets/images/hud/hud.png');
     await images.load('assets/images/hud/avatar-frame.png');
 
+    // Characters
+    await images.load('assets/images/npcs/oracle.png');
+
     // Swords
     await images.load('assets/images/equipments/swords/desolator-sprite.png');
     await images.load('assets/images/equipments/swords/purifier-sprite.png');
@@ -151,7 +154,6 @@ class DestroyerGame extends FlameGame
     await images.load('assets/images/equipments/swords/flame-sprite.png');
     await images.load('assets/images/equipments/swords/lightning-sprite.png');
     await images.load('assets/images/equipments/swords/fireball.png');
-    await images.load('assets/images/equipments/swords/slash-on-enemy.png');
 
     // Armors
     await images.load('assets/images/equipments/armors/Helmet.webp');
@@ -188,6 +190,7 @@ class DestroyerGame extends FlameGame
     await images.load('assets/images/enemies/garbage1.png');
     await images.load('assets/images/enemies/garbage2.png');
     await images.load('assets/images/enemies/boss-intro.png');
+    await images.load('assets/images/enemies/garbage_monster.png');
     await images.load('assets/animations/slash.png');
     await images.load('assets/animations/electric.png');
     await images.load('assets/animations/flame.png');

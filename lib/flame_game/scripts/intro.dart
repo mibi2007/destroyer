@@ -7,62 +7,224 @@ import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nes_ui/nes_ui.dart';
 
-import '../../level_selection/level.dart';
+import '../components/door.dart';
 import '../components/equipment.dart';
 import '../components/equipments/weapon.dart';
 import '../game.dart';
 import '../game_world.dart';
+import 'script.dart';
 
-class IntroScript extends Component
-    with HasGameRef<DestroyerGame>, HasWorldReference<DestroyerGameWorld>, ParentIsA<SceneComponent> {
-  final textBoxConfig = TextBoxConfig(
-    timePerChar: 0.05, // Time in seconds to wait before showing the next character
-    // Other configurations for your text box...
-  );
-
-  late Timer _timer;
+class IntroScript extends Script {
+  late final Door door;
+  late final SpriteComponent oracle;
+  late final Timer _timer;
   int _seconds = 0;
-  late TextBoxComponent firstDialog;
-  int _afterClosedFirstDialogSecond = -1;
+  // late TextBoxComponent firstDialog;
+  bool isShownFirstBossDialog = false;
+  bool isBossKilled = false;
+  final List<TextBoxComponent> playerDialogs = [];
+  final List<TextBoxComponent> bossDialogs = [];
+  final List<TextBoxComponent> oracleDialogs = [];
 
   @override
   FutureOr<void> onLoad() {
-    firstDialog = TextBoxComponent(
-      text: 'This place is', // The text you want to display
-      boxConfig: textBoxConfig,
-      anchor: Anchor.bottomLeft,
-    );
+    playerDialogs.addAll([
+      TextBoxComponent(
+        text: 'The world are breaking its balance',
+        textRenderer: textRenderer,
+        boxConfig: boxConfig,
+        anchor: Anchor.bottomCenter,
+      ),
+      TextBoxComponent(
+        text: 'I can see the force is very strong here!!!',
+        textRenderer: textRenderer,
+        boxConfig: boxConfig,
+        anchor: Anchor.bottomCenter,
+      ),
+    ]);
+    bossDialogs.addAll([
+      TextBoxComponent(
+        text: 'Well, Destroyer, not surprise. ToDay is the Day I Die...',
+        textRenderer: textRenderer,
+        boxConfig: boxConfig,
+        anchor: Anchor.bottomCenter,
+      ),
+      TextBoxComponent(
+        text: '...Ups, I mean you die!',
+        textRenderer: textRenderer,
+        boxConfig: boxConfig,
+        anchor: Anchor.bottomCenter,
+      ),
+      TextBoxComponent(
+        text: 'Aah, I die!, But you can not change anything! Ha Ha Ha...',
+        textRenderer: textRenderer,
+        boxConfig: boxConfig,
+        anchor: Anchor.bottomCenter,
+      ),
+    ]);
+    oracleDialogs.addAll([
+      TextBoxComponent(
+        text: 'The world broke its balance, that cause the Earth Stone explodes into Dark Shard.',
+        textRenderer: textRenderer,
+        boxConfig: boxConfig,
+        anchor: Anchor.bottomCenter,
+      ),
+      TextBoxComponent(
+        text: 'Human will be destroyed when these Dark Entity become stronger.',
+        textRenderer: textRenderer,
+        boxConfig: boxConfig,
+        anchor: Anchor.bottomCenter,
+      ),
+      TextBoxComponent(
+        text: 'You are the only one who can save humanity!!! What is your decision?',
+        textRenderer: textRenderer,
+        boxConfig: boxConfig,
+        anchor: Anchor.bottomCenter,
+      ),
+    ]);
     _timer = Timer(1, onTick: () {
       _seconds++;
+      if (_seconds == 1) {
+        bossDialogs[0].position = boss.position - Vector2(boss.width / 2, 0);
+        bossDialogs[1].position = boss.position - Vector2(boss.width / 2, 0);
+        bossDialogs[2].position = boss.position - Vector2(boss.width / 2, 0);
+      }
+      // print(game.playerData.position.value);
       if (_seconds == 3) {
-        showPlayerFirstDialog();
+        playerDialogs[0].position = game.playerData.position.value - Vector2(0, 60);
+        parent.add(playerDialogs[0]);
+        add(TimerComponent(
+          period: 3, // The period in seconds
+          onTick: () {
+            playerDialogs[0].removeFromParent();
+            playerDialogs[1].position = game.playerData.position.value - Vector2(0, 60);
+            if (!isShownFirstBossDialog) {
+              parent.add(playerDialogs[1]);
+              add(TimerComponent(
+                period: 6, // The period in seconds
+                onTick: () {
+                  playerDialogs[1].removeFromParent();
+                },
+              ));
+            }
+          },
+        ));
       }
-      if (_afterClosedFirstDialogSecond >= 0) {
-        _afterClosedFirstDialogSecond++;
+      if (game.playerData.position.value.x > 860 && !isShownFirstBossDialog) {
+        isShownFirstBossDialog = true;
+        playerDialogs[0].removeFromParent();
+        playerDialogs[1].removeFromParent();
+        if (!isBossKilled) {
+          parent.add(bossDialogs[0]);
+          add(TimerComponent(
+            period: 4, // The period in seconds
+            onTick: () {
+              bossDialogs[0].removeFromParent();
+              if (!isBossKilled) {
+                parent.add(bossDialogs[1]);
+                add(TimerComponent(
+                  period: 3, // The period in seconds
+                  onTick: () {
+                    bossDialogs[1].removeFromParent();
+                  },
+                ));
+              }
+            },
+          ));
+        }
       }
-      if (_afterClosedFirstDialogSecond == 3) {}
-    });
-  }
-
-  void showPlayerFirstDialog() {
-    firstDialog.position = game.playerData.position.value;
-    parent.add(firstDialog);
-
-    // Start the timer to next action
-    _afterClosedFirstDialogSecond = 0;
+    }, repeat: true);
   }
 
   void onBossKilled(PositionComponent boss) {
+    bossDialogs[0].removeFromParent();
+    bossDialogs[1].removeFromParent();
+    isBossKilled = true;
+    parent.add(bossDialogs[2]);
+    add(TimerComponent(
+      period: 5, // The period in seconds
+      onTick: () {
+        bossDialogs[2].removeFromParent();
+        worldShake();
+        for (var dialog in oracleDialogs) {
+          dialog.position = oracle.position + Vector2(0, -32);
+        }
+        player.position = Vector2(door.x + door.width, door.y);
+        // game.remove(game.camera);
+        // game.cameraMaxSpeed = Vector2.all(double.infinity);
+
+        // world.customCamera.moveTo(player.position, speed: double.infinity);
+        // Not allow to go back
+        // player.animation.resetLast2Second();
+        // game.camera.stop();
+        world.customCamera.follow(player, maxSpeed: kCameraSpeed, snap: true);
+        add(TimerComponent(
+          period: 2, // The period in seconds
+          onTick: () {
+            parent.add(oracle);
+            parent.add(oracleDialogs[0]);
+            add(TimerComponent(
+              period: 5, // The period in seconds
+              onTick: () {
+                oracleDialogs[0].removeFromParent();
+                parent.add(oracleDialogs[1]);
+                add(TimerComponent(
+                  period: 5, // The period in seconds
+                  onTick: () {
+                    oracleDialogs[1].removeFromParent();
+                    parent.add(oracleDialogs[2]);
+                    reward();
+                  },
+                ));
+              },
+            ));
+          },
+        ));
+      },
+    ));
+  }
+
+  void reward() {
     final newSword = Sword.purifier(1);
     final swordImage = game.images.fromCache(newSword.iconAsset);
     final sword = SwordComponent(
       item: newSword,
-      position: Vector2(boss.position.x, boss.position.y - 100),
+      position: Vector2(oracle.position.x + 64, oracle.position.y - 150),
       size: Vector2.all(24),
       sprite: Sprite(swordImage),
     );
     parent.add(sword);
-    sword.add(MoveByEffect(Vector2(0, 180), CurvedEffectController(1.0, Curves.easeInOut)));
+    sword.add(MoveByEffect(Vector2(0, 170), CurvedEffectController(1.0, Curves.easeInOut),
+        onComplete: () => sword.add(MoveEffect.by(
+              Vector2(0, -4),
+              EffectController(
+                alternate: true,
+                infinite: true,
+                duration: 1,
+                curve: Curves.ease,
+              ),
+            ))));
+  }
+
+  void worldShake() {
+    world.customCamera.viewport.add(MoveEffect.by(
+      Vector2(10, 10),
+      LinearEffectController(0.1),
+      onComplete: () => world.customCamera.viewport.add(MoveEffect.by(
+        Vector2(0, -20),
+        LinearEffectController(0.1),
+        onComplete: () => world.customCamera.viewport.add(MoveEffect.by(
+          Vector2(-20, 0),
+          LinearEffectController(0.1),
+          onComplete: () => world.customCamera.viewport.add(MoveEffect.by(
+            Vector2(0, 20),
+            LinearEffectController(0.2),
+            onComplete: () =>
+                world.customCamera.viewport.add(MoveEffect.by(Vector2(-10, 10), LinearEffectController(1))),
+          )),
+        )),
+      )),
+    ));
   }
 
   void onRewardPicked(EquipmentComponent equipment) {
@@ -104,53 +266,56 @@ class PurifySwordPickedDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final sword = Sword.purifier(1);
     return NesDialog(
-      child: Column(
-        children: [
-          Text(
-            'You got new sword!',
-            style: TextStyle(
-              fontFamily: GoogleFonts.pressStart2p().fontFamily,
-              fontSize: 25,
-            ),
-          ),
-          const SizedBox(height: 20),
-          Text('Purifier Sword', style: TextStyle(fontFamily: GoogleFonts.pressStart2p().fontFamily, fontSize: 20)),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Flexible(
-                flex: 7,
-                child: Column(
-                  children: [
-                    Text(
-                      'Level: ${sword.level}',
-                    ),
-                    Text(
-                      'Damage: ${sword.damage}',
-                    ),
-                    Text(
-                      'AttackSpeed: ${sword.attackSpeed}',
-                    ),
-                  ],
-                ),
+      child: SizedBox(
+        width: 600,
+        child: Column(
+          children: [
+            Text(
+              'Exchange Desolator lv5 with a new sword!',
+              style: TextStyle(
+                fontFamily: GoogleFonts.pressStart2p().fontFamily,
+                fontSize: 25,
               ),
-              const SizedBox(width: 20),
-              Flexible(
-                flex: 3,
-                child: SizedBox(
-                  width: 60,
-                  height: 60,
-                  child: Image.asset(
-                    'assets/images/equipments/swords/purifier-sprite.png',
-                    filterQuality: FilterQuality.none,
-                    fit: BoxFit.contain,
+            ),
+            const SizedBox(height: 20),
+            Text('Purifier Sword', style: TextStyle(fontFamily: GoogleFonts.pressStart2p().fontFamily, fontSize: 20)),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Flexible(
+                  flex: 7,
+                  child: Column(
+                    children: [
+                      Text(
+                        'Level: ${sword.level}',
+                      ),
+                      Text(
+                        'Damage: ${sword.damage}',
+                      ),
+                      Text(
+                        'AttackSpeed: ${sword.attackSpeed}',
+                      ),
+                    ],
                   ),
                 ),
-              ),
-            ],
-          ),
-        ],
+                const SizedBox(width: 20),
+                Flexible(
+                  flex: 3,
+                  child: SizedBox(
+                    width: 60,
+                    height: 60,
+                    child: Image.asset(
+                      'assets/images/equipments/swords/purifier-sprite.png',
+                      filterQuality: FilterQuality.none,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

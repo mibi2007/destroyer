@@ -2,7 +2,6 @@ import 'package:flame/components.dart';
 
 mixin EnemyCollision on PositionComponent {
   double currentHealth = 0;
-  bool isDamaging = false;
   bool isHit = false;
   bool isElectricShocked = false;
   bool isBurned = false;

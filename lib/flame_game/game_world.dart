@@ -55,7 +55,7 @@ class DestroyerGameWorld extends World with HasGameReference<DestroyerGame> {
   late final double groundLevel = (size.y / 2) - (size.y / 5);
 
   final hud = Hud(priority: 1);
-  late CameraComponent camera;
+  late CameraComponent customCamera;
 
   @override
   Future<void> onLoad() async {
@@ -116,14 +116,16 @@ class DestroyerGameWorld extends World with HasGameReference<DestroyerGame> {
     //   }
     // });
 
-    camera = CameraComponent.withFixedResolution(
+    customCamera = CameraComponent.withFixedResolution(
       world: this,
       width: game.fixedResolution.x,
       height: game.fixedResolution.y,
       hudComponents: [hud],
     );
-    camera.viewfinder.position = game.fixedResolution / 2;
-    await game.add(camera);
+    customCamera.viewfinder.position = game.fixedResolution / 2;
+    await game.add(customCamera);
+    // game.camera = camera;
+
     loadScene();
   }
 

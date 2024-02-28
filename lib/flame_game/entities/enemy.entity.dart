@@ -32,7 +32,6 @@ class EnemyEntity extends SpriteComponent
   // bool isShockElectric = false;
   // bool isBurned = false;
   // bool isDamaging = false;
-  double _timerDamaging = 0;
 
   final Enemy enemy;
   SequenceEffect? effect;
@@ -43,7 +42,7 @@ class EnemyEntity extends SpriteComponent
   EnemyEntity(
     this.enemy,
     Image image, {
-    Vector2? position,
+    super.position,
     this.targetPosition,
     Vector2? size,
     Vector2? scale,
@@ -51,13 +50,10 @@ class EnemyEntity extends SpriteComponent
     Anchor? anchor,
     int? priority,
     int? arrmor,
-    Vector2? srcPosition,
-    Vector2? srcSize,
+    super.srcPosition,
+    super.srcSize,
   }) : super.fromImage(
           image,
-          srcPosition: srcPosition,
-          srcSize: srcSize,
-          position: position,
           size: size,
           scale: scale,
           angle: angle,
@@ -106,12 +102,12 @@ class EnemyEntity extends SpriteComponent
       effect?.resume();
     }
 
-    if (isDamaging && _timerDamaging > 1) {
-      isDamaging = false;
-      _timerDamaging = 0;
-    } else {
-      _timerDamaging += dt;
-    }
+    // if (isDamaging && _timerDamaging > 1) {
+    //   isDamaging = false;
+    //   _timerDamaging = 0;
+    // } else {
+    //   _timerDamaging += dt;
+    // }
   }
 
   @override
@@ -175,7 +171,6 @@ class EnemyAnimationEntity extends SpriteAnimationComponent
       ...attackedBehaviors(),
     ]);
     initHealthBar(enemy.maxHealth, width);
-    print('enemy loaded');
     _timer = Timer(1, repeat: true, onTick: () {
       if (currentHealth == 0) {
         add(TimerComponent(

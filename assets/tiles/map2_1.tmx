@@ -150,7 +150,7 @@
    <point/>
   </object>
   <object id="188" type="Coin" gid="4" x="1600" y="1568" width="32" height="32"/>
-  <object id="199" type="Player" gid="1" x="1536" y="1600" width="32" height="32"/>
+  <object id="199" type="Player" gid="1" x="672" y="1600" width="32" height="32"/>
  </objectgroup>
  <objectgroup id="4" name="Settings">
   <properties>

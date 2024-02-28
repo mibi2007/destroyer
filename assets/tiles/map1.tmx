@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="50" height="30" tilewidth="32" tileheight="32" infinite="0" nextlayerid="5" nextobjectid="15">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="50" height="30" tilewidth="32" tileheight="32" infinite="0" nextlayerid="5" nextobjectid="18">
  <tileset firstgid="1" source="Spritesheet.tsx"/>
  <layer id="1" name="Tile Layer 1" width="50" height="30">
   <data encoding="base64">
@@ -13,7 +13,7 @@
    </properties>
   </object>
   <object id="13" x="0" y="0" width="192" height="608"/>
-  <object id="14" x="1408" y="0" width="192" height="608"/>
+  <object id="14" x="1568" y="0" width="32" height="608"/>
  </objectgroup>
  <objectgroup id="3" name="SpawnPoints">
   <object id="3" type="Player" gid="1" x="400" y="416" width="32" height="32"/>
@@ -22,6 +22,8 @@
     <property name="Type" value="Boss"/>
    </properties>
   </object>
+  <object id="15" type="Door" gid="3" x="1408" y="608" width="64" height="64"/>
+  <object id="17" type="Oracle" gid="2147483649" x="1504" y="608" width="32" height="32"/>
  </objectgroup>
  <objectgroup id="4" name="Settings">
   <properties>

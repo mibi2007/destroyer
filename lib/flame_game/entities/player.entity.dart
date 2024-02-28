@@ -35,6 +35,7 @@ const double defaultMoveSpeed = 150;
 const double flySpeed = 75;
 const double timeWalkSpeed = 350;
 const double g = 800;
+final Vector2 _up = Vector2(0, -1);
 
 class PlayerEntity extends PositionedEntity with ParentIsA<SceneComponent> {
   final Artboard artboard;
@@ -81,7 +82,6 @@ class PlayerAnimationEntity extends RiveComponent
 
   double gravity = 0;
 
-  final Vector2 _up = Vector2(0, -1);
   final Vector2 _velocity = Vector2.zero();
   late StateMachineController _movesController;
   late StateMachineController _swordsController;
@@ -508,6 +508,8 @@ class PlayerAnimationEntity extends RiveComponent
         if (_up.dot(newCollisionNormal) > 0.7) {
           _isOnGround = true;
           _jumpCount = 0;
+        } else {
+          _isOnGround = false;
         }
 
         // Resolve collision by moving player along

@@ -9,11 +9,10 @@ class HitByEnemy extends CollisionBehavior<EnemyEntity, PlayerAnimationEntity> w
   @override
   void onCollisionStart(Set<Vector2> intersectionPoints, EnemyEntity other) {
     if (game.playerData.health.value > 0 &&
-        !other.isDamaging &&
+        other.currentHealth > 0 &&
         !game.playerData.effects.value.any(
             (effect) => effect.name == 'invincible' || effect.name == 'timeWalk' || effect.name == 'ballLightning')) {
       parent.hit();
-      other.isDamaging = true;
       game.playerData.health.value -= (other.enemy.damage - game.playerData.armor.value * 3).round();
     }
     // Vector2 collisionDirection = other.position - position;

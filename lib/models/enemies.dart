@@ -30,3 +30,12 @@ class Boss extends Enemy {
   late final SpriteAnimation attackAnimation;
   Boss({super.asset = '', super.damage = 50, required super.maxHealth, super.armor = 20, required super.level});
 }
+
+class GarbageMonster extends Enemy {
+  GarbageMonster(
+      {super.asset = 'assets/images/enemies/garbage_monster.png',
+      super.damage = 20,
+      super.maxHealth = 200,
+      super.armor = 20,
+      required super.level});
+}

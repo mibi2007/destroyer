@@ -44,4 +44,10 @@ class GarbageEntity extends EnemyEntity {
         ),
     ]);
   }
+
+  @override
+  void onRemove() {
+    game.playerData.garbages.value++;
+    super.onRemove();
+  }
 }

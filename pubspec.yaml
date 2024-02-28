@@ -43,7 +43,7 @@ flutter:
 
   assets:
     - assets/images/
-    - assets/images/characters/
+    - assets/images/npcs/
     - assets/images/enemies/
     - assets/images/hud/
     - assets/images/skills-and-effects/
