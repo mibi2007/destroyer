@@ -24,7 +24,6 @@ class Level1BScript extends Script {
         isShownDialog = true;
         parent.add(showFirstDialog());
       }
-      print(game.playerData.garbages.value);
       if (boss.currentHealth <= boss.maxHealth * 0.3) {
         for (int i = 0; i < 10; i++) {
           boss.attack();

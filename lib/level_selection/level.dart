@@ -1,3 +1,5 @@
+// ignore_for_file: curly_braces_in_flow_control_structures
+
 import 'package:destroyer/flame_game/components/brick.dart';
 import 'package:destroyer/flame_game/entities/enemy.entity.dart';
 import 'package:destroyer/flame_game/entities/garbage_monster.entity.dart';
@@ -258,7 +260,11 @@ class SceneComponent extends Component
             (enemyComponent as EnemyAnimationEntity).onKilled = () {
               onBossKilled?.call(enemyComponent);
             };
-            if (script is IntroScript) (script as IntroScript).boss = enemyComponent;
+            if (script is IntroScript) {
+              (script as IntroScript).boss = enemyComponent;
+            } else if (script is Level1BScript) {
+              (script as Level1BScript).boss = enemyComponent;
+            }
           } else if (type == 'Garbage') {
             enemy = Garbage(
               level: level.number,
