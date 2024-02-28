@@ -1,5 +1,8 @@
+import 'package:destroyer/flame_game/components/brick.dart';
+import 'package:destroyer/flame_game/entities/enemy.entity.dart';
 import 'package:destroyer/flame_game/scripts/intro.dart';
 import 'package:destroyer/utils/tileset.dart';
+import 'package:destroyer/utils/utils.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
@@ -10,13 +13,14 @@ import 'package:flutter/widgets.dart';
 
 import '../flame_game/components/coin.dart';
 import '../flame_game/components/door.dart';
-import '../flame_game/components/enemy.dart';
 import '../flame_game/components/equipment.dart';
 import '../flame_game/components/equipments/armor.dart';
 import '../flame_game/components/platform.dart';
-import '../flame_game/components/player.dart';
+import '../flame_game/entities/garbage.entity.dart';
+import '../flame_game/entities/player.entity.dart';
 import '../flame_game/game.dart';
 import '../flame_game/game_world.dart';
+import '../flame_game/scripts/level_1a.dart';
 import '../models/enemies.dart';
 import '../models/equipments.dart';
 import '../utils/disabler.dart';
@@ -31,14 +35,16 @@ class SceneComponent extends Component
         DoubleTapCallbacks,
         KeyboardHandler {
   final GameLevel level;
-  late final PlayerComponent _player;
+  late final PlayerEntity _player;
   late final Artboard artboard;
   late final TiledComponent mapTiled;
   late final Cursor cursor;
 
   int? sceneIndex;
-  void Function(EnemySpriteComponent boss)? onBossKilled;
+  void Function(PositionComponent boss)? onBossKilled;
   void Function(EquipmentComponent item)? onRewardPicked;
+
+  late Component script;
 
   SceneComponent(this.level, {this.sceneIndex = 0});
 
@@ -50,6 +56,7 @@ class SceneComponent extends Component
     cursor = Cursor();
     // cursor.debugMode = true;
     // add(cursor);
+    _startScript();
 
     _setupStartLevel(game.isTesting);
 
@@ -62,13 +69,13 @@ class SceneComponent extends Component
 
     _spawnActors();
     leftClick.addListener(_onLeftClickHander);
-    // game.playerData.currentMousePosition.addListener(_mouseMoveHadler);
 
     // Wait until the _player is added to the scene
-    Future.delayed(const Duration(milliseconds: 1000), () {
-      // _setupCamera();
-      _startScript();
-    });
+    // add(TimerComponent(
+    //   period: 1, // The period in seconds
+    //   onTick: () {
+    //   },
+    // ));
   }
 
   _onLeftClickHander() {
@@ -143,7 +150,7 @@ class SceneComponent extends Component
           //   game.mapTiled.size.y - halfSize.y,
           // );
 
-          _player = PlayerComponent(
+          _player = PlayerEntity(
             artboard: artboard,
             position: position,
             size: size,
@@ -166,7 +173,7 @@ class SceneComponent extends Component
           //   // ],
           // );
           add(_player);
-          parent.camera.follow(_player, maxSpeed: cameraSpeed, snap: true);
+          parent.camera.follow(_player, maxSpeed: kCameraSpeed, snap: true);
           // if (settings != null) {
           // _player.animation.gravity = double.parse(settings.properties.first.value.toString());
           // }
@@ -177,6 +184,7 @@ class SceneComponent extends Component
             game.spriteSheet,
             position: position,
             size: size,
+            priority: 1,
           );
           add(coin);
 
@@ -187,27 +195,104 @@ class SceneComponent extends Component
           final targetObjectId = spawnPoint.properties.getValue<int>('Target');
           final flip = spawnPoint.properties.getValue<bool>('Flip');
           final type = spawnPoint.properties.getValue<String>('Type');
-          final health = type == 'Boss' ? 7000.0 : 100.0;
           TiledObject? target = getObjectFromTargetById(spawnPointsLayer.objects, targetObjectId);
-          final enemy = EnemySpriteComponent(
-            Garbage(maxHealth: health),
-            game.spriteSheet,
-            position: position,
-            targetPosition: target != null ? Vector2(target.x, target.y) : null,
-            size: size,
-          );
-          if (flip == true) enemy.flipHorizontally();
-          add(enemy);
+          Enemy enemy;
+          Vector2 enemySize = Vector2.all(32);
+          String asset;
           if (type == 'Boss') {
-            enemy.onKilled = () {
-              onBossKilled?.call(enemy);
-            };
+            asset = 'assets/images/enemies/boss1.png';
+            enemy = Boss(
+              level: level.number,
+              asset: asset,
+              maxHealth: 1000,
+              armor: level.number * 5,
+            );
+            (enemy as Boss);
+            if (level == GameLevel.lv2) {
+              enemySize = Vector2.all(128);
+              enemy.moveAnimation = SpriteAnimation.spriteList(
+                await Future.wait([
+                  Sprite.load(asset, srcSize: enemySize, srcPosition: Vector2(128 * 0, 0)),
+                  Sprite.load(asset, srcSize: enemySize, srcPosition: Vector2(128 * 1, 0)),
+                  Sprite.load(asset, srcSize: enemySize, srcPosition: Vector2(128 * 2, 0)),
+                  Sprite.load(asset, srcSize: enemySize, srcPosition: Vector2(128 * 3, 0)),
+                  // Add as many frames as you have
+                ]),
+                stepTime: 0.5, // Time each frame is displayed
+              );
+              enemy.attackAnimation = SpriteAnimation.spriteList(
+                await Future.wait([
+                  Sprite.load(asset, srcSize: enemySize, srcPosition: Vector2(128 * 0, 128)),
+                  Sprite.load(asset, srcSize: enemySize, srcPosition: Vector2(128 * 1, 128)),
+                  Sprite.load(asset, srcSize: enemySize, srcPosition: Vector2(128 * 2, 128)),
+                  // Add as many frames as you have
+                ]),
+                stepTime: 0.2, // Time each frame is displayed
+              );
+            } else {
+              enemySize = Vector2.all(128);
+              asset = 'assets/images/enemies/boss-intro.png';
+              enemy.moveAnimation = SpriteAnimation.spriteList(
+                  await Future.wait([
+                    Sprite.load(asset, srcSize: enemySize, srcPosition: Vector2(128 * 0, 0)),
+                  ]),
+                  stepTime: 0.5);
+              enemy.attackAnimation = SpriteAnimation.spriteList(
+                  await Future.wait([
+                    Sprite.load(asset, srcSize: enemySize, srcPosition: Vector2(128 * 0, 0)),
+                  ]),
+                  stepTime: 0.2);
+            }
+          } else if (type == 'Garbage') {
+            enemy = Garbage(
+              level: level.number,
+              asset: rnd.nextDouble() * 2 < 1
+                  ? 'assets/images/enemies/garbage1.png'
+                  : 'assets/images/enemies/garbage2.png',
+              maxHealth: 100,
+              armor: level.number * 10,
+            );
+          } else {
+            enemy = Garbage(
+              level: level.number,
+              maxHealth: 100,
+              armor: level.number * 10,
+            );
           }
+          PositionComponent enemyComponent;
+          if (type == 'Garbage') {
+            enemyComponent = GarbageEntity(
+              enemy,
+              game.images.fromCache(enemy.asset),
+              position: position,
+              targetPosition: target?.position,
+              size: enemySize,
+              priority: 1,
+              anchor: Anchor.topCenter,
+            );
+          } else {
+            print(type);
+            print(enemy);
+            enemyComponent = EnemyAnimationEntity(
+              enemy: enemy,
+              size: enemySize,
+              position: position,
+              priority: 1,
+            );
+            if (type == 'Boss') {
+              (enemyComponent as EnemyAnimationEntity).onKilled = () {
+                onBossKilled?.call(enemyComponent);
+              };
+            }
+          }
+          if (flip == true) enemyComponent.flipHorizontallyAroundCenter();
+          add(enemyComponent);
 
           break;
 
         case 'Door':
           final nextDoor = spawnPoint.properties.getValue<int>('Target');
+          final nextScene = spawnPoint.properties.getValue<bool>('NextScene');
           final nextLevel = spawnPoint.properties.getValue<bool>('NextLevel');
           final door = Door(
             game.spriteSheet,
@@ -221,12 +306,17 @@ class SceneComponent extends Component
                 parent.camera.moveTo(_player.position);
                 // Not allow to go back
                 _player.animation.resetLast2Second();
-                parent.camera.follow(_player, maxSpeed: cameraSpeed, snap: true);
+                parent.camera.follow(_player, maxSpeed: kCameraSpeed, snap: true);
               }
-              if (nextLevel == true) parent.nextScene();
+              if (nextScene == true) parent.nextScene();
+              if (nextLevel == true) parent.nextLevel();
             },
           );
-          add(door);
+          if (level != GameLevel.lv2) {
+            add(door);
+          } else {
+            (script as Level1AScript).door = door;
+          }
           break;
 
         case 'Equipment':
@@ -239,6 +329,13 @@ class SceneComponent extends Component
           );
           add(equipmentComponent);
           break;
+
+        case 'Brick':
+          final offsetX = spawnPoint.properties.getValue<int>('TileOffsetX');
+          final offsetY = spawnPoint.properties.getValue<int>('TileOffsetY');
+          final brick = BrickComponent(game.spriteSheet,
+              offsetX: offsetX, offsetY: offsetY, position: position, size: size, priority: 0);
+          add(brick);
       }
     }
   }
@@ -287,18 +384,19 @@ class SceneComponent extends Component
   }
 
   void _startScript() {
-    if (level.number == 1) {
-      final introScript = IntroScript();
-      add(introScript);
-      onBossKilled = introScript.onBossKilled;
-      onRewardPicked = introScript.onRewardPicked;
+    // Component script;
+    if (level == GameLevel.lv1) {
+      script = IntroScript();
+      onBossKilled = (script as IntroScript).onBossKilled;
+      onRewardPicked = (script as IntroScript).onRewardPicked;
+    } else if (level == GameLevel.lv2 && sceneIndex == 0) {
+      script = Level1AScript();
+    } else if (level == GameLevel.lv2 && sceneIndex == 1) {
+      script = Level1AScript();
+    } else {
+      script = Component();
     }
-  }
-
-  void _mouseMoveHadler() {
-    final cursorAbsolutePosition = game.camera.globalToLocal(game.playerData.currentMousePosition.value);
-    final cursorPosition = _player.position + cursorAbsolutePosition / game.zoom;
-    cursor.position = cursorPosition;
+    add(script);
   }
 }
 

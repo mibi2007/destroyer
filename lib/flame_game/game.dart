@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:destroyer/flame_game/entities/enemy.entity.dart';
 import 'package:destroyer/level_selection/levels.dart';
 import 'package:destroyer/models/equipments.dart';
 import 'package:flame/components.dart';
@@ -16,7 +17,6 @@ import '../models/player_data/player_data.dart';
 import '../player_progress/player_progress.dart';
 import '../utils/disabler.dart';
 import 'components/background.dart';
-import 'components/enemy.dart';
 import 'game_world.dart';
 
 /// This is the base of the game which is added to the [GameWidget].
@@ -98,9 +98,14 @@ class DestroyerGame extends FlameGame
   void rightClickHandler() {
     final clickPosition = playerData.currentMousePosition.value;
     playerData.selectedLocation.value = clickPosition;
-    final enemyList = componentsAtPoint(clickPosition).whereType<EnemySpriteComponent>().toList();
+    final enemyList =
+        componentsAtPoint(clickPosition).where((com) => (com is EnemyEntity) || com is EnemyAnimationEntity).toList();
+    // [
+    //   ...componentsAtPoint(clickPosition).whereType<EnemyEntity>(),
+    //   ...componentsAtPoint(clickPosition).whereType<EnemyAnimationEntity>()
+    // ];
     if (enemyList.isNotEmpty) {
-      playerData.selectedTarget.value = enemyList.first;
+      playerData.selectedTarget.value = enemyList.first as PositionComponent;
       print(objectRuntimeType(playerData.selectedTarget.value, 'selectedTarget'));
     }
   }
@@ -117,7 +122,10 @@ class DestroyerGame extends FlameGame
 
     // The backdrop is a static layer behind the world that the camera is
     // looking at, so here we add our parallax background.
-    background = Background();
+    background = Background(level, sceneIndex);
+    if (level == GameLevel.lv2) {
+      background.position = Vector2(background.position.x, background.position.y - 150);
+    }
     camera.backdrop.add(background);
 
     rightClick.addListener(rightClickHandler);
@@ -168,9 +176,21 @@ class DestroyerGame extends FlameGame
     await images.load('assets/images/skills-and-effects/Spell_Immunity_icon.webp');
     await images.load('assets/images/skills-and-effects/Requiem_of_Souls_effect.png');
     await images.load('assets/images/skills-and-effects/Chronosphere_effect.png');
+    await images.load('assets/images/skills-and-effects/night.png');
+    await images.load('assets/images/skills-and-effects/electrict.png');
 
     // Negative effects
     await images.load('assets/images/skills-and-effects/Kinetic_Field_icon.webp');
+
+    // Other images
+    await images.load('assets/images/hand-hold-dark-shard.png');
+    await images.load('assets/images/enemies/boss1.png');
+    await images.load('assets/images/enemies/garbage1.png');
+    await images.load('assets/images/enemies/garbage2.png');
+    await images.load('assets/images/enemies/boss-intro.png');
+    await images.load('assets/animations/slash.png');
+    await images.load('assets/animations/electric.png');
+    await images.load('assets/animations/flame.png');
     add(FpsTextComponent());
 
     add(DestroyerGameWorld());

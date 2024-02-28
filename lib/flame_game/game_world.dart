@@ -8,6 +8,8 @@ import '../hud/hud.dart';
 import '../level_selection/level.dart';
 import 'game_screen.dart';
 
+const double kCameraSpeed = 200;
+
 /// The world is where you place all the components that should live inside of
 /// the game, like the player, enemies, obstacles and points for example.
 /// The world can be much bigger than what the camera is currently looking at,

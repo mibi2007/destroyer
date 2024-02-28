@@ -27,14 +27,17 @@ class RequiemOfSoulsSkillComponent extends SpriteComponent with CollisionCallbac
     size = Vector2(0, 0);
     add(CircleHitbox());
     add(SizeEffect.to(Vector2(1200, 1200), animationController));
-    Future.delayed(Duration(milliseconds: (duration * 1000).toInt()), () {
-      add(OpacityEffect.fadeOut(
-        LinearEffectController(0.5),
-        onComplete: () {
-          game.playerData.souls.value = 0;
-          add(RemoveEffect());
-        },
-      ));
-    });
+    add(TimerComponent(
+      period: duration, // The period in seconds
+      onTick: () {
+        add(OpacityEffect.fadeOut(
+          LinearEffectController(0.5),
+          onComplete: () {
+            game.playerData.souls.value = 0;
+            add(RemoveEffect());
+          },
+        ));
+      },
+    ));
   }
 }

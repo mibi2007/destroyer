@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:provider/provider.dart' hide Provider;
 
 import 'flame_game/game_screen.dart';
@@ -26,7 +25,8 @@ final router = GoRouter(
             color: context.watch<Palette>().backgroundLevelSelection.color,
             child: LevelSelectionScreen(
               key: Key('level selection'),
-              isTesting: state.uri.queryParameters['test'] == 'true',
+              // isTesting: state.uri.queryParameters['test'] == 'true',
+              isTesting: true,
             ),
           ),
           routes: [
@@ -42,7 +42,8 @@ final router = GoRouter(
                   child: GameScreen(
                     level: level,
                     sceneIndex: sceneIndex,
-                    isTesting: state.uri.queryParameters['test'] == 'true',
+                    // isTesting: state.uri.queryParameters['test'] == 'true',
+                    isTesting: true,
                   ),
                 );
               },
@@ -60,9 +61,9 @@ final router = GoRouter(
   ],
 );
 
-final navigationProvider = Provider<Function>((ref) {
-  // This function can be used to navigate using go_router
-  return (BuildContext context, String sessionId) {
-    GoRouter.of(context).go('/session/$sessionId');
-  };
-});
+// final navigationProvider = Provider<Function>((ref) {
+//   // This function can be used to navigate using go_router
+//   return (BuildContext context, String sessionId) {
+//     GoRouter.of(context).go('/session/$sessionId/0');
+//   };
+// });

@@ -165,34 +165,43 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
     if (game.playerData.casting.value != null) return;
     final skill = game.playerData.sword.value.skills[skillIndex];
     final index = game.playerData.skills.value.indexWhere((s) => s == skill);
-    if (skill.countdown == 0) return;
+    if (skill.cooldown == 0) return;
     if (game.playerData.skillCountdown.value[index]) return;
-    Future.delayed(Duration(milliseconds: skill.casttime.toInt() * 1000)).then((_) {
-      if (skill.effects.isNotEmpty && !skill.passive) {
-        // print(skill.effects);
-        for (var effect in skill.effects) {
-          if (effect.duration != 0) {
-            game.playerData.effects.addAll([effect]);
-            Future.delayed(Duration(milliseconds: (effect.duration * 1000).toInt()), () {
-              // print('removed effect');
-              game.playerData.effects.remove(effect);
-            });
+    add(TimerComponent(
+      period: skill.castTime, // The period in seconds
+      onTick: () {
+        if (skill.effects.isNotEmpty && !skill.passive) {
+          // print(skill.effects);
+          for (var effect in skill.effects) {
+            if (effect.duration != 0) {
+              game.playerData.effects.addAll([effect]);
+              add(TimerComponent(
+                period: effect.duration, // The period in seconds
+                onTick: () {
+                  game.playerData.effects.remove(effect);
+                },
+              ));
+            }
           }
+          // print(effect);
+          // print(game.playerData.effects.value);
         }
-        // print(effect);
-        // print(game.playerData.effects.value);
-      }
-      game.playerData.casting.value = null;
-      // print('set null');
-    });
-    Future.delayed(Duration(seconds: skill.countdown.toInt()), () {
-      game.playerData.skillCountdown.updateAt(index, false);
-    });
+        game.playerData.casting.value = null;
+        // print('set null');
+      },
+    ));
+    add(TimerComponent(
+      period: game.isTesting ? 1 : skill.cooldown, // The period in seconds
+      onTick: () {
+        game.playerData.skillCountdown.updateAt(index, false);
+      },
+    ));
+
     game.playerData.casting.value = skill;
     game.playerData.skillCountdown.updateAt(index, true);
 
     final skillComponent = skills.firstWhere((c) => c.skill == skill);
-    skillComponent.startCountdown(skill.countdown);
+    skillComponent.startCountdown(game.isTesting ? 1 : skill.cooldown);
   }
 
   // Detect if player cast same skill key twice to target self
@@ -228,7 +237,7 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
     // Load game over overlay if health is zero.
     if (game.playerData.health.value <= 0) {
       // AudioManager.stopBgm();
-      game.pauseEngine();
+      // game.pauseEngine();
       game.overlays.add(GameOver.id);
     }
   }
@@ -266,8 +275,6 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
     final newSword = game.playerData.sword.value;
     final newIndex = equipments.indexWhere(((c) => (c.item as Sword).type == newSword.type));
 
-    // Make sure the selected sword has been changed completely before adding the effect
-    // Future.delayed(const Duration(milliseconds: 500), () {
     for (var i = 0; i < equipments.length; i++) {
       for (final e in equipments[i].children.whereType<Effect>()) {
         // if (e is ColorEffect) {
@@ -288,8 +295,9 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
       Vector2.all(1),
       EffectController(duration: 0.1),
     ));
-    // });
+
     updateSkill();
+
     if (game.playerData.lastSword.value != null && game.playerData.lastSword.value!.skills.isNotEmpty) {
       final removeEffects = game.playerData.lastSword.value!.skills
           .map((s) => s.effects)

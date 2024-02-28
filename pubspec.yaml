@@ -13,8 +13,10 @@ dependencies:
   audioplayers: ^5.2.1
   flame: ^1.16.0
   flame_audio: ^2.10.0
+  flame_behaviors: ^1.1.0
   flame_rive: ^1.10.0
   flame_riverpod: ^5.3.0
+  flame_steering_behaviors: ^0.1.0
   flame_tiled: ^1.19.0
   flutter:
     sdk: flutter
@@ -41,6 +43,8 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/images/characters/
+    - assets/images/enemies/
     - assets/images/hud/
     - assets/images/skills-and-effects/
     - assets/images/equipments/swords/

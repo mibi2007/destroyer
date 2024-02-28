@@ -1,7 +1,6 @@
+import 'package:destroyer/flame_game/entities/player.entity.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-
-import 'player.dart';
 
 // Represents a door in the game world.
 class Door extends SpriteComponent with CollisionCallbacks {
@@ -28,7 +27,7 @@ class Door extends SpriteComponent with CollisionCallbacks {
 
   @override
   void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
-    if (other is PlayerAnimationComponent) {
+    if (other is PlayerAnimationEntity) {
       // AudioManager.playSfx('Blop_1.wav');
       onPlayerEnter?.call();
     }

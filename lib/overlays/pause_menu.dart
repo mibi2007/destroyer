@@ -1,4 +1,3 @@
-import 'package:destroyer/overlays/config.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -19,7 +18,7 @@ class PauseMenu extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              width: 100,
+              width: 200,
               child: ElevatedButton(
                 onPressed: () {
                   // AudioManager.resumeBgm();
@@ -29,24 +28,22 @@ class PauseMenu extends StatelessWidget {
                 child: const Text('Resume'),
               ),
             ),
+            const SizedBox(height: 30),
+            // SizedBox(
+            //   width: 200,
+            //   child: ElevatedButton(
+            //     onPressed: () {
+            //       game.overlays.remove(id);
+            //       game.overlays.add(Config.id);
+            //     },
+            //     child: const Text('Exit'),
+            //   ),
+            // ),
             SizedBox(
-              width: 100,
+              width: 200,
               child: ElevatedButton(
                 onPressed: () {
-                  game.overlays.remove(id);
-                  game.overlays.add(Config.id);
-                },
-                child: const Text('Exit'),
-              ),
-            ),
-            SizedBox(
-              width: 100,
-              child: ElevatedButton(
-                onPressed: () {
-                  game.overlays.remove(id);
-                  game.resumeEngine();
-                  game.removeAll(game.children);
-                  context.go('/');
+                  context.pop();
                 },
                 child: const Text('Exit'),
               ),

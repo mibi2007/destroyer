@@ -38,12 +38,13 @@ class PlayerData {
   final angleToSigned = ValueNotifier<double>(0);
   final currentMousePosition = ValueNotifier<Vector2>(Vector2.zero());
   final effects = ValueNotifierList<SkillEffect>([]);
-  final selectedTarget = ValueNotifier<SpriteComponent?>(null);
+  final selectedTarget = ValueNotifier<PositionComponent?>(null);
   final selectedLocation = ValueNotifier<Vector2?>(null);
   final skillCountdown = ValueNotifierList<bool>([]);
   final casting = ValueNotifier<Skill?>(null);
   final autoAttack = DoubleTapNotifier();
   final souls = ValueNotifier<int>(0);
+  final garbages = ValueNotifier<int>(0);
 }
 
 class ValueNotifierList<T> extends ValueNotifier<List<T>> {

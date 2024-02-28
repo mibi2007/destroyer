@@ -20,7 +20,8 @@ mixin HealthBar on PositionComponent {
   void updateHealthBar(double value) {
     currentHealth = value.clamp(0, maxHealth);
     healthBar.size.x = (currentHealth / maxHealth) * width; // Update the width of the health bar
-    healthBar.paint.color = currentHealth > maxHealth * 0.5 ? Colors.green : Colors.red; // Change color based on health
+    healthBar.paint.color =
+        currentHealth > maxHealth * 0.2 ? Colors.green : Colors.red; // Change color based on healthdimension
   }
 
   @override

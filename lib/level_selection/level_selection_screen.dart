@@ -97,8 +97,9 @@ class LevelSelectionScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Credits: ${playerProgress.credits}', style: Theme.of(context).textTheme.bodyMedium),
-              const SizedBox(width: 16),
+              Image.asset('assets/images/coin.png', width: 40, height: 40, fit: BoxFit.contain),
+              Text(':${playerProgress.credits}', style: Theme.of(context).textTheme.bodyMedium),
+              const SizedBox(width: 100),
               WobblyButton(
                 onPressed: () {
                   NesDialog.show(

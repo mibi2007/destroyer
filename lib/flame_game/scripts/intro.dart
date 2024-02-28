@@ -8,7 +8,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:nes_ui/nes_ui.dart';
 
 import '../../level_selection/level.dart';
-import '../components/enemy.dart';
 import '../components/equipment.dart';
 import '../components/equipments/weapon.dart';
 import '../game.dart';
@@ -21,20 +20,39 @@ class IntroScript extends Component
     // Other configurations for your text box...
   );
 
+  late Timer _timer;
+  int _seconds = 0;
+  late TextBoxComponent firstDialog;
+  int _afterClosedFirstDialogSecond = -1;
+
   @override
   FutureOr<void> onLoad() {
-    // game.overlays.add(PurifySwordPicked.id);
-  }
-
-  TextBoxComponent showFirstDialog() {
-    return TextBoxComponent(
-      text: 'Your text here', // The text you want to display
+    firstDialog = TextBoxComponent(
+      text: 'This place is', // The text you want to display
       boxConfig: textBoxConfig,
-      // Other properties for your text box...
+      anchor: Anchor.bottomLeft,
     );
+    _timer = Timer(1, onTick: () {
+      _seconds++;
+      if (_seconds == 3) {
+        showPlayerFirstDialog();
+      }
+      if (_afterClosedFirstDialogSecond >= 0) {
+        _afterClosedFirstDialogSecond++;
+      }
+      if (_afterClosedFirstDialogSecond == 3) {}
+    });
   }
 
-  void onBossKilled(EnemySpriteComponent boss) {
+  void showPlayerFirstDialog() {
+    firstDialog.position = game.playerData.position.value;
+    parent.add(firstDialog);
+
+    // Start the timer to next action
+    _afterClosedFirstDialogSecond = 0;
+  }
+
+  void onBossKilled(PositionComponent boss) {
     final newSword = Sword.purifier(1);
     final swordImage = game.images.fromCache(newSword.iconAsset);
     final sword = SwordComponent(
@@ -44,7 +62,7 @@ class IntroScript extends Component
       sprite: Sprite(swordImage),
     );
     parent.add(sword);
-    sword.add(MoveByEffect(Vector2(0, 120), CurvedEffectController(1.0, Curves.easeInOut)));
+    sword.add(MoveByEffect(Vector2(0, 180), CurvedEffectController(1.0, Curves.easeInOut)));
   }
 
   void onRewardPicked(EquipmentComponent equipment) {
@@ -52,9 +70,12 @@ class IntroScript extends Component
     newEquipments.removeWhere((item) => item is Sword && item.type == SwordType.desolator);
     game.setEquipments(newEquipments);
     world.finishedLevel();
-    Future.delayed(const Duration(milliseconds: 1000), () {
-      game.overlays.add(PurifySwordPickedDialog.id);
-    });
+    add(TimerComponent(
+      period: 1, // The period in seconds
+      onTick: () {
+        game.overlays.add(PurifySwordPickedDialog.id);
+      },
+    ));
   }
 
   // void _showDialog(String s) {
@@ -65,6 +86,12 @@ class IntroScript extends Component
   //   );
   //   parent.add(dialog);
   // }
+
+  @override
+  void update(double dt) {
+    _timer.update(dt);
+    super.update(dt);
+  }
 }
 
 class PurifySwordPickedDialog extends StatelessWidget {

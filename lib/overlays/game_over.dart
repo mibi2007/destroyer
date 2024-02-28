@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../flame_game/game.dart';
-import '../flame_game/game_world.dart';
-import 'main_menu.dart';
 
 class GameOver extends StatelessWidget {
   static const id = 'GameOver';
@@ -19,25 +18,20 @@ class GameOver extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              width: 100,
+              width: 200,
               child: ElevatedButton(
                 onPressed: () {
-                  game.overlays.remove(id);
-                  game.resumeEngine();
-                  game.removeAll(game.children);
-                  game.add(DestroyerGameWorld());
+                  context.replace(GoRouter.of(context).routeInformationProvider.value.uri.path);
                 },
                 child: const Text('Restart'),
               ),
             ),
+            const SizedBox(height: 30),
             SizedBox(
-              width: 100,
+              width: 200,
               child: ElevatedButton(
                 onPressed: () {
-                  game.overlays.remove(id);
-                  game.resumeEngine();
-                  game.removeAll(game.children);
-                  game.overlays.add(MainMenu.id);
+                  context.pop();
                 },
                 child: const Text('Exit'),
               ),

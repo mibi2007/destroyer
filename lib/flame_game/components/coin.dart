@@ -1,10 +1,10 @@
+import 'package:destroyer/flame_game/entities/player.entity.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flutter/animation.dart';
 
 import '../game.dart';
-import 'player.dart';
 
 // Represents a collectable coin in the game world.
 class Coin extends SpriteComponent with CollisionCallbacks, HasGameReference<DestroyerGame> {
@@ -42,7 +42,7 @@ class Coin extends SpriteComponent with CollisionCallbacks, HasGameReference<Des
 
   @override
   void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
-    if (other is PlayerAnimationComponent) {
+    if (other is PlayerAnimationEntity) {
       // AudioManager.playSfx('Collectibles_6.wav');
 
       // SequenceEffect can also be used here

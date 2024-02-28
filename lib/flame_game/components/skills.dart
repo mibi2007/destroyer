@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:ui' hide TextStyle;
 
+import 'package:destroyer/flame_game/entities/enemy.entity.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
@@ -13,7 +14,6 @@ import '../../hud/hud.dart';
 import '../../level_selection/level.dart';
 import '../../models/skills.dart';
 import '../game.dart';
-import 'enemy.dart';
 import 'platform.dart';
 
 const beginColor = Color.fromARGB(255, 255, 60, 0);
@@ -28,10 +28,13 @@ mixin Countdown on PositionComponent {
 
     final clipComponent = ClipComponent.rectangle(position: Vector2(0, 0), size: size, children: [countdownComponent!]);
     add(clipComponent);
-    Future.delayed(Duration(seconds: countdownTime.toInt()), () {
-      if (countdownComponent != null) countdownComponent!.removeFromParent();
-      countdownComponent = null;
-    });
+    add(TimerComponent(
+      period: countdownTime, // The period in seconds
+      onTick: () {
+        if (countdownComponent != null) countdownComponent!.removeFromParent();
+        countdownComponent = null;
+      },
+    ));
   }
 
   // @override
@@ -61,7 +64,7 @@ class CountdownComponent extends PositionComponent {
   @override
   void render(Canvas canvas) {
     // Reduce the number of renders
-    if (_timeTick < 0.01) return;
+    // if (_timeTick < 0.01) return;
     super.render(canvas);
     // Draw the skill icon
 
@@ -172,7 +175,13 @@ class SkillComponent extends PositionComponent with HasGameReference<DestroyerGa
 class Fireball extends SpriteComponent
     with HasGameReference<DestroyerGame>, ParentIsA<SceneComponent>, CollisionCallbacks {
   final Vector2 velocity;
-  Fireball({required Vector2 position, required double angle, required double speed, required this.velocity})
+  final double damage;
+  Fireball(
+      {required Vector2 position,
+      required double angle,
+      required double speed,
+      required this.velocity,
+      required this.damage})
       : super(
           sprite: Sprite(Flame.images.fromCache('assets/images/equipments/swords/fireball.png')),
           position: position,
@@ -231,7 +240,7 @@ class Fireball extends SpriteComponent
   @override
   void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollisionStart(intersectionPoints, other);
-    if (other is Platform || other is EnemySpriteComponent) {
+    if (other is Platform || other is EnemyEntity) {
       // TODO: play explosion
       removeFromParent();
     }

@@ -1,9 +1,9 @@
+import 'package:destroyer/flame_game/entities/player.entity.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 
 import '../equipment.dart';
-import '../player.dart';
 
 class ArmorComponent extends EquipmentComponent with CollisionCallbacks {
   ArmorComponent({
@@ -26,7 +26,7 @@ class ArmorComponent extends EquipmentComponent with CollisionCallbacks {
 
   @override
   void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
-    if (other is PlayerAnimationComponent) {
+    if (other is PlayerAnimationEntity) {
       // AudioManager.playSfx('Collectibles_6.wav');
 
       // SequenceEffect can also be used here

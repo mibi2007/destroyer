@@ -3,13 +3,25 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "d:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/intro.tmx",
+    "activeFile": "d:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/Level2.tmx",
     "expandedProjectPaths": [
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "": {
-            "scaleInDock": 2
+            "scaleInDock": 1
+        },
+        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/0x72_DungeonTilesetII_v1.4.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/Level1.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 278.5,
+                "y": 191.5
+            }
         },
         "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/Level2.tmx": {
             "expandedObjectLayers": [
@@ -32,31 +44,102 @@
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
+        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map1.tmx": {
+            "expandedObjectLayers": [
+                3
+            ],
+            "scale": 1,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 1424.5,
+                "y": 390.5
+            }
+        },
+        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map2.tmx": {
+            "expandedObjectLayers": [
+                3,
+                4,
+                5
+            ],
+            "scale": 3,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 966.4999999999999,
+                "y": 1827.1666666666665
+            }
+        },
+        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map2_1.tmx": {
+            "expandedObjectLayers": [
+                3
+            ],
+            "scale": 0.5,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 2525,
+                "y": 1693
+            }
+        },
+        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map3.tmx": {
+            "scale": 1,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 529.5,
+                "y": 479.5
+            }
+        },
+        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map4.tmx": {
+            "expandedObjectLayers": [
+                3
+            ],
+            "scale": 0.25,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 2434,
+                "y": 1758
+            }
+        },
+        "d:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/0x72_DungeonTilesetII_v1.4.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
         "d:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/Buildings.tsx": {
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
         "d:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/Level1.tmx": {
             "expandedObjectLayers": [
-                4,
-                3
+                3,
+                4
             ],
             "scale": 0.75,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 653.3333333333334,
-                "y": 431.33333333333337
+                "x": 652.6666666666666,
+                "y": 429.9999999999999
             }
         },
         "d:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/Level2.tmx": {
             "expandedObjectLayers": [
-                3
+                3,
+                4
             ],
             "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 749,
-                "y": 2508.5
+                "x": 647.5,
+                "y": 1058.5
+            }
+        },
+        "d:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/Level3.tmx": {
+            "expandedObjectLayers": [
+                3,
+                4
+            ],
+            "scale": 0.5,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 589,
+                "y": 151
             }
         },
         "d:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/Spritesheet.tsx": {
@@ -67,38 +150,77 @@
             "scaleInDock": 2,
             "scaleInEditor": 1
         },
+        "d:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/Village.tsx": {
+            "scaleInDock": 0.75,
+            "scaleInEditor": 1
+        },
+        "d:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/animation.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "d:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/dungeon.tmx": {
+            "scale": 4.6846875,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 79.94129811220066,
+                "y": 80.15475952238009
+            }
+        },
         "d:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/intro.tmx": {
             "expandedObjectLayers": [
-                2,
-                3
+                3,
+                2
             ],
             "scale": 0.5,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 865,
-                "y": 927
+                "x": 1259,
+                "y": 925
+            }
+        },
+        "d:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map2_2.tmx": {
+            "expandedObjectLayers": [
+                3,
+                4
+            ],
+            "scale": 0.5,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 1267,
+                "y": 805
             }
         }
     },
-    "last.imagePath": "D:/Documents/games/GlobalCitizenFestival2024/destroyer/design/maps/Legacy-Fantasy - High Forest 2.3/Assets",
+    "frame.defaultDuration": 180,
+    "last.imagePath": "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/animations",
     "map.lastUsedFormat": "tmx",
     "map.layerDataFormat": null,
     "openFiles": [
         "d:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/intro.tmx",
         "d:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/Level1.tmx",
-        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/Level2.tmx"
+        "d:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/Level2.tmx",
+        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/Spritesheet.tsx"
     ],
     "project": "destroyer.tiled-project",
-    "property.type": "int",
+    "property.type": "bool",
     "recentFiles": [
-        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/Tiles.tsx",
-        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/Buildings.tsx",
-        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/Spritesheet.tsx",
-        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/Level2.tmx",
+        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/animation.tsx",
+        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/0x72_DungeonTilesetII_v1.4.tsx",
+        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/dungeon.tmx",
+        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/intro.tmx",
         "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/Level1.tmx",
-        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/intro.tmx"
+        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/Level2.tmx",
+        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/Level3.tmx",
+        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/Village.tsx",
+        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/Spritesheet.tsx",
+        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/Tiles.tsx",
+        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/Buildings.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 192,
+        "width": 192
+    },
     "tileset.transparentColor": "#000000",
     "tileset.useTransparentColor": true
 }

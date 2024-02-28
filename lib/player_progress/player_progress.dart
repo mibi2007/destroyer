@@ -54,6 +54,7 @@ class PlayerProgress extends ChangeNotifier {
     _store.reset();
     _levelsFinished.clear();
     _equipments.clear();
+    _credits = 0;
     notifyListeners();
   }
 

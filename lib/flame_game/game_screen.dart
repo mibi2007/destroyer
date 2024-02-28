@@ -5,6 +5,8 @@ import 'package:nes_ui/nes_ui.dart';
 
 import '../audio/audio_controller.dart';
 import '../level_selection/levels.dart';
+import '../overlays/game_over.dart';
+import '../overlays/pause_menu.dart';
 import 'game.dart';
 import 'game_win_dialog.dart';
 import 'scripts/intro.dart';
@@ -74,6 +76,8 @@ class GameScreen extends StatelessWidget {
                   );
                 },
                 PurifySwordPickedDialog.id: (context, game) => PurifySwordPickedDialog(game: game),
+                GameOver.id: (context, game) => GameOver(game: game),
+                PauseMenu.id: (context, game) => PauseMenu(game: game),
               },
             ),
           ),
