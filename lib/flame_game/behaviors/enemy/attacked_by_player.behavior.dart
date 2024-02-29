@@ -8,11 +8,11 @@ import 'package:flame_behaviors/flame_behaviors.dart';
 import '../../../models/skills.dart';
 import '../../../skills/lightning_particle.dart';
 import '../../../skills/requiem_of_souls.dart';
-import '../../components/enemies/enemy_collision.dart';
 import '../../components/skills.dart';
 import '../../entities/enemy.entity.dart';
 import '../../entities/player.entity.dart';
 import '../../game.dart';
+import 'enemy_collision.dart';
 
 class HitBySlash extends CollisionBehavior<Slash, EntityMixin> with HasGameRef<DestroyerGame> {
   static const String _asset = 'assets/animations/slash.png';
@@ -23,10 +23,12 @@ class HitBySlash extends CollisionBehavior<Slash, EntityMixin> with HasGameRef<D
     final Vector2 srcSize = Vector2.all(_dimension);
     if (parent is EnemyEntity) {
       final castType = parent as EnemyEntity;
+      if (castType.isCursed) return;
       final dmg = other.sword.damage - castType.enemy.armor;
       _damage<EnemyEntity>(dmg, srcSize);
     } else if (parent is EnemyAnimationEntity) {
       final castType = parent as EnemyAnimationEntity;
+      if (castType.isCursed) return;
       final dmg = other.sword.damage - castType.enemy.armor;
       _damage<EnemyAnimationEntity>(dmg, srcSize);
     }
@@ -84,6 +86,7 @@ class BurnSkill extends Component with HasGameRef<DestroyerGame> {
 
   void onCollisionStart<T extends EnemyCollision>(double dmg, double burnTime) {
     final parent = behavior.parent as T;
+    if (parent.isCursed) return;
     parent.isBurned = true;
     // double dmg = 0;
     // if (other is Fireball) dmg = other.damage - parent.enemy.armor;
@@ -126,13 +129,17 @@ class HitByFireball extends CollisionBehavior<Fireball, EntityMixin> with HasGam
   @override
   void onCollisionStart(Set<Vector2> intersectionPoints, Fireball other) {
     if (parent is EnemyEntity) {
-      final dmg = other.damage - (parent as EnemyEntity).enemy.armor;
+      final typeCast = parent as EnemyEntity;
+      if (typeCast.isCursed) return;
+      final dmg = other.damage - typeCast.enemy.armor;
       final burnSkill = BurnSkill.fromFireball(this);
       game.add(burnSkill);
       burnSkill.onCollisionStart(dmg, _burnTime);
     }
     if (parent is EnemyAnimationEntity) {
-      final dmg = other.damage - (parent as EnemyAnimationEntity).enemy.armor;
+      final typeCast = parent as EnemyAnimationEntity;
+      if (typeCast.isCursed) return;
+      final dmg = other.damage - typeCast.enemy.armor;
       final burnSkill = BurnSkill.fromFireball(this);
       game.add(burnSkill);
       burnSkill.onCollisionStart(dmg, _burnTime);
@@ -145,15 +152,18 @@ class HitByRequiemOfSouls extends CollisionBehavior<RequiemOfSoulsSkillComponent
   static const _burnTime = 1.0;
   @override
   void onCollisionStart(Set<Vector2> intersectionPoints, RequiemOfSoulsSkillComponent other) {
-    print('hit by fireball');
     if (parent is EnemyEntity) {
-      final dmg = other.skill.damage - (parent as EnemyEntity).enemy.armor;
+      final typeCast = parent as EnemyEntity;
+      if (typeCast.isCursed) return;
+      final dmg = other.skill.damage - typeCast.enemy.armor;
       final burnSkill = BurnSkill.fromRequiemOfSoulsSkillComponent(this);
       game.add(burnSkill);
       burnSkill.onCollisionStart(dmg, _burnTime);
     }
     if (parent is EnemyAnimationEntity) {
-      final dmg = other.skill.damage - (parent as EnemyAnimationEntity).enemy.armor;
+      final typeCast = parent as EnemyAnimationEntity;
+      if (typeCast.isCursed) return;
+      final dmg = other.skill.damage - typeCast.enemy.armor;
       final burnSkill = BurnSkill.fromRequiemOfSoulsSkillComponent(this);
       game.add(burnSkill);
       burnSkill.onCollisionStart(dmg, _burnTime);
@@ -186,6 +196,7 @@ class ElectricShockEffect extends Component with HasGameRef<DestroyerGame> {
 
   void onCollisionStart<T extends EnemyCollision>(double dmg) {
     final parent = behavior.parent as T;
+    if (parent.isCursed) return;
     final srcSize = Vector2.all(_dimension);
     parent.isElectricShocked = true;
     parent.currentHealth -= dmg.toInt();
@@ -226,15 +237,19 @@ class HitByLightningBall extends CollisionBehavior<PlayerAnimationEntity, Entity
   void onCollisionStart(Set<Vector2> intersectionPoints, PlayerAnimationEntity other) {
     if (!other.isLightning) return;
     if (parent is EnemyEntity) {
+      final typeCast = parent as EnemyEntity;
+      if (typeCast.isCursed) return;
       final electricShockEffect = ElectricShockEffect.fromBallLightning(this, _electricShockTime);
       add(electricShockEffect);
-      final dmg = Skills.ballLightning.damage - (parent as EnemyEntity).enemy.armor;
+      final dmg = Skills.ballLightning.damage - typeCast.enemy.armor;
       electricShockEffect.onCollisionStart(dmg);
     }
     if (parent is EnemyAnimationEntity) {
+      final typeCast = parent as EnemyAnimationEntity;
+      if (typeCast.isCursed) return;
       final electricShockEffect = ElectricShockEffect.fromBallLightning(this, _electricShockTime);
       add(electricShockEffect);
-      final dmg = Skills.ballLightning.damage - (parent as EnemyAnimationEntity).enemy.armor;
+      final dmg = Skills.ballLightning.damage - typeCast.enemy.armor;
       electricShockEffect.onCollisionStart(dmg);
     }
   }
@@ -245,16 +260,19 @@ class HitByThunderStrike extends CollisionBehavior<ThunderStrikeEffects, EntityM
   @override
   void onCollisionStart(Set<Vector2> intersectionPoints, ThunderStrikeEffects other) {
     if (parent is EnemyEntity) {
+      final typeCast = parent as EnemyEntity;
+      if (typeCast.isCursed) return;
       final electricShockEffect = ElectricShockEffect.fromThunderStrike(this, _electricShockTime);
       add(electricShockEffect);
-      final dmg = Skills.thunderStrike.damage - (parent as EnemyEntity).enemy.armor;
+      final dmg = Skills.thunderStrike.damage - typeCast.enemy.armor;
       electricShockEffect.onCollisionStart(dmg);
     }
     if (parent is EnemyAnimationEntity) {
+      final typeCast = parent as EnemyAnimationEntity;
+      if (typeCast.isCursed) return;
       final electricShockEffect = ElectricShockEffect.fromThunderStrike(this, _electricShockTime);
       add(electricShockEffect);
-      final dmg = Skills.thunderStrike.damage - (parent as EnemyAnimationEntity).enemy.armor;
-      print('hit by thunder strike: $dmg');
+      final dmg = Skills.thunderStrike.damage - typeCast.enemy.armor;
       electricShockEffect.onCollisionStart(dmg);
     }
   }

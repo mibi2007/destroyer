@@ -10,8 +10,8 @@ import 'package:flame_behaviors/flame_behaviors.dart';
 
 import '../../models/enemies.dart';
 import '../behaviors/enemy/attacked_by_player.behavior.dart';
+import '../behaviors/enemy/enemy_collision.dart';
 import '../components/damage_text.dart';
-import '../components/enemies/enemy_collision.dart';
 import '../components/health_bar.dart';
 import '../game.dart';
 
@@ -25,7 +25,6 @@ class EnemyEntity extends SpriteComponent
         EntityMixin,
         ShowDamageText {
   static final Vector2 _left = Vector2(-1, 0);
-  static final Vector2 _right = Vector2(1, 0);
   Vector2 direction = _left;
 
   // bool isHit = false;
@@ -160,7 +159,6 @@ class EnemyAnimationEntity extends SpriteAnimationComponent
 
   EnemyAnimationEntity({required this.enemy, required super.size, required super.position, required super.priority});
   late final Timer _timer;
-  final Vector2 _velocity = Vector2.zero();
 
   int _secondCount = 0;
 

@@ -71,7 +71,7 @@ class PlayerAnimationEntity extends RiveComponent
   int _vAxisInput = 0;
   bool _jumpInput = false;
   bool _isOnGround = false;
-  double _moveSpeed = defaultMoveSpeed;
+  final double _moveSpeed = defaultMoveSpeed;
   int _jumpCount = 0;
   // Direction direction = Direction(Vector2(1, 0));
   // double aim = 0;
@@ -591,7 +591,6 @@ class PlayerAnimationEntity extends RiveComponent
         speed: fireSpeed,
         damage: game.playerData.sword.value.damage,
       );
-      print('fireball');
       parent.parent.add(bullet);
     }
   }
@@ -637,9 +636,7 @@ class PlayerAnimationEntity extends RiveComponent
         lookingConstraint!.rotation = pi / 180;
       }
       if (skill.name == 'Repel') {
-        print('Repel');
       } else if (skill.name == 'Guardian Engel') {
-        print('Guardian Engel');
       } else if (skill.name == 'Time Walk') {
         game.playerData.casting.value = Skills.timeWalk;
 

@@ -1,5 +1,5 @@
 import 'package:flame/palette.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// A palette of colors to be used in the game.
 ///

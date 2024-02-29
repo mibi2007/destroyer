@@ -10,7 +10,7 @@ class Info extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       backgroundColor: Colors.black,
       body: Center(
         child: Column(
@@ -20,9 +20,9 @@ class Info extends StatelessWidget {
               width: 300,
               child: Column(
                 children: [
-                  const Text('Simple Platformer'),
-                  const Text('by Luan Nico'),
-                  const Text(''),
+                  Text('Simple Platformer'),
+                  Text('by Luan Nico'),
+                  Text(''),
                 ],
               ),
             ),

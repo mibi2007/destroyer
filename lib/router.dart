@@ -23,7 +23,7 @@ final router = GoRouter(
           pageBuilder: (context, state) => buildPageTransition<void>(
             key: const ValueKey('play'),
             color: context.watch<Palette>().backgroundLevelSelection.color,
-            child: LevelSelectionScreen(
+            child: const LevelSelectionScreen(
               key: Key('level selection'),
               // isTesting: state.uri.queryParameters['test'] == 'true',
               isTesting: true,
