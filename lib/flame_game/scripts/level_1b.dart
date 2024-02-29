@@ -24,12 +24,12 @@ class Level1BScript extends Script {
         isShownDialog = true;
         parent.add(showFirstDialog());
       }
-      if (boss.currentHealth <= boss.maxHealth * 0.3) {
+      if (boss!.currentHealth <= boss!.maxHealth * 0.3) {
         for (int i = 0; i < 10; i++) {
-          boss.attack();
+          boss!.attack();
         }
       }
-      if (boss.currentHealth <= 0) {
+      if (boss!.currentHealth <= 0) {
         parent.add(door);
       }
     }, repeat: true);

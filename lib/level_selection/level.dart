@@ -72,7 +72,7 @@ class SceneComponent extends Component
       level.scenes[sceneIndex!].mapTiled,
       Vector2.all(32),
     );
-    add(mapTiled);
+    await add(mapTiled);
 
     _spawnActors();
     leftClick.addListener(_onLeftClickHander);
@@ -323,11 +323,14 @@ class SceneComponent extends Component
           if (level != GameLevel.lv2 && level != GameLevel.lv1) {
             add(door);
           }
-          if (level == GameLevel.lv1) {
+          if (script is IntroScript) {
             (script as IntroScript).door = door;
           }
-          if (level == GameLevel.lv2) {
+          if (script is Level1AScript) {
             (script as Level1AScript).door = door;
+          }
+          if (script is Level1BScript) {
+            (script as Level1BScript).door = door;
           }
           break;
 

@@ -166,7 +166,7 @@ class Skills {
     requirement: 'Lightning Sword Lv.4',
     cooldown: 60,
     castTime: 4,
-    damage: 500,
+    damage: 100,
     triggerIndex: 6,
     keyboard: 'E',
     effects: [],

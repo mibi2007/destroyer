@@ -34,9 +34,9 @@ dev_dependencies:
   flame_test: ^1.15.4
   flutter_launcher_icons: ^0.13.1
   flutter_lints: ^3.0.1
-  flutter_test:
-    sdk: flutter
-  test: ^1.24.3
+  # flutter_test:
+  #   sdk: flutter
+  # test: ^1.24.3
 
 flutter:
   uses-material-design: true

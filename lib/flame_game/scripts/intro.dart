@@ -85,9 +85,9 @@ class IntroScript extends Script {
     _timer = Timer(1, onTick: () {
       _seconds++;
       if (_seconds == 1) {
-        bossDialogs[0].position = boss.position - Vector2(boss.width / 2, 0);
-        bossDialogs[1].position = boss.position - Vector2(boss.width / 2, 0);
-        bossDialogs[2].position = boss.position - Vector2(boss.width / 2, 0);
+        bossDialogs[0].position = boss!.position - Vector2(boss!.width / 2, 0);
+        bossDialogs[1].position = boss!.position - Vector2(boss!.width / 2, 0);
+        bossDialogs[2].position = boss!.position - Vector2(boss!.width / 2, 0);
       }
       // print(game.playerData.position.value);
       if (_seconds == 3) {

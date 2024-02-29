@@ -12,7 +12,7 @@ import '../game_world.dart';
 class Script extends Component
     with HasGameRef<DestroyerGame>, HasWorldReference<DestroyerGameWorld>, ParentIsA<SceneComponent> {
   late final PlayerEntity player;
-  late final EnemyAnimationEntity boss;
+  EnemyAnimationEntity? boss;
   final boxConfig = TextBoxConfig(
     timePerChar: 0.05, // Time in seconds to wait before showing the next character
     maxWidth: 200,

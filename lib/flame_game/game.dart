@@ -123,9 +123,9 @@ class DestroyerGame extends FlameGame
     // The backdrop is a static layer behind the world that the camera is
     // looking at, so here we add our parallax background.
     background = Background(level, sceneIndex);
-    if (level == GameLevel.lv2) {
-      background.position = Vector2(background.position.x, background.position.y - 150);
-    }
+    // if (level == GameLevel.lv2) {
+    //   background.position = Vector2(background.position.x, background.position.y - 150);
+    // }
     camera.backdrop.add(background);
 
     rightClick.addListener(rightClickHandler);

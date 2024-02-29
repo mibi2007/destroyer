@@ -608,10 +608,7 @@ class PlayerAnimationEntity extends RiveComponent
     final currentIndex = equipments.indexWhere((element) => (element as Sword).type == sword.type);
     final nextIndex = (currentIndex + 1) % equipments.length;
     final nextSword = equipments[nextIndex] as Sword;
-    game.playerData.sword.value = nextSword;
-    _sword?.value = nextSword.triggerIndex.toDouble();
-    _swordTriggers[nextSword.triggerIndex]?.fire();
-    game.playerData.sword.value = nextSword;
+    _changeToSword(nextSword.type);
   }
 
   @override

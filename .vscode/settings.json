@@ -19,5 +19,7 @@
     "titleBar.inactiveBackground": "#03285299",
     "titleBar.inactiveForeground": "#e7e7e799"
   },
-  "peacock.color": "#032852"
+  "peacock.color": "#032852",
+    "dart.flutterSdkPath": "C:\\Users\\ADMIN\\.puro\\envs\\my_env\\flutter",
+    "dart.sdkPath": "C:\\Users\\ADMIN\\.puro\\envs\\my_env\\flutter\\bin\\cache\\dart-sdk"
 }
