@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:destroyer/flame_game/behaviors/move_on_platform.behavior.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
@@ -26,7 +27,6 @@ import '../../skills/requiem_of_souls.dart';
 import '../behaviors/player/hit_by_enemy_collision.behavior.dart';
 import '../components/equipment.dart';
 import '../components/equipments/weapon.dart';
-import '../components/platform.dart';
 import '../components/skills.dart';
 import '../game.dart';
 
@@ -34,10 +34,10 @@ const double jumpSpeed = 250;
 const double defaultMoveSpeed = 150;
 const double flySpeed = 75;
 const double timeWalkSpeed = 350;
-const double g = 800;
+const double playerGravity = 800;
 final Vector2 _up = Vector2(0, -1);
 
-class PlayerEntity extends PositionedEntity with ParentIsA<SceneComponent> {
+class PlayerEntity extends PositionComponent with ParentIsA<SceneComponent> {
   final Artboard artboard;
   late PlayerAnimationEntity animation;
 
@@ -66,11 +66,12 @@ class PlayerAnimationEntity extends RiveComponent
         KeyboardHandler,
         HasPaint,
         ParentIsA<PlayerEntity>,
-        EntityMixin {
+        EntityMixin,
+        OnGround {
   int _hAxisInput = 0;
   int _vAxisInput = 0;
   bool _jumpInput = false;
-  bool _isOnGround = false;
+  // bool isOnGround = false;
   final double _moveSpeed = defaultMoveSpeed;
   int _jumpCount = 0;
   // Direction direction = Direction(Vector2(1, 0));
@@ -79,8 +80,6 @@ class PlayerAnimationEntity extends RiveComponent
 
   @override
   bool get debugMode => false;
-
-  double gravity = 0;
 
   final Vector2 _velocity = Vector2.zero();
   late StateMachineController _movesController;
@@ -153,8 +152,6 @@ class PlayerAnimationEntity extends RiveComponent
     parent.position = value;
   }
 
-  Vector2 collisionNormal = Vector2.zero();
-
   bool isInsideChronosphere = false;
   bool isLightning = false;
 
@@ -211,6 +208,12 @@ class PlayerAnimationEntity extends RiveComponent
 
   @override
   Future<void> onLoad() async {
+    // Player behaviors
+    await addAll([
+      PropagatingCollisionBehavior(CircleHitbox(isSolid: true), key: ComponentKey.named('player')),
+      MoveOnPlatform(),
+      HitByEnemy(),
+    ]);
     // add(test1);
     // add(test2);
     // add(test3);
@@ -226,8 +229,6 @@ class PlayerAnimationEntity extends RiveComponent
     // game.playerData.sword.addListener(_onSwordChangeHandler);
     // rightClick.addListener(rightClickHandler);
     // add(CircleHitbox());
-    addAll(
-        [PropagatingCollisionBehavior(CircleHitbox(isSolid: true), key: ComponentKey.named('player')), HitByEnemy()]);
     // await add(PositionComponent(position: Vector2.all(x / 2), children: [CircleHitbox()]));
     final controller = StateMachineController.fromArtboard(artboard, 'movesStateMachine');
     if (controller != null) {
@@ -318,7 +319,7 @@ class PlayerAnimationEntity extends RiveComponent
     add(TimerComponent(
       period: 1, // The period in seconds
       onTick: () {
-        gravity = g;
+        gravity = playerGravity;
       },
     ));
   }
@@ -356,7 +357,7 @@ class PlayerAnimationEntity extends RiveComponent
       _velocity.y = _vAxisInput * flySpeed;
       position.x += _velocity.x * dt;
       position.y += _velocity.y * dt;
-      moveBackgound(_velocity);
+      moveBackground(_velocity);
       game.playerData.position.value = position;
       return;
     } else if (game.playerData.effects.value.contains(SkillEffects.timeWalk5s) &&
@@ -365,7 +366,7 @@ class PlayerAnimationEntity extends RiveComponent
       _velocity.y = _vAxisInput * timeWalkSpeed;
       position.x += _velocity.x * dt;
       position.y += _velocity.y * dt;
-      moveBackgound(_velocity);
+      moveBackground(_velocity);
       game.playerData.position.value = position;
       return;
     }
@@ -385,40 +386,44 @@ class PlayerAnimationEntity extends RiveComponent
     // Allow jump only if jump input is pressed
     // and player is already on ground.
     if (_jumpInput) {
-      if (_isOnGround && _jumpCount == 0) {
-        _isOnGround = false;
+      if (isOnGround && _jumpCount == 0) {
+        isOnGround = false;
         _jumpCount++;
         // AudioManager.playSfx('Jump_15.wav');
-        _velocity.y = -jumpSpeed;
+        // _velocity.y = -jumpSpeed;
         // _controller.findInput<double>('Level')?.value = 1;
+        velocity.y = -jumpSpeed;
         _jumpTrigger?.fire();
-      } else if (!_isOnGround && _jumpCount == 1) {
+      } else if (!isOnGround && _jumpCount == 1) {
         _jumpCount++;
-        _velocity.y = -jumpSpeed;
+        // _velocity.y = -jumpSpeed;
+        velocity.y = -jumpSpeed;
         _jumpTrigger?.fire();
       } else {
         _landTrigger?.fire();
       }
+      // _velocity.y = velocity.y;
       _jumpInput = false;
     } else {}
     if (_velocity.x == 0) {
       _landTrigger?.fire();
     }
-    // Clamp velocity along y to avoid player tunneling
     // through platforms at very high velocities.
-    if (_isOnGround && isColliding || isLightning) {
+    if (isOnGround || isLightning) {
       _velocity.y = 0;
+      _jumpCount = 0;
       // _landTrigger?.fire();
     } else {
-      _velocity.y += gravity * dt;
+      _velocity.y = velocity.y;
     }
+
     // delta movement = velocity * time
     position += _velocity * dt;
     game.playerData.position.value = position;
-    moveBackgound(_velocity);
+    moveBackground(_velocity);
   }
 
-  void moveBackgound(Vector2 v) {
+  void moveBackground(Vector2 v) {
     if (collisionNormal.x > -0.9 && collisionNormal.x < 0.9) {
       game.background.parallax!.baseVelocity.x = v.x / 50;
     } else {
@@ -495,29 +500,29 @@ class PlayerAnimationEntity extends RiveComponent
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    if (other is Platform && !isLightning) {
-      if (intersectionPoints.length == 2) {
-        // Calculate the collision normal and separation distance.
-        final mid = (intersectionPoints.elementAt(0) + intersectionPoints.elementAt(1)) / 2;
+    // if (other is Platform && !isLightning) {
+    //   if (intersectionPoints.length == 2) {
+    //     // Calculate the collision normal and separation distance.
+    //     final mid = (intersectionPoints.elementAt(0) + intersectionPoints.elementAt(1)) / 2;
 
-        final newCollisionNormal = absoluteCenter - mid;
-        final separationDistance = (size.x / 2) - newCollisionNormal.length;
-        newCollisionNormal.normalize();
-        // If collision normal is almost upwards,
-        // player must be on ground.
-        if (_up.dot(newCollisionNormal) > 0.7) {
-          _isOnGround = true;
-          _jumpCount = 0;
-        } else {
-          _isOnGround = false;
-        }
+    //     final newCollisionNormal = absoluteCenter - mid;
+    //     final separationDistance = (size.x / 2) - newCollisionNormal.length;
+    //     newCollisionNormal.normalize();
+    //     // If collision normal is almost upwards,
+    //     // player must be on ground.
+    //     if (_up.dot(newCollisionNormal) > 0.7) {
+    //       _isOnGround = true;
+    //       _jumpCount = 0;
+    //     } else {
+    //       _isOnGround = false;
+    //     }
 
-        // Resolve collision by moving player along
-        // collision normal by separation distance.
-        position += newCollisionNormal.scaled(separationDistance);
-        collisionNormal = newCollisionNormal;
-      }
-    }
+    //     // Resolve collision by moving player along
+    //     // collision normal by separation distance.
+    //     position += newCollisionNormal.scaled(separationDistance);
+    //     collisionNormal = newCollisionNormal;
+    //   }
+    // }
 
     if (other is EquipmentComponent) {
       game.addEquipment(other.item);

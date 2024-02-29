@@ -1,22 +1,16 @@
 import 'dart:async';
 
 import 'package:destroyer/flame_game/entities/player.entity.dart';
-import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flame_steering_behaviors/flame_steering_behaviors.dart';
 
-import '../behaviors/enemy/attacked_by_player.behavior.dart';
-import '../behaviors/enemy/move_on_platform.behavior.dart';
+import '../behaviors/move_on_platform.behavior.dart';
 import 'enemy.entity.dart';
 
 const relativeValue = 16.0;
-const double g = 150;
 
-class GarbageMonsterEntity extends EnemyEntity with Steerable {
+class GarbageMonsterEntity extends EnemyEntity with Steerable, OnGround {
   bool isRolling = false;
-  Vector2 collisionNormal = Vector2.zero();
-  bool isOnGround = false;
   GarbageMonsterEntity(super.enemy, super.image, {super.position})
       : super(
           srcPosition: Vector2.zero(),
@@ -29,9 +23,8 @@ class GarbageMonsterEntity extends EnemyEntity with Steerable {
 
   @override
   Future<FutureOr<void>> onLoad() async {
+    super.onLoad();
     await addAll([
-      PropagatingCollisionBehavior(CircleHitbox(isSolid: true)),
-      ...attackedBehaviors(),
       MoveOnPlatform(),
       SeparationBehavior(
         parent.children.query<GarbageMonsterEntity>(),
@@ -53,9 +46,6 @@ class GarbageMonsterEntity extends EnemyEntity with Steerable {
 
   @override
   void update(double dt) {
-    if (!isOnGround) {
-      velocity.y += g * dt;
-    }
     if (isRolling || isHit || isBurned || isElectricShocked) {
       velocity.x = 0;
       velocity.y = 0;

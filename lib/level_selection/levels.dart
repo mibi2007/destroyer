@@ -36,6 +36,12 @@ class GameLevel {
     ],
   );
   static GameLevel lv2 = GameLevel(number: 2, title: 'Purge the Phantom Garbage', equipments: [
+    Sword.purifier(1),
+  ], scenes: [
+    Scene(0, mapTiled: 'map2_1.tmx'),
+    Scene(1, mapTiled: 'map2_2.tmx'),
+  ]);
+  static GameLevel lv3 = GameLevel(number: 3, title: 'Lv2 but Full Swords ^_^', equipments: [
     Sword.purifier(4),
     Sword.time(4),
     Sword.flame(4),
@@ -44,20 +50,11 @@ class GameLevel {
     Scene(0, mapTiled: 'map2_1.tmx'),
     Scene(1, mapTiled: 'map2_2.tmx'),
   ]);
-  static GameLevel lv3 = GameLevel(number: 3, title: 'Cleanup the IO Transporter', equipments: [
+  static GameLevel lv4 = GameLevel(number: 4, title: 'Demo treasure hunt', equipments: [
     Sword.purifier(4),
-    Sword.time(4),
-    Sword.flame(4),
-    Sword.lightning(4),
+    Sword.flame(3),
   ], scenes: [
     Scene(0, mapTiled: 'map3.tmx'),
-  ]);
-  static GameLevel lv4 = GameLevel(number: 4, title: 'Cleanup the IO Transporter', equipments: [
-    Sword.purifier(4),
-    Sword.time(4),
-    Sword.flame(4),
-    Sword.lightning(4),
-  ], scenes: [
     Scene(0, mapTiled: 'map4.tmx'),
   ]);
 

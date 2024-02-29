@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
@@ -231,8 +232,8 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
 
   // Updates health text on hud.
   void onHealthChange() {
-    healthTextComponent.text = '${game.playerData.health.value}/100';
-    healthBarComponent.width = 150 * game.playerData.health.value / 100;
+    healthTextComponent.text = '${max(game.playerData.health.value, 0)}/100';
+    healthBarComponent.width = 150 * max(game.playerData.health.value, 0) / 100;
 
     // Load game over overlay if health is zero.
     if (game.playerData.health.value <= 0) {

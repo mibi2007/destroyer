@@ -5,15 +5,26 @@ import '../../entities/enemy.entity.dart';
 import '../../entities/player.entity.dart';
 import '../../game.dart';
 
-class HitByEnemy extends CollisionBehavior<EnemyEntity, PlayerAnimationEntity> with HasGameReference<DestroyerGame> {
+class HitByEnemy extends CollisionBehavior<EntityMixin, PlayerAnimationEntity> with HasGameReference<DestroyerGame> {
   @override
-  void onCollisionStart(Set<Vector2> intersectionPoints, EnemyEntity other) {
-    if (game.playerData.health.value > 0 &&
-        other.currentHealth > 0 &&
-        !game.playerData.effects.value.any(
-            (effect) => effect.name == 'invincible' || effect.name == 'timeWalk' || effect.name == 'ballLightning')) {
-      parent.hit();
-      game.playerData.health.value -= (other.enemy.damage - game.playerData.armor.value * 3).round();
+  void onCollisionStart(Set<Vector2> intersectionPoints, EntityMixin other) {
+    if (other is EnemyEntity) {
+      if (game.playerData.health.value > 0 &&
+          other.currentHealth > 0 &&
+          !game.playerData.effects.value.any(
+              (effect) => effect.name == 'invincible' || effect.name == 'timeWalk' || effect.name == 'ballLightning')) {
+        parent.hit();
+        game.playerData.health.value -= (other.enemy.damage - game.playerData.armor.value * 3).round();
+      }
+    }
+    if (other is EnemyAnimationEntity) {
+      if (game.playerData.health.value > 0 &&
+          other.currentHealth > 0 &&
+          !game.playerData.effects.value.any(
+              (effect) => effect.name == 'invincible' || effect.name == 'timeWalk' || effect.name == 'ballLightning')) {
+        parent.hit();
+        game.playerData.health.value -= (other.enemy.damage - game.playerData.armor.value * 3).round();
+      }
     }
     // Vector2 collisionDirection = other.position - position;
     // collisionDirection.normalize(); // Normalize to get a unit vector

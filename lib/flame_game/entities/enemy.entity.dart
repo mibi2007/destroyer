@@ -7,6 +7,7 @@ import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/image_composition.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../models/enemies.dart';
 import '../behaviors/enemy/attacked_by_player.behavior.dart';
@@ -18,7 +19,6 @@ import '../game.dart';
 class EnemyEntity extends SpriteComponent
     with
         ParentIsA<SceneComponent>,
-        CollisionCallbacks,
         HasGameReference<DestroyerGame>,
         HealthBar,
         EnemyCollision,
@@ -110,15 +110,15 @@ class EnemyEntity extends SpriteComponent
   }
 
   @override
+  @mustCallSuper
   Future<void> onLoad() async {
-    addAll([
-      PropagatingCollisionBehavior(CircleHitbox(collisionType: CollisionType.passive, isSolid: true)),
+    await addAll([
+      PropagatingCollisionBehavior(CircleHitbox(isSolid: true)),
       ...attackedBehaviors(),
     ]);
     // await add(CircleHitbox()..collisionType = CollisionType.passive);
-    maxHealth = enemy.maxHealth;
-    currentHealth = maxHealth;
-    // add(EnemyBehavior());
+    // maxHealth = enemy.maxHealth;
+    // currentHealth = maxHealth;
   }
 
   // @override
@@ -152,76 +152,34 @@ class EnemyEntity extends SpriteComponent
 }
 
 class EnemyAnimationEntity extends SpriteAnimationComponent
-    with HasGameRef<DestroyerGame>, HealthBar, CollisionCallbacks, EnemyCollision, EntityMixin, ShowDamageText {
+    with
+        HasGameRef<DestroyerGame>,
+        HealthBar,
+        CollisionCallbacks,
+        EnemyCollision,
+        EntityMixin,
+        ShowDamageText,
+        ParentIsA<SceneComponent> {
   final Enemy enemy;
 
   void Function()? onKilled;
 
-  EnemyAnimationEntity({required this.enemy, required super.size, required super.position, required super.priority});
-  late final Timer _timer;
-
-  int _secondCount = 0;
+  EnemyAnimationEntity({required this.enemy, required super.size, required super.position, required super.priority}) {
+    initHealthBar(enemy.maxHealth, width);
+  }
 
   @override
+  @mustCallSuper
   FutureOr<void> onLoad() {
     addAll([
-      PropagatingCollisionBehavior(CircleHitbox(collisionType: CollisionType.passive, isSolid: true)),
+      PropagatingCollisionBehavior(CircleHitbox(isSolid: true)),
       ...attackedBehaviors(),
     ]);
-    initHealthBar(enemy.maxHealth, width);
-    _timer = Timer(1, repeat: true, onTick: () {
-      if (currentHealth == 0) {
-        add(TimerComponent(
-          period: 1, // The period in seconds
-          onTick: () {
-            removeFromParent();
-          },
-        ));
-      }
-      if (_secondCount % 5 == 0) {
-        attack();
-        add(TimerComponent(
-          period: 0.6, // The period in seconds
-          onTick: () {
-            move();
-          },
-        ));
-      }
-      // if (_secondCount % 2 == 0) {
-      //   if (game.playerData.position.value.x > position.x) {
-      //     attack();
-      //   }
-      // }
-      _secondCount++;
-    });
-    move();
   }
 
-  @override
-  removeFromParent() {
-    onKilled?.call();
-    super.removeFromParent();
-  }
+  move() {}
 
-  move() {
-    if (enemy is Boss) animation = (enemy as Boss).moveAnimation;
-  }
-
-  attack() {
-    if (enemy is Boss) animation = (enemy as Boss).attackAnimation;
-  }
-
-  @override
-  void update(double dt) {
-    _timer.update(dt);
-    super.update(dt);
-  }
-
-  @override
-  void onRemove() {
-    _timer.stop();
-    super.onRemove();
-  }
+  attack() {}
 
   @override
   bool checkIfDead() {

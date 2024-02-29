@@ -1,7 +1,6 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 
 import 'package:destroyer/flame_game/components/brick.dart';
-import 'package:destroyer/flame_game/entities/enemy.entity.dart';
 import 'package:destroyer/flame_game/entities/garbage_monster.entity.dart';
 import 'package:destroyer/flame_game/scripts/intro.dart';
 import 'package:destroyer/utils/tileset.dart';
@@ -19,6 +18,7 @@ import '../flame_game/components/door.dart';
 import '../flame_game/components/equipment.dart';
 import '../flame_game/components/equipments/armor.dart';
 import '../flame_game/components/platform.dart';
+import '../flame_game/entities/boss.entity.dart';
 import '../flame_game/entities/garbage.entity.dart';
 import '../flame_game/entities/player.entity.dart';
 import '../flame_game/game.dart';
@@ -216,7 +216,7 @@ class SceneComponent extends Component
               armor: level.number * 5,
             );
             (enemy as Boss);
-            if (level == GameLevel.lv2) {
+            if (level == GameLevel.lv2 || level == GameLevel.lv3) {
               enemySize = Vector2.all(128);
               enemy.moveAnimation = SpriteAnimation.spriteList(
                 await Future.wait([
@@ -251,13 +251,13 @@ class SceneComponent extends Component
                   ]),
                   stepTime: 0.2);
             }
-            enemyComponent = EnemyAnimationEntity(
-              enemy: enemy,
+            enemyComponent = BossEntity(
+              boss: enemy,
               size: enemySize,
               position: position,
               priority: 1,
             );
-            (enemyComponent as EnemyAnimationEntity).onKilled = () {
+            (enemyComponent as BossEntity).onKilled = () {
               onBossKilled?.call(enemyComponent);
             };
             if (script is IntroScript) {
@@ -339,7 +339,7 @@ class SceneComponent extends Component
           final equipmentComponent = ArmorComponent(
             item: equipment,
             sprite: Sprite(game.images.fromCache(equipment.iconAsset)),
-            position: position,
+            position: position + Vector2.all(16),
             size: size,
           );
           add(equipmentComponent);
@@ -411,9 +411,9 @@ class SceneComponent extends Component
       script = IntroScript();
       onBossKilled = (script as IntroScript).onBossKilled;
       onRewardPicked = (script as IntroScript).onRewardPicked;
-    } else if (level == GameLevel.lv2 && sceneIndex == 0) {
+    } else if ((level == GameLevel.lv2 || level == GameLevel.lv3) && sceneIndex == 0) {
       script = Level1AScript();
-    } else if (level == GameLevel.lv2 && sceneIndex == 1) {
+    } else if ((level == GameLevel.lv2 || level == GameLevel.lv3) && sceneIndex == 1) {
       script = Level1BScript();
     } else {
       script = Script();

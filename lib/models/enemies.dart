@@ -29,6 +29,14 @@ class Boss extends Enemy {
   late final SpriteAnimation moveAnimation;
   late final SpriteAnimation attackAnimation;
   Boss({super.asset = '', super.damage = 50, required super.maxHealth, super.armor = 20, required super.level});
+
+  factory Boss.map1() => Boss(
+        asset: 'assets/images/enemies/boss1.png',
+        damage: 50,
+        maxHealth: 1000,
+        armor: 20,
+        level: 1,
+      );
 }
 
 class GarbageMonster extends Enemy {

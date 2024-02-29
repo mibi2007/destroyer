@@ -35,7 +35,7 @@ class Background extends ParallaxComponent {
     final List<ParallaxImageData> layers = [];
     if (level == GameLevel.lv1) {
       layers.addAll(background1.map((image) => ParallaxImageData(image)));
-    } else if (level == GameLevel.lv2) {
+    } else if (level == GameLevel.lv2 || level == GameLevel.lv3) {
       layers.addAll(background2.map((image) => ParallaxImageData(image)));
     } else {
       layers.addAll(backgroundDefault.map((image) => ParallaxImageData(image)));

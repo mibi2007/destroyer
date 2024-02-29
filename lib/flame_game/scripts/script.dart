@@ -5,14 +5,14 @@ import 'package:flame/components.dart';
 import 'package:flame/text.dart';
 
 import '../../level_selection/level.dart';
-import '../entities/enemy.entity.dart';
+import '../entities/boss.entity.dart';
 import '../game.dart';
 import '../game_world.dart';
 
 class Script extends Component
     with HasGameRef<DestroyerGame>, HasWorldReference<DestroyerGameWorld>, ParentIsA<SceneComponent> {
   late final PlayerEntity player;
-  EnemyAnimationEntity? boss;
+  BossEntity? boss;
   final boxConfig = TextBoxConfig(
     timePerChar: 0.05, // Time in seconds to wait before showing the next character
     maxWidth: 200,

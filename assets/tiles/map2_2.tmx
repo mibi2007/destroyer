@@ -17,8 +17,8 @@
   <object id="198" x="320" y="1408" width="1280" height="320"/>
  </objectgroup>
  <objectgroup id="3" name="SpawnPoints">
-  <object id="26" type="Player" gid="1" x="736" y="576" width="32" height="32"/>
-  <object id="189" type="Enemy" gid="2147483650" x="1248" y="1280" width="32" height="32">
+  <object id="26" type="Player" gid="1" x="704" y="576" width="32" height="32"/>
+  <object id="189" type="Enemy" gid="2147483650" x="1248" y="1312" width="32" height="32">
    <properties>
     <property name="Type" value="Boss"/>
    </properties>
