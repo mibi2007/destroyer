@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flame/components.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
 
@@ -14,7 +16,8 @@ class HitByEnemy extends CollisionBehavior<EntityMixin, PlayerAnimationEntity> w
           !game.playerData.effects.value.any(
               (effect) => effect.name == 'invincible' || effect.name == 'timeWalk' || effect.name == 'ballLightning')) {
         parent.hit();
-        game.playerData.health.value -= (other.enemy.damage - game.playerData.armor.value * 3).round();
+        final dmg = other.enemy.damage - game.playerData.armor.value;
+        game.playerData.health.value -= max(dmg.round(), 0);
       }
     }
     if (other is EnemyAnimationEntity) {
@@ -23,7 +26,8 @@ class HitByEnemy extends CollisionBehavior<EntityMixin, PlayerAnimationEntity> w
           !game.playerData.effects.value.any(
               (effect) => effect.name == 'invincible' || effect.name == 'timeWalk' || effect.name == 'ballLightning')) {
         parent.hit();
-        game.playerData.health.value -= (other.enemy.damage - game.playerData.armor.value * 3).round();
+        final dmg = other.enemy.damage - game.playerData.armor.value;
+        game.playerData.health.value -= max(dmg.round(), 0);
       }
     }
     // Vector2 collisionDirection = other.position - position;

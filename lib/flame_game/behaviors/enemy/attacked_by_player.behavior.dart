@@ -1,3 +1,4 @@
+import 'package:destroyer/utils/utils.dart';
 import 'package:flame/cache.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
@@ -84,6 +85,9 @@ class BurnSkill extends Component with HasGameRef<DestroyerGame> {
     return BurnSkill(behavior: behavior);
   }
 
+  @override
+  bool get debugMode => true;
+
   void onCollisionStart<T extends EnemyCollision>(double dmg, double burnTime) {
     final parent = behavior.parent as T;
     if (parent.isCursed) return;
@@ -98,13 +102,16 @@ class BurnSkill extends Component with HasGameRef<DestroyerGame> {
     parent.showDamage(dmg);
     behavior.add(
       ParticleSystemComponent(
+        scale: Vector2(rnd.nextDouble() * 0.5 + 0.5, rnd.nextDouble() * 0.5 + 0.5),
+        position: Vector2(rnd.nextDouble() * parent.width / 2 - parent.width / 4,
+            rnd.nextDouble() * parent.height / 2 - parent.height / 4),
         anchor: Anchor.center,
         particle: TranslatedParticle(
           lifespan: burnTime,
           offset: Vector2(parent.width / 2, 0),
           child: SpriteAnimationParticle(
             animation: getBoomAnimation(game.images),
-            size: Vector2(50, 50),
+            size: parent.size,
           ),
         ),
       ),

@@ -10,6 +10,8 @@ import '../overlays/pause_menu.dart';
 import 'game.dart';
 import 'game_win_dialog.dart';
 import 'scripts/intro.dart';
+import 'scripts/level_1b.dart';
+import 'scripts/level_4b.dart';
 
 final GlobalKey<RiverpodAwareGameWidgetState<DestroyerGame>> gameWidgetKey =
     GlobalKey<RiverpodAwareGameWidgetState<DestroyerGame>>();
@@ -76,6 +78,8 @@ class GameScreen extends StatelessWidget {
                   );
                 },
                 PurifySwordPickedDialog.id: (context, game) => PurifySwordPickedDialog(game: game),
+                PurifySword2PickedDialog.id: (context, game) => PurifySword2PickedDialog(game: game),
+                LightningSwordPickedDialog.id: (context, game) => LightningSwordPickedDialog(game: game),
                 GameOver.id: (context, game) => GameOver(game: game),
                 PauseMenu.id: (context, game) => PauseMenu(game: game),
               },

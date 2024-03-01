@@ -16,13 +16,17 @@
   <object id="14" x="1568" y="0" width="32" height="608"/>
  </objectgroup>
  <objectgroup id="3" name="SpawnPoints">
-  <object id="3" type="Player" gid="1" x="400" y="416" width="32" height="32"/>
+  <object id="3" type="Player" gid="1" x="320" y="544" width="32" height="32"/>
   <object id="10" type="Enemy" gid="2" x="1056" y="544" width="32" height="32">
    <properties>
     <property name="Type" value="Boss"/>
    </properties>
   </object>
-  <object id="15" type="Door" gid="3" x="1408" y="608" width="64" height="64"/>
+  <object id="15" type="Door" gid="3" x="1408" y="608" width="64" height="64">
+   <properties>
+    <property name="NextLevel" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="17" type="Oracle" gid="2147483649" x="1504" y="608" width="32" height="32"/>
  </objectgroup>
  <objectgroup id="4" name="Settings">

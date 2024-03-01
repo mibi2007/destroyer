@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:destroyer/flame_game/components/door.dart';
 import 'package:destroyer/flame_game/scripts/script.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
@@ -9,7 +10,6 @@ import 'package:nes_ui/nes_ui.dart';
 
 import '../../models/enemies.dart';
 import '../../models/equipments.dart';
-import '../components/equipment.dart';
 import '../components/equipments/weapon.dart';
 import '../entities/boss.entity.dart';
 import '../game.dart';
@@ -17,12 +17,13 @@ import '../game.dart';
 const _asset = 'assets/images/enemies/boss1.png';
 final _srcSize = Vector2.all(128);
 
-class Level1BScript extends Script {
+class Level6Script extends Script {
   final textBoxConfig = TextBoxConfig(
     timePerChar: 0.05, // Time in seconds to wait before showing the next character
     // Other configurations for your text box...
   );
 
+  late final Door door;
   late final Timer _timer;
   // int seconds = 0;
   bool isShownDialog = false;
@@ -30,7 +31,7 @@ class Level1BScript extends Script {
   @override
   Future<FutureOr<void>> onLoad() async {
     boss = BossEntity(
-      boss: Boss(asset: _asset, level: game.level.number, maxHealth: 1000, armor: game.level.number * 5),
+      boss: Boss(asset: _asset, level: 5, maxHealth: 50, armor: 10),
       size: Vector2.all(128),
       position: Vector2.zero(),
       priority: 1,
@@ -38,10 +39,10 @@ class Level1BScript extends Script {
     boss!.boss
       ..moveAnimation = SpriteAnimation.spriteList(
           await Future.wait([
-            Sprite.load(_asset, srcSize: _srcSize, srcPosition: Vector2(128 * 0, -20)),
-            Sprite.load(_asset, srcSize: _srcSize, srcPosition: Vector2(128 * 1, -20)),
-            Sprite.load(_asset, srcSize: _srcSize, srcPosition: Vector2(128 * 2, -20)),
-            Sprite.load(_asset, srcSize: _srcSize, srcPosition: Vector2(128 * 3, -20)),
+            Sprite.load(_asset, srcSize: _srcSize, srcPosition: Vector2(128 * 0, 0)),
+            Sprite.load(_asset, srcSize: _srcSize, srcPosition: Vector2(128 * 1, 0)),
+            Sprite.load(_asset, srcSize: _srcSize, srcPosition: Vector2(128 * 2, 0)),
+            Sprite.load(_asset, srcSize: _srcSize, srcPosition: Vector2(128 * 3, 0)),
           ]),
           stepTime: 0.5)
       ..attackAnimation = SpriteAnimation.spriteList(
@@ -56,6 +57,14 @@ class Level1BScript extends Script {
       if (game.playerData.garbages.value == 1 && !isShownDialog) {
         isShownDialog = true;
         parent.add(showFirstDialog());
+      }
+      if (boss!.currentHealth <= boss!.maxHealth * 0.3) {
+        for (int i = 0; i < 2; i++) {
+          boss!.attack();
+        }
+      }
+      if (boss!.currentHealth <= 0) {
+        parent.add(door);
       }
     }, repeat: true);
   }
@@ -75,25 +84,11 @@ class Level1BScript extends Script {
   }
 
   void onBossKilled(PositionComponent killedBoss) {
-    reward();
-  }
-
-  void onRewardPicked(EquipmentComponent equipment) {
-    final newEquipments = game.getEquipments();
-    newEquipments.removeWhere((item) => item is Sword && item.type == SwordType.purifier);
-    newEquipments.add(equipment.item);
-    game.setEquipments(newEquipments);
     world.nextLevel();
-    add(TimerComponent(
-      period: 1, // The period in seconds
-      onTick: () {
-        game.overlays.add(PurifySword2PickedDialog.id);
-      },
-    ));
   }
 
   void reward() {
-    final newSword = Sword.purifier(2);
+    final newSword = Sword.lightning(4);
     final swordImage = game.images.fromCache(newSword.iconAsset);
     final sword = SwordComponent(
       item: newSword,
@@ -131,22 +126,22 @@ class Level1BScript extends Script {
   }
 }
 
-class PurifySword2PickedDialog extends StatelessWidget {
-  static const id = 'PurifySword2PickedDialog';
+class LightningSwordPickedDialog extends StatelessWidget {
+  static const id = 'LightningSwordPickedDialog';
   final DestroyerGame game;
 
-  const PurifySword2PickedDialog({super.key, required this.game});
+  const LightningSwordPickedDialog({super.key, required this.game});
 
   @override
   Widget build(BuildContext context) {
-    final sword = Sword.purifier(2);
+    final sword = Sword.lightning(4);
     return NesDialog(
       child: SizedBox(
         width: 600,
         child: Column(
           children: [
             Text(
-              'You have upgraded your sword!',
+              'You have new sword!',
               style: TextStyle(
                 fontFamily: GoogleFonts.pressStart2p().fontFamily,
                 fontSize: 25,

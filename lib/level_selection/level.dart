@@ -18,16 +18,18 @@ import '../flame_game/components/door.dart';
 import '../flame_game/components/equipment.dart';
 import '../flame_game/components/equipments/armor.dart';
 import '../flame_game/components/platform.dart';
-import '../flame_game/entities/boss.entity.dart';
 import '../flame_game/entities/garbage.entity.dart';
 import '../flame_game/entities/player.entity.dart';
 import '../flame_game/game.dart';
 import '../flame_game/game_world.dart';
 import '../flame_game/scripts/level_1a.dart';
 import '../flame_game/scripts/level_1b.dart';
+import '../flame_game/scripts/level_4b.dart';
+import '../flame_game/scripts/level_6.dart';
 import '../flame_game/scripts/script.dart';
 import '../models/enemies.dart';
 import '../models/equipments.dart';
+import '../overlays/game_over.dart';
 import '../utils/disabler.dart';
 import 'levels.dart';
 
@@ -56,6 +58,8 @@ class SceneComponent extends Component
 
   // @override
   // bool containsLocalPoint(Vector2 point) => true;
+  @override
+  bool get debugMode => false;
 
   @override
   Future<void> onLoad() async {
@@ -83,6 +87,15 @@ class SceneComponent extends Component
     //   onTick: () {
     //   },
     // ));
+
+    game.playerData.isDead.addListener(() {
+      if (game.playerData.isDead.value) {
+        game.setCredits(0);
+        game.overlays.add(GameOver.id);
+        // _player.removeFromParent();
+        parent.customCamera.stop();
+      }
+    });
   }
 
   _onLeftClickHander() {
@@ -99,6 +112,12 @@ class SceneComponent extends Component
     if (initLevelEquipments || game.getEquipments().isEmpty) {
       game.setEquipments(level.equipments);
     }
+    for (final equipment in game.getEquipments()) {
+      if (equipment is Armor) {
+        game.playerData.inventory.add(equipment);
+      }
+    }
+    game.playerData.armor.value = 5 * game.playerData.inventory.value.length;
   }
 
   // @override
@@ -162,7 +181,7 @@ class SceneComponent extends Component
             position: position,
             size: size,
           );
-          script.player = _player;
+          // script.player = _player;
           // _player.add(BoundedPositionBehavior(
           //   bounds: Rectangle.fromRect(levelBounds),
           // ));
@@ -180,7 +199,7 @@ class SceneComponent extends Component
           //   // ],
           // );
           add(_player);
-          parent.customCamera.follow(_player, maxSpeed: kCameraSpeed, snap: true);
+          movePlayerToPosition(_player.position);
           // if (settings != null) {
           // _player.animation.gravity = double.parse(settings.properties.first.value.toString());
           // }
@@ -208,63 +227,11 @@ class SceneComponent extends Component
           String asset;
           PositionComponent enemyComponent;
           if (type == 'Boss') {
-            asset = 'assets/images/enemies/boss1.png';
-            enemy = Boss(
-              level: level.number,
-              asset: asset,
-              maxHealth: 1000,
-              armor: level.number * 5,
-            );
-            (enemy as Boss);
-            if (level == GameLevel.lv2 || level == GameLevel.lv3) {
-              enemySize = Vector2.all(128);
-              enemy.moveAnimation = SpriteAnimation.spriteList(
-                await Future.wait([
-                  Sprite.load(asset, srcSize: enemySize, srcPosition: Vector2(128 * 0, 0)),
-                  Sprite.load(asset, srcSize: enemySize, srcPosition: Vector2(128 * 1, 0)),
-                  Sprite.load(asset, srcSize: enemySize, srcPosition: Vector2(128 * 2, 0)),
-                  Sprite.load(asset, srcSize: enemySize, srcPosition: Vector2(128 * 3, 0)),
-                  // Add as many frames as you have
-                ]),
-                stepTime: 0.5, // Time each frame is displayed
-              );
-              enemy.attackAnimation = SpriteAnimation.spriteList(
-                await Future.wait([
-                  Sprite.load(asset, srcSize: enemySize, srcPosition: Vector2(128 * 0, 128)),
-                  Sprite.load(asset, srcSize: enemySize, srcPosition: Vector2(128 * 1, 128)),
-                  Sprite.load(asset, srcSize: enemySize, srcPosition: Vector2(128 * 2, 128)),
-                  // Add as many frames as you have
-                ]),
-                stepTime: 0.2, // Time each frame is displayed
-              );
-            } else {
-              enemySize = Vector2.all(128);
-              asset = 'assets/images/enemies/boss-intro.png';
-              enemy.moveAnimation = SpriteAnimation.spriteList(
-                  await Future.wait([
-                    Sprite.load(asset, srcSize: enemySize, srcPosition: Vector2(128 * 0, 0)),
-                  ]),
-                  stepTime: 0.5);
-              enemy.attackAnimation = SpriteAnimation.spriteList(
-                  await Future.wait([
-                    Sprite.load(asset, srcSize: enemySize, srcPosition: Vector2(128 * 0, 0)),
-                  ]),
-                  stepTime: 0.2);
-            }
-            enemyComponent = BossEntity(
-              boss: enemy,
-              size: enemySize,
-              position: position,
-              priority: 1,
-            );
-            (enemyComponent as BossEntity).onKilled = () {
-              onBossKilled?.call(enemyComponent);
+            script.boss!.position = position;
+            enemyComponent = script.boss!;
+            script.boss!.onKilled = () {
+              onBossKilled?.call(script.boss!);
             };
-            if (script is IntroScript) {
-              (script as IntroScript).boss = enemyComponent;
-            } else if (script is Level1BScript) {
-              (script as Level1BScript).boss = enemyComponent;
-            }
           } else if (type == 'Garbage') {
             enemy = Garbage(
               level: level.number,
@@ -292,7 +259,7 @@ class SceneComponent extends Component
               position: position,
             );
           }
-          if (flip == true) enemyComponent.flipHorizontallyAroundCenter();
+          // if (flip == true) enemyComponent.flipHorizontallyAroundCenter();
           add(enemyComponent);
 
           break;
@@ -309,29 +276,30 @@ class SceneComponent extends Component
               if (nextDoor != null) {
                 final targetObjectId = spawnPoint.properties.getValue<int>('Target');
                 TiledObject target = getObjectFromTargetById(spawnPointsLayer.objects, targetObjectId)!;
-                _player.position = Vector2(target.x, target.y - 30);
-                // parent.camera.moveTo(_player.position);
-                // Not allow to go back
-                _player.animation.resetLast2Second();
-                parent.customCamera.moveTo(_player.position, speed: double.infinity);
-                parent.customCamera.follow(_player, maxSpeed: kCameraSpeed, snap: true);
+                movePlayerToPosition(Vector2(target.x, target.y));
               }
               if (nextScene == true) parent.nextScene();
               if (nextLevel == true) parent.nextLevel();
             },
           );
-          if (level != GameLevel.lv2 && level != GameLevel.lv1) {
+          if (nextScene != null || nextLevel != null) {
+            if (script is IntroScript) {
+              (script as IntroScript).door = door;
+            } else if (script is Level1AScript) {
+              (script as Level1AScript).door = door;
+            } else if (script is Level4BScript) {
+              (script as Level4BScript).door = door;
+            } else if (script is Level6Script) {
+              (script as Level6Script).door = door;
+            } else {
+              print('Script not found');
+              add(door);
+            }
+          } else {
+            print('Script not found 2');
             add(door);
           }
-          if (script is IntroScript) {
-            (script as IntroScript).door = door;
-          }
-          if (script is Level1AScript) {
-            (script as Level1AScript).door = door;
-          }
-          if (script is Level1BScript) {
-            (script as Level1BScript).door = door;
-          }
+
           break;
 
         case 'Equipment':
@@ -415,10 +383,27 @@ class SceneComponent extends Component
       script = Level1AScript();
     } else if ((level == GameLevel.lv2 || level == GameLevel.lv3) && sceneIndex == 1) {
       script = Level1BScript();
+      onBossKilled = (script as Level1BScript).onBossKilled;
+      onRewardPicked = (script as Level1BScript).onRewardPicked;
+    } else if (level == GameLevel.lv4 && sceneIndex == 1) {
+      script = Level4BScript();
+    } else if (level == GameLevel.lv5 && sceneIndex == 1) {
+      script = Level4BScript();
+    } else if (level == GameLevel.lv6) {
+      script = Level6Script();
+      onBossKilled = (script as Level6Script).onBossKilled;
+      // onRewardPicked = (script as Level6Script).onRewardPicked;
     } else {
       script = Script();
     }
     add(script);
+  }
+
+  void movePlayerToPosition(Vector2 position) {
+    _player.animation.resetLast2Second();
+    _player.position = position + Vector2(30, -30);
+    parent.customCamera.moveTo(_player.position, speed: double.infinity);
+    parent.customCamera.follow(_player, maxSpeed: kCameraSpeed, snap: true);
   }
 }
 

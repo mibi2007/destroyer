@@ -332,6 +332,7 @@ class PlayerAnimationEntity extends RiveComponent
 
   @override
   void update(double dt) {
+    if (game.playerData.isDead.value) return;
     super.update(dt);
 
     if (interval != null) interval!.update(dt);
@@ -450,16 +451,16 @@ class PlayerAnimationEntity extends RiveComponent
 
     if (event is KeyDownEvent) {
       if (keysPressed.contains(LogicalKeyboardKey.keyA)) {
-        if (game.playerData.direction.value.isleft) {
+        if (game.playerData.direction.value.isLeft) {
           _walkTrigger?.fire();
-        } else if (game.playerData.direction.value.isright) {
+        } else if (game.playerData.direction.value.isRight) {
           _backwardTrigger?.fire();
         }
       }
       if (keysPressed.contains(LogicalKeyboardKey.keyD)) {
-        if (game.playerData.direction.value.isleft) {
+        if (game.playerData.direction.value.isLeft) {
           _backwardTrigger?.fire();
-        } else if (game.playerData.direction.value.isright) {
+        } else if (game.playerData.direction.value.isRight) {
           _walkTrigger?.fire();
         }
       }
@@ -525,6 +526,8 @@ class PlayerAnimationEntity extends RiveComponent
     // }
 
     if (other is EquipmentComponent) {
+      print('picked up ${other.item.name}');
+      print(other.isMounted);
       game.addEquipment(other.item);
       if (other is SwordComponent) {
         final newSword = other.item as Sword;

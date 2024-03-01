@@ -24,9 +24,6 @@ class EnemyEntity extends SpriteComponent
         EnemyCollision,
         EntityMixin,
         ShowDamageText {
-  static final Vector2 _left = Vector2(-1, 0);
-  Vector2 direction = _left;
-
   // bool isHit = false;
   // bool isShockElectric = false;
   // bool isBurned = false;
@@ -97,6 +94,7 @@ class EnemyEntity extends SpriteComponent
 
     if (isHit || isInsideChronosphere || isElectricShocked || isBurned) {
       effect?.pause();
+      return;
     } else {
       effect?.resume();
     }

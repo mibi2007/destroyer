@@ -5,8 +5,8 @@ final gameLevels = <GameLevel>[
   GameLevel.lv2,
   GameLevel.lv3,
   GameLevel.lv4,
-  // (number: 2, title: 'Purge the Phantom Garbage', mapTiled: 'map.tmx', equipments: [Sword.purifier(1)]),
-  // (number: 3, title: 'Cleanup the IO Transporter', mapTiled: 'Level2.tmx', equipments: [Sword.purifier(1)]),
+  GameLevel.lv5,
+  GameLevel.lv6,
 ];
 
 class GameLevel {
@@ -37,6 +37,7 @@ class GameLevel {
   );
   static GameLevel lv2 = GameLevel(number: 2, title: 'Purge the Phantom Garbage', equipments: [
     Sword.purifier(1),
+    Sword.lightning(4),
   ], scenes: [
     Scene(0, mapTiled: 'map2_1.tmx'),
     Scene(1, mapTiled: 'map2_2.tmx'),
@@ -55,12 +56,36 @@ class GameLevel {
     Sword.flame(3),
   ], scenes: [
     Scene(0, mapTiled: 'map3.tmx'),
-    Scene(0, mapTiled: 'map4.tmx'),
+    Scene(1, mapTiled: 'map4.tmx'),
   ]);
+  static GameLevel lv5 = GameLevel(number: 5, title: 'Treasure hunt Full Swords', equipments: [
+    Sword.purifier(4),
+    Sword.time(4),
+    Sword.flame(4),
+    Sword.lightning(4),
+  ], scenes: [
+    Scene(0, mapTiled: 'map3.tmx'),
+    Scene(1, mapTiled: 'map4.tmx'),
+  ]);
+  static GameLevel lv6 = GameLevel(number: 6, title: 'Solo Boss Full Equipments', equipments: [
+    Sword.purifier(4),
+    Sword.time(4),
+    Sword.flame(4),
+    Sword.lightning(4),
+    Armor.helmet(),
+    Armor.chestpiece(),
+    Armor.gauntlets(),
+    Armor.leggings(),
+    Armor.boots(),
+  ], scenes: [
+    Scene(0, mapTiled: 'map5.tmx'),
+  ]);
+
+  static GameLevel end = GameLevel(number: -1, title: 'End', equipments: [], scenes: []);
 
   GameLevel next() {
     if (number == gameLevels.length) {
-      return GameLevel.lv1;
+      return GameLevel.end;
     }
     return gameLevels.firstWhere((element) => element.number == number + 1);
   }

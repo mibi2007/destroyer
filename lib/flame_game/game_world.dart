@@ -1,4 +1,5 @@
 import 'package:destroyer/flame_game/game.dart';
+import 'package:destroyer/level_selection/levels.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
@@ -164,7 +165,7 @@ class DestroyerGameWorld extends World with HasGameReference<DestroyerGame> {
     }
   }
 
-  void finishedLevel() {
+  void _finishedLevel() {
     final levelTime = (DateTime.now().millisecondsSinceEpoch - timeStarted.millisecondsSinceEpoch) / 1000;
 
     levelCompletedIn = levelTime.round();
@@ -173,8 +174,13 @@ class DestroyerGameWorld extends World with HasGameReference<DestroyerGame> {
   }
 
   void nextLevel() {
-    finishedLevel();
-    game.navigate('/play/session/${game.level.next().number}/0');
+    _finishedLevel();
+    if (game.level.next() == GameLevel.end) {
+      game.pauseEngine();
+      game.overlays.add(GameScreen.winDialogKey);
+    } else {
+      game.navigate('/play/session/${game.level.next().number}/0');
+    }
   }
 
   void loadScene() {

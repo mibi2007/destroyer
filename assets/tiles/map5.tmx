@@ -17,7 +17,7 @@
   <object id="198" x="320" y="1408" width="1280" height="320"/>
  </objectgroup>
  <objectgroup id="3" name="SpawnPoints">
-  <object id="26" type="Player" gid="1" x="736" y="576" width="32" height="32"/>
+  <object id="26" type="Player" gid="1" x="960" y="1344" width="32" height="32"/>
   <object id="189" type="Enemy" gid="2147483650" x="1248" y="1344" width="32" height="32">
    <properties>
     <property name="Type" value="Boss"/>
@@ -321,6 +321,11 @@
    <properties>
     <property name="TileOffsetX" type="int" value="2"/>
     <property name="TileOffsetY" type="int" value="3"/>
+   </properties>
+  </object>
+  <object id="199" type="Door" gid="3" x="1440" y="1408" width="64" height="64">
+   <properties>
+    <property name="NextLevel" type="bool" value="true"/>
    </properties>
   </object>
  </objectgroup>

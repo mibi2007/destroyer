@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:nes_ui/nes_ui.dart';
 
 import '../flame_game/game.dart';
 
@@ -17,13 +18,19 @@ class GameOver extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(
-              width: 200,
-              child: ElevatedButton(
-                onPressed: () {
-                  context.replace(GoRouter.of(context).routeInformationProvider.value.uri.path);
-                },
-                child: const Text('Restart'),
+            const NesContainer(
+              width: 400,
+              // child: ElevatedButton(
+              //   onPressed: () {
+              //     final path = GoRouter.of(context).routeInformationProvider.value.uri.toString();
+              //     context.pushReplacement(path);
+              //   },
+              //   child: const Text('Restart'),
+              // ),
+              child: Text(
+                'You died, reset coin',
+                style: TextStyle(),
+                textAlign: TextAlign.center,
               ),
             ),
             const SizedBox(height: 30),

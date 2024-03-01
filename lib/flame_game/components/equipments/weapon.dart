@@ -11,6 +11,9 @@ class SwordComponent extends EquipmentComponent with CollisionCallbacks {
   });
 
   @override
+  bool get debugMode => false;
+
+  @override
   Future<void> onLoad() async {
     add(CircleHitbox());
     // Load your sword sprite and set up animations here

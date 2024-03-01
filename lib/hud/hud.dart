@@ -10,11 +10,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../flame_game/components/equipment.dart';
+import '../flame_game/components/equipments/armor.dart';
 import '../flame_game/components/equipments/weapon.dart';
 import '../flame_game/components/skills.dart';
 import '../flame_game/game.dart';
 import '../models/equipments.dart';
-import '../overlays/game_over.dart';
 import '../overlays/pause_menu.dart';
 
 const skillGap = 8.0;
@@ -29,6 +29,7 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
   final List<EquipmentComponent> equipments = [];
   final List<SkillComponent> skills = [];
   final List<EffectComponent> effects = [];
+  final List<EquipmentComponent> inventory = [];
   final effect = GlowEffect(
     10.0,
     EffectController(duration: 3),
@@ -136,8 +137,10 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
     game.playerData.equipments.addListener(_onEquipmentsChangeHandler);
     game.playerData.effects.addListener(_onEffectsChangeHandler);
     game.playerData.currentMousePosition.addListener(_mouseMoveHandler);
+    game.playerData.inventory.addListener(_onInventoryChangeHandler);
 
     _onEquipmentsChangeHandler();
+    _onInventoryChangeHandler();
   }
 
   void _mouseMoveHandler() {
@@ -222,6 +225,7 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
     game.playerData.sword.removeListener(_onSwordChangeHandler);
     game.playerData.equipments.removeListener(_onEquipmentsChangeHandler);
     game.playerData.effects.removeListener(_onEffectsChangeHandler);
+    game.playerData.inventory.removeListener(_onInventoryChangeHandler);
     super.onRemove();
   }
 
@@ -239,12 +243,12 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
     if (game.playerData.health.value <= 0) {
       // AudioManager.stopBgm();
       // game.pauseEngine();
-      game.overlays.add(GameOver.id);
+      game.playerData.isDead.value = true;
     }
   }
 
   Future<void> _onEquipmentsChangeHandler() async {
-    removeAll([...equipments, ...skills]);
+    removeAll([...equipments, ...skills, ...inventory]);
     equipments.clear();
     skills.clear();
     int index = 0;
@@ -305,7 +309,8 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
           .reduce((combine, effects) => [...combine, ...effects]);
       if (removeEffects.isNotEmpty) {
         for (var element in removeEffects) {
-          game.playerData.effects.remove(element);
+          game.playerData.effects
+              .remove(element, shouldNotify: removeEffects.indexOf(element) == removeEffects.length - 1);
         }
       }
     }
@@ -381,22 +386,54 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
     removeAll(effects);
     effects.clear();
     final skillEffects = game.playerData.effects.value;
-    if (skillEffects.isEmpty) return;
-    for (var i = 0; i < skillEffects.length; i++) {
-      // if (effects.length < i + 1) {
-      // final position = Vector2(x + i * (skillSize + skillGap), game.fixedResolution.y - skillSize / 2 - 7);
-      final effectPosition = Vector2(76 + i * (effectSize + effectGap), 44);
-      final effectComp = EffectComponent(skillEffects[i], position: effectPosition, size: Vector2.all(effectSize));
-      if (skillEffects[i].name == 'Requiem of Souls') {
-        effectComp.count = game.playerData.souls.value;
+    if (skillEffects.isNotEmpty) {
+      for (var i = 0; i < skillEffects.length; i++) {
+        // if (effects.length < i + 1) {
+        // final position = Vector2(x + i * (skillSize + skillGap), game.fixedResolution.y - skillSize / 2 - 7);
+        final effectPosition = Vector2(76 + i * (effectSize + effectGap), 44);
+        final effectComp = EffectComponent(skillEffects[i], position: effectPosition, size: Vector2.all(effectSize));
+        if (skillEffects[i].name == 'Requiem of Souls') {
+          effectComp.count = game.playerData.souls.value;
+        }
+        effects.add(effectComp);
+        add(effectComp);
+        if (skillEffects[i].duration > 0) {
+          effectComp.startCountdown(skillEffects[i].duration);
+        }
+        // }
       }
-      effects.add(effectComp);
-      add(effectComp);
-      if (skillEffects[i].duration > 0) {
-        effectComp.startCountdown(skillEffects[i].duration);
-      }
-      // }
     }
+    _renderEquipments();
+  }
+
+  _renderEquipments() {
+    final skillEffects = game.playerData.effects.value;
+    final effectWidth = (effectSize + effectGap) * skillEffects.length;
+    for (final item in inventory) {
+      item.position = Vector2(76 + effectWidth + (effectSize + effectGap) * inventory.indexOf(item).toDouble(), 44);
+      add(item);
+    }
+  }
+
+  void _onInventoryChangeHandler() {
+    removeAll(inventory);
+    inventory.clear();
+
+    for (final armor in game.playerData.inventory.value) {
+      if (armor is Armor) {
+        final armorImage = game.images.fromCache(armor.iconAsset);
+        final armorComp = ArmorComponent(
+          item: armor,
+          position: Vector2.zero(),
+          size: Vector2.all(20),
+          sprite: Sprite(armorImage, srcSize: Vector2.all(256)),
+        );
+        inventory.add(armorComp);
+      }
+    }
+
+    _renderEquipments();
+    game.playerData.armor.value = 5 * game.playerData.inventory.value.length;
   }
 }
 

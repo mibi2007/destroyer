@@ -6,18 +6,18 @@ import '../skills.dart';
 
 class Direction {
   final Vector2 direction;
-  late bool isleft;
-  late bool isright;
+  late bool isLeft;
+  late bool isRight;
   late double x;
   Direction(this.direction) {
-    isleft = direction.x == -1;
-    isright = direction.x == 1;
+    isLeft = direction.x == -1;
+    isRight = direction.x == 1;
     x = direction.x;
   }
 
   @override
   String toString() {
-    return 'Direction: left: $isleft, right: $isright';
+    return 'Direction: left: $isLeft, right: $isRight';
   }
 }
 
@@ -45,6 +45,7 @@ class PlayerData {
   final autoAttack = DoubleTapNotifier();
   final souls = ValueNotifier<int>(0);
   final garbages = ValueNotifier<int>(0);
+  final isDead = ValueNotifier<bool>(false);
 }
 
 class ValueNotifierList<T> extends ValueNotifier<List<T>> {
@@ -62,9 +63,9 @@ class ValueNotifierList<T> extends ValueNotifier<List<T>> {
     notifyListeners();
   }
 
-  void remove(T indexValue) {
+  void remove(T indexValue, {bool shouldNotify = false}) {
     final success = value.remove(indexValue);
-    if (success) notifyListeners();
+    if (success && shouldNotify) notifyListeners();
   }
 
   void removeAll(List<T> indexValues) {

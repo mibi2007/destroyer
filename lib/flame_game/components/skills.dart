@@ -235,7 +235,7 @@ class Fireball extends SpriteComponent
   @override
   void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollisionStart(intersectionPoints, other);
-    if (other is Platform || other is EnemyEntity) {
+    if (other is Platform || other is EnemyEntity || other is EnemyAnimationEntity) {
       // TODO: play explosion
       removeFromParent();
     }

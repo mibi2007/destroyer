@@ -53,6 +53,9 @@ class ChronosphereSkillComponent extends SpriteComponent with CollisionCallbacks
     if (other is EnemyEntity) {
       other.isInsideChronosphere = true;
     }
+    if (other is EnemyAnimationEntity) {
+      other.isInsideChronosphere = true;
+    }
     if (other is Coin) {
       other.isInsideChronosphere = true;
     }
@@ -65,6 +68,9 @@ class ChronosphereSkillComponent extends SpriteComponent with CollisionCallbacks
       game.playerData.effects.remove(SkillEffects.timeWalk5s);
     }
     if (other is EnemyEntity) {
+      other.isInsideChronosphere = false;
+    }
+    if (other is EnemyAnimationEntity) {
       other.isInsideChronosphere = false;
     }
     if (other is Coin) {

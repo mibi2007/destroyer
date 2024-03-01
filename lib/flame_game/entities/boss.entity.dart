@@ -1,34 +1,64 @@
+import 'package:destroyer/models/player_data/player_data.dart';
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
 import 'package:flame_steering_behaviors/flame_steering_behaviors.dart';
+import 'package:flutter/animation.dart';
 
 import '../../models/enemies.dart';
+import '../../utils/utils.dart';
 import '../behaviors/move_on_platform.behavior.dart';
 import '../entities/enemy.entity.dart';
+import 'garbage.entity.dart';
 import 'garbage_monster.entity.dart';
 import 'player.entity.dart';
 
 class BossEntity extends EnemyAnimationEntity with Steerable, OnGround {
-  BossEntity({required this.boss, required super.size, required super.position, required super.priority})
+  final bool isAutonomous;
+  late final Direction direction;
+  BossEntity(
+      {this.isAutonomous = true,
+      required this.boss,
+      required super.size,
+      required super.position,
+      required super.priority})
       : super(enemy: boss);
 
   final Boss boss;
+  late final GarbageEntity garbageBullet;
+  late final Garbage garbage;
 
   late final Timer _timer;
 
   int _secondCount = 0;
   @override
   Future<void> onLoad() async {
+    garbage = Garbage(
+      level: game.level.number,
+      asset: rnd.nextDouble() * 2 < 1 ? 'assets/images/enemies/garbage1.png' : 'assets/images/enemies/garbage2.png',
+      maxHealth: 100,
+      armor: game.level.number * 10,
+      damage: 20 + game.level.number * 5,
+    );
+    garbageBullet = GarbageEntity(garbage, game.images.fromCache(garbage.asset),
+        position: Vector2(0, 0), targetPosition: Vector2(0, 0), size: Vector2.all(32), anchor: Anchor.center);
     super.onLoad();
+    direction = Direction(Vector2(-game.playerData.direction.value.x, 0));
     await addAll([
       MoveOnPlatform(),
-      SeparationBehavior(
-        parent.children.query<GarbageMonsterEntity>(),
-        maxDistance: 2 * relativeValue,
-        maxAcceleration: 10 * relativeValue,
-      ),
-      PursueBehavior(parent.children.whereType<PlayerEntity>().first, pursueRange: 400),
+      if (isAutonomous) ...[
+        SeparationBehavior(
+          parent.children.query<GarbageMonsterEntity>(),
+          maxDistance: 2 * relativeValue,
+          maxAcceleration: 10 * relativeValue,
+        ),
+        PursueBehavior(parent.children.whereType<PlayerEntity>().first, pursueRange: 400),
+      ]
     ]);
     _timer = Timer(1, repeat: true, onTick: () {
+      if (!isMounted) return;
+      if (direction.x * (position.x - game.playerData.position.value.x) < 0) {
+        flipHorizontallyAroundCenter();
+      }
       if (currentHealth == 0) {
         add(TimerComponent(
           period: 1, // The period in seconds
@@ -37,14 +67,16 @@ class BossEntity extends EnemyAnimationEntity with Steerable, OnGround {
           },
         ));
       }
-      if (_secondCount % 5 == 0) {
-        attack();
-        add(TimerComponent(
-          period: 0.6, // The period in seconds
-          onTick: () {
-            move();
-          },
-        ));
+      if (isAutonomous && game.level.number > 2) {
+        if (_secondCount % 5 == 0) {
+          attack();
+          add(TimerComponent(
+            period: 0.6, // The period in seconds
+            onTick: () {
+              move();
+            },
+          ));
+        }
       }
       // if (_secondCount % 2 == 0) {
       //   if (game.playerData.position.value.x > position.x) {
@@ -69,11 +101,23 @@ class BossEntity extends EnemyAnimationEntity with Steerable, OnGround {
 
   @override
   attack() {
+    if (!isMounted) return;
     animation = boss.attackAnimation;
+    garbageBullet.sprite = Sprite(game.images.fromCache(
+        rnd.nextDouble() * 2 < 1 ? 'assets/images/enemies/garbage1.png' : 'assets/images/enemies/garbage2.png'));
+    garbageBullet.position = position + Vector2(-width / 2, height - 32);
+    parent.add(garbageBullet);
+    garbageBullet
+        .add(MoveEffect.to(game.playerData.position.value + Vector2(0, -20), CurvedEffectController(1, Curves.easeIn)));
+    garbageBullet.curse();
   }
 
   @override
   void update(double dt) {
+    if (isInsideChronosphere) {
+      velocity = Vector2.zero();
+      return;
+    }
     _timer.update(dt);
     super.update(dt);
   }
@@ -82,6 +126,19 @@ class BossEntity extends EnemyAnimationEntity with Steerable, OnGround {
   void onRemove() {
     _timer.stop();
     super.onRemove();
+  }
+
+  @override
+  void flipHorizontallyAroundCenter() {
+    direction.x = -direction.x;
+    if (direction.x > 0) {
+      healthBar.flipHorizontally();
+      healthBar.position.x = width;
+    } else {
+      healthBar.flipHorizontally();
+      healthBar.position.x = 0;
+    }
+    super.flipHorizontallyAroundCenter();
   }
 
   @override

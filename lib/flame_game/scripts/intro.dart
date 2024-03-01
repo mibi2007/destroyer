@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:destroyer/flame_game/entities/boss.entity.dart';
 import 'package:destroyer/models/equipments.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
@@ -7,12 +8,14 @@ import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nes_ui/nes_ui.dart';
 
+import '../../models/enemies.dart';
 import '../components/door.dart';
 import '../components/equipment.dart';
 import '../components/equipments/weapon.dart';
 import '../game.dart';
-import '../game_world.dart';
 import 'script.dart';
+
+const _asset = 'assets/images/enemies/boss-intro.png';
 
 class IntroScript extends Script {
   late final Door door;
@@ -25,9 +28,29 @@ class IntroScript extends Script {
   final List<TextBoxComponent> playerDialogs = [];
   final List<TextBoxComponent> bossDialogs = [];
   final List<TextBoxComponent> oracleDialogs = [];
+  // @override
+  // get boss => BossEntity(boss: Boss.intro(), size: Vector2(64, 64), position: Vector2(800, 100), priority: 1);
 
   @override
-  FutureOr<void> onLoad() {
+  Future<FutureOr<void>> onLoad() async {
+    boss = BossEntity(
+      isAutonomous: false,
+      boss: Boss(asset: _asset, level: 1, maxHealth: 1000, armor: 5, damage: 30),
+      size: Vector2.all(128),
+      position: Vector2.zero(),
+      priority: 1,
+    );
+    boss!.boss
+      ..moveAnimation = SpriteAnimation.spriteList(
+          await Future.wait([
+            Sprite.load(_asset, srcSize: Vector2.all(128), srcPosition: Vector2(128 * 0, -20)),
+          ]),
+          stepTime: 5)
+      ..attackAnimation = SpriteAnimation.spriteList(
+          await Future.wait([
+            Sprite.load(_asset, srcSize: Vector2.all(128), srcPosition: Vector2(128 * 0, -20)),
+          ]),
+          stepTime: 5);
     playerDialogs.addAll([
       TextBoxComponent(
         text: 'The world are breaking its balance',
@@ -85,9 +108,9 @@ class IntroScript extends Script {
     _timer = Timer(1, onTick: () {
       _seconds++;
       if (_seconds == 1) {
-        bossDialogs[0].position = boss!.position - Vector2(boss!.width / 2, 0);
-        bossDialogs[1].position = boss!.position - Vector2(boss!.width / 2, 0);
-        bossDialogs[2].position = boss!.position - Vector2(boss!.width / 2, 0);
+        bossDialogs[0].position = boss!.position - Vector2(boss!.width / 3, -30);
+        bossDialogs[1].position = boss!.position - Vector2(boss!.width / 3, -30);
+        bossDialogs[2].position = boss!.position - Vector2(boss!.width / 3, -30);
       }
       // print(game.playerData.position.value);
       if (_seconds == 3) {
@@ -149,7 +172,7 @@ class IntroScript extends Script {
         for (var dialog in oracleDialogs) {
           dialog.position = oracle.position + Vector2(0, -32);
         }
-        player.position = Vector2(door.x + door.width, door.y);
+        // parent.player.position = Vector2(door.x + door.width, door.y);
         // game.remove(game.camera);
         // game.cameraMaxSpeed = Vector2.all(double.infinity);
 
@@ -157,7 +180,22 @@ class IntroScript extends Script {
         // Not allow to go back
         // player.animation.resetLast2Second();
         // game.camera.stop();
-        world.customCamera.follow(player, maxSpeed: kCameraSpeed, snap: true);
+        // world.customCamera.follow(player, maxSpeed: kCameraSpeed, snap: true);
+        parent.movePlayerToPosition(Vector2(door.x + door.width / 2, door.y));
+        game.background.parallax!.baseVelocity.y = 5;
+        // for (int i = 0; i < game.camera.backdrop.children.length; i++) {
+        //   if (game.camera.backdrop.children.elementAt(i) is Background) {
+        //     add(TimerComponent(
+        //       period: i * 0.5, // The period in seconds
+        //       onTick: () {
+        //         game.camera.backdrop.children.elementAt(i).addAll([
+        //           MoveEffect.by(Vector2(0, 1000), LinearEffectController(5)),
+        //           // OpacityEffect.fadeOut(LinearEffectController(2))
+        //         ]);
+        //       },
+        //     ));
+        //   }
+        // }
         add(TimerComponent(
           period: 2, // The period in seconds
           onTick: () {
@@ -231,7 +269,7 @@ class IntroScript extends Script {
     final newEquipments = game.getEquipments();
     newEquipments.removeWhere((item) => item is Sword && item.type == SwordType.desolator);
     game.setEquipments(newEquipments);
-    world.finishedLevel();
+    world.nextLevel();
     add(TimerComponent(
       period: 1, // The period in seconds
       onTick: () {
