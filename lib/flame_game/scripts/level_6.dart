@@ -31,7 +31,7 @@ class Level6Script extends Script {
   @override
   Future<FutureOr<void>> onLoad() async {
     boss = BossEntity(
-      boss: Boss(asset: _asset, level: 5, maxHealth: 50, armor: 10),
+      boss: Boss(asset: _asset, level: 5, maxHealth: 5000, armor: 10),
       size: Vector2.all(128),
       position: Vector2.zero(),
       priority: 1,
@@ -62,9 +62,6 @@ class Level6Script extends Script {
         for (int i = 0; i < 2; i++) {
           boss!.attack();
         }
-      }
-      if (boss!.currentHealth <= 0) {
-        parent.add(door);
       }
     }, repeat: true);
   }
