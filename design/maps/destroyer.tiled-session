@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/Spritesheet.tsx",
+    "activeFile": "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map2_2.tmx",
     "expandedProjectPaths": [
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
@@ -84,6 +84,9 @@
             }
         },
         "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map2_2.tmx": {
+            "expandedObjectLayers": [
+                3
+            ],
             "scale": 0.5556510416666666,
             "selectedLayer": 2,
             "viewCenter": {
@@ -104,6 +107,9 @@
             }
         },
         "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map4.tmx": {
+            "expandedObjectLayers": [
+                3
+            ],
             "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
@@ -239,20 +245,20 @@
         "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map3.tmx",
         "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map4.tmx",
         "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map2_1.tmx",
-        "d:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map2_2.tmx",
-        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map5.tmx"
+        "d:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map5.tmx",
+        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map2_2.tmx"
     ],
     "project": "destroyer.tiled-project",
     "property.type": "bool",
     "recentFiles": [
-        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/GameSpritesheet.tsx",
+        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/Spritesheet.tsx",
+        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map1.tmx",
+        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map3.tmx",
+        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map4.tmx",
+        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map2_1.tmx",
         "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map5.tmx",
         "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map2_2.tmx",
-        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map2_1.tmx",
-        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map4.tmx",
-        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map3.tmx",
-        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map1.tmx",
-        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/Spritesheet.tsx",
+        "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/GameSpritesheet.tsx",
         "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/animation.tsx",
         "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/0x72_DungeonTilesetII_v1.4.tsx",
         "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/dungeon.tmx",
