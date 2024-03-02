@@ -81,7 +81,7 @@ class _InstructionsDialogState extends State<InstructionsDialog> {
                           width: 60,
                           height: 60,
                           child: SpriteAnimationWidget.asset(
-                            path: '/switch-swords.png',
+                            path: 'switch-swords.png',
                             data: SpriteAnimationData.sequenced(
                               amount: 4,
                               stepTime: 1,

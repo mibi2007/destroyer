@@ -1,10 +1,10 @@
-import '../player_progress/player_progress.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../style/wobbly_button.dart';
+import '../player_progress/player_progress.dart';
 import '../style/palette.dart';
+import '../style/wobbly_button.dart';
 import 'custom_name_dialog.dart';
 import 'settings.dart';
 
@@ -12,11 +12,13 @@ class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   static const _gap = SizedBox(height: 60);
+  static const _mobileGap = SizedBox(height: 20);
 
   @override
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsController>();
     final palette = context.watch<Palette>();
+    final gap = MediaQuery.of(context).size.height < 500 ? _mobileGap : _gap;
 
     return Scaffold(
       backgroundColor: palette.backgroundSettings.color,
@@ -25,22 +27,22 @@ class SettingsScreen extends StatelessWidget {
           children: [
             Expanded(
               child: ConstrainedBox(
-                constraints: const BoxConstraints(
-                  maxWidth: 600,
+                constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width * 0.8,
                 ),
                 child: ListView(
                   children: [
-                    _gap,
-                    const Text(
+                    gap,
+                    Text(
                       'Settings',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: 'Press Start 2P',
-                        fontSize: 30,
+                        fontSize: MediaQuery.of(context).size.height < 500 ? 24.0 : 32.0,
                         height: 1,
                       ),
                     ),
-                    _gap,
+                    gap,
                     const _NameChangeLine(
                       'Name',
                     ),
@@ -68,8 +70,7 @@ class SettingsScreen extends StatelessWidget {
 
                         final messenger = ScaffoldMessenger.of(context);
                         messenger.showSnackBar(
-                          const SnackBar(
-                              content: Text('Player progress has been reset.')),
+                          const SnackBar(content: Text('Player progress has been reset.')),
                         );
                       },
                     ),
@@ -77,14 +78,14 @@ class SettingsScreen extends StatelessWidget {
                 ),
               ),
             ),
-            _gap,
+            gap,
             WobblyButton(
               onPressed: () {
                 GoRouter.of(context).pop();
               },
               child: const Text('Back'),
             ),
-            _gap,
+            gap,
           ],
         ),
       ),
@@ -100,6 +101,10 @@ class _NameChangeLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsController>();
+    final textStyle = TextStyle(
+      fontFamily: 'Press Start 2P',
+      fontSize: MediaQuery.of(context).size.height < 500 ? 16.0 : 20.0,
+    );
 
     return InkResponse(
       highlightShape: BoxShape.rectangle,
@@ -109,20 +114,13 @@ class _NameChangeLine extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(title,
-                style: const TextStyle(
-                  fontFamily: 'Press Start 2P',
-                  fontSize: 20,
-                )),
+            Text(title, style: textStyle),
             const Spacer(),
             ValueListenableBuilder(
               valueListenable: settings.playerName,
               builder: (context, name, child) => Text(
                 '‘$name’',
-                style: const TextStyle(
-                  fontFamily: 'Press Start 2P',
-                  fontSize: 20,
-                ),
+                style: textStyle,
               ),
             ),
           ],
@@ -143,6 +141,10 @@ class _SettingsLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textStyle = TextStyle(
+      fontFamily: 'Press Start 2P',
+      fontSize: MediaQuery.of(context).size.height < 500 ? 16.0 : 20.0,
+    );
     return InkResponse(
       highlightShape: BoxShape.rectangle,
       onTap: onSelected,
@@ -156,10 +158,7 @@ class _SettingsLine extends StatelessWidget {
                 title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontFamily: 'Press Start 2P',
-                  fontSize: 20,
-                ),
+                style: textStyle,
               ),
             ),
             icon,

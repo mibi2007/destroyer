@@ -21,6 +21,13 @@ class LevelSelectionScreen extends StatelessWidget {
     final palette = context.watch<Palette>();
     final playerProgress = context.watch<PlayerProgress>();
     final levelTextStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.4);
+    final gap =
+        MediaQuery.of(context).size.height < 500 ? const SizedBox(height: 20, width: 20) : const SizedBox(height: 50);
+    final gap2 =
+        MediaQuery.of(context).size.height < 500 ? const SizedBox(height: 10, width: 10) : const SizedBox(height: 30);
+    const gapBig = SizedBox(width: 100);
+    final contentWidth =
+        MediaQuery.of(context).size.width * 0.8 > 600 ? 600.0 : MediaQuery.of(context).size.width * 0.8;
 
     return Scaffold(
       backgroundColor: palette.backgroundLevelSelection.color,
@@ -39,7 +46,9 @@ class LevelSelectionScreen extends StatelessWidget {
                   const SizedBox(width: 16),
                   NesButton(
                     type: NesButtonType.normal,
-                    child: NesIcon(iconData: NesIcons.questionMark),
+                    child: NesIcon(
+                        iconData: NesIcons.questionMark,
+                        size: MediaQuery.of(context).size.height < 500 ? const Size(14, 14) : null),
                     onPressed: () {
                       NesDialog.show(
                         context: context,
@@ -51,10 +60,10 @@ class LevelSelectionScreen extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 50),
+          gap2,
           Expanded(
             child: SizedBox(
-              width: 600,
+              width: contentWidth,
               child: ListView(
                 children: [
                   for (final level in gameLevels)
@@ -80,7 +89,7 @@ class LevelSelectionScreen extends StatelessWidget {
                             const SizedBox(width: 10),
                             const Icon(Icons.lock, size: 20),
                           ] else if (playerProgress.levels.length >= level.number) ...[
-                            const SizedBox(width: 50),
+                            gap,
                             Text(
                               '${playerProgress.levels[level.number - 1]}s',
                               style: levelTextStyle,
@@ -93,34 +102,52 @@ class LevelSelectionScreen extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 30),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          gap2,
+          Flex(
+            direction: MediaQuery.of(context).size.height < 500 ? Axis.horizontal : Axis.vertical,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Image.asset('assets/images/coin.png', width: 40, height: 40, fit: BoxFit.contain),
-              Text(':${playerProgress.credits}', style: Theme.of(context).textTheme.bodyMedium),
-              const SizedBox(width: 100),
-              WobblyButton(
-                onPressed: () {
-                  NesDialog.show(
-                    context: context,
-                    builder: (_) => EquipmentPickedDialog(
-                      equipments: playerProgress.getEquipments(),
-                    ),
-                  );
-                },
-                child: const Text('Equipments'),
+              if (MediaQuery.of(context).size.height < 500) ...[
+                WobblyButton(
+                  onPressed: () {
+                    GoRouter.of(context).go('/');
+                  },
+                  child: const Text('Back'),
+                ),
+                gapBig,
+              ],
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset('assets/images/coin.png', width: 40, height: 40, fit: BoxFit.contain),
+                  Text(':${playerProgress.credits}', style: Theme.of(context).textTheme.bodyMedium),
+                  MediaQuery.of(context).size.height < 500 ? gap : gapBig,
+                  WobblyButton(
+                    onPressed: () {
+                      NesDialog.show(
+                        context: context,
+                        builder: (_) => EquipmentPickedDialog(
+                          equipments: playerProgress.getEquipments(),
+                        ),
+                      );
+                    },
+                    child: const Text('Equipments'),
+                  ),
+                ],
               ),
+              if (MediaQuery.of(context).size.height > 500) ...[
+                gap2,
+                WobblyButton(
+                  onPressed: () {
+                    GoRouter.of(context).go('/');
+                  },
+                  child: const Text('Back'),
+                ),
+              ],
             ],
           ),
-          const SizedBox(height: 30),
-          WobblyButton(
-            onPressed: () {
-              GoRouter.of(context).go('/');
-            },
-            child: const Text('Back'),
-          ),
-          const SizedBox(height: 30),
+          gap2,
         ],
       ),
     );

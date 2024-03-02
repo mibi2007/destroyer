@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tileset version="1.10" tiledversion="1.10.2" name="Spritesheet" tilewidth="32" tileheight="32" tilecount="48" columns="8">
- <image source="Spritesheet.png" width="256" height="192"/>
+ <image source="assets/tiles/Spritesheet.png" width="256" height="192"/>
  <wangsets>
   <wangset name="ground1" type="mixed" tile="-1">
    <wangcolor name="" color="#ff0000" tile="-1" probability="1"/>

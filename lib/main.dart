@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart' show ProviderScope;
 import 'package:nes_ui/nes_ui.dart';
@@ -15,6 +16,12 @@ import 'utils/disabler.dart';
 void main() async {
   customGameInput();
   WidgetsFlutterBinding.ensureInitialized();
+  // if (!kIsWeb) {
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.landscapeRight,
+  ]).then((value) => runApp(const ProviderScope(child: MyGame())));
+  // }
   runApp(const ProviderScope(child: MyGame()));
 }
 

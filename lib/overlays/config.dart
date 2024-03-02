@@ -22,11 +22,11 @@ class Config extends StatelessWidget {
             SizedBox(
               width: 300,
               child: ValueListenableBuilder<bool>(
-                valueListenable: settings.quickCastOn,
-                builder: (context, quickCastOn, child) => SwitchListTile(
-                  title: const Text('On switching weapons, quick cast the autocast spell if available'),
-                  value: quickCastOn,
-                  onChanged: (value) => settings.toggleQuickCastOn(),
+                valueListenable: settings.gamepadOn,
+                builder: (context, gamepadOn, child) => SwitchListTile(
+                  title: const Text('Enable Gamepad for mobile devices'),
+                  value: gamepadOn,
+                  onChanged: (value) => settings.toggleGamepadOn(),
                 ),
               ),
             ),

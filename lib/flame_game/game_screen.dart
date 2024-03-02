@@ -1,4 +1,6 @@
 import 'package:flame_riverpod/flame_riverpod.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nes_ui/nes_ui.dart';
@@ -7,6 +9,7 @@ import '../audio/audio_controller.dart';
 import '../level_selection/levels.dart';
 import '../overlays/game_over.dart';
 import '../overlays/pause_menu.dart';
+import '../utils/disabler.dart';
 import 'game.dart';
 import 'game_win_dialog.dart';
 import 'scripts/intro.dart';
@@ -41,22 +44,31 @@ class GameScreen extends StatelessWidget {
     // if (isTesting) {
     myGame.isTesting = true;
     // }
-    double width;
-    double height;
-    if ((MediaQuery.of(context).size.width / 640 * 454) > MediaQuery.of(context).size.height) {
-      height = MediaQuery.of(context).size.height;
-      width = height * 640 / 454;
-    } else {
-      width = MediaQuery.of(context).size.width;
-      height = width * 454 / 640;
-    }
+    // double width;
+    // double height;
+    // if ((MediaQuery.of(context).size.width / 640 * 454) > MediaQuery.of(context).size.height) {
+    //   height = MediaQuery.of(context).size.height;
+    //   width = height * 640 / 454;
+    // } else {
+    //   width = MediaQuery.of(context).size.width;
+    //   height = width * 454 / 640;
+    // }
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
         child: Center(
-          child: SizedBox(
-            width: width,
-            height: height,
+          child: Listener(
+            onPointerDown: kIsWeb
+                ? null
+                : (PointerDownEvent event) {
+                    if (event.kind == PointerDeviceKind.mouse) {
+                      if (event.buttons == kPrimaryMouseButton) {
+                        leftClick.update();
+                      } else if (event.buttons == kSecondaryMouseButton) {
+                        rightClick.update();
+                      }
+                    }
+                  },
             child: RiverpodAwareGameWidget<DestroyerGame>(
               key: gameWidgetKey,
               game: myGame,

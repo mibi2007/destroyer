@@ -26,14 +26,18 @@ class MainMenuScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
+              Text(
                 'Destroyer',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontFamily: 'Press Start 2P', fontSize: 32, height: 1, color: Colors.black),
+                style: TextStyle(
+                    fontFamily: 'Press Start 2P',
+                    fontSize: MediaQuery.of(context).size.height < 500 ? 24 : 32,
+                    height: 1,
+                    color: Colors.black),
               ),
-              const SizedBox(
-                width: 500,
-                height: 500,
+              SizedBox(
+                width: MediaQuery.of(context).size.height * 0.6,
+                height: MediaQuery.of(context).size.height * 0.6,
                 child: RiveAnimation.asset(
                   'assets/animations/character.riv',
                   fit: BoxFit.cover,
@@ -44,12 +48,12 @@ class MainMenuScreen extends StatelessWidget {
                 angle: -0.1,
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 500),
-                  child: const Text(
-                    'A Flutter game.',
+                  child: Text(
+                    'A Flutter Game.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'Press Start 2P',
-                      fontSize: 32,
+                      fontSize: MediaQuery.of(context).size.height < 500 ? 24 : 32,
                       height: 1,
                     ),
                   ),

@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-export 'disabler_other.dart' if (dart.library.html) 'disabler_web.dart';
+export 'disabler_other.dart' if (dart.library.html) 'disabler_web.dart' if (dart.library.window) 'disabler_window.dart';
 
 final rightClick = RightClick();
 final leftClick = LeftClick();

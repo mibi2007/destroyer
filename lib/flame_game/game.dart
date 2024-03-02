@@ -55,12 +55,16 @@ class DestroyerGame extends FlameGame
 
   DestroyerGame(this.level, this.sceneIndex, {required this.screenSize, this.isTesting = false}) {
     images.prefix = '';
+    fixedResolution = screenSize.height < 500
+        ? Vector2(screenSize.width, screenSize.height) * 0.94
+        : Vector2(screenSize.width, screenSize.height) * 0.57;
   }
   late Image spriteSheet;
 
   final playerData = PlayerData();
-  final ratio = 454 / 640;
-  final fixedResolution = Vector2(640, 330 + 240 * 330 / 640);
+  // final ratio = 454 / 640;
+  // final fixedResolution = Vector2(640, 330 + 240 * 330 / 640);
+  late final Vector2 fixedResolution;
   double _timer = 0;
   late Background background;
   // late TiledComponent mapTiled;
@@ -196,6 +200,8 @@ class DestroyerGame extends FlameGame
     await images.load('assets/animations/slash.png');
     await images.load('assets/animations/electric.png');
     await images.load('assets/animations/flame.png');
+    await images.load('assets/tiles/Spritesheet.png');
+
     add(FpsTextComponent());
 
     add(DestroyerGameWorld());

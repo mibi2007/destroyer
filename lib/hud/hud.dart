@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
+import 'package:flame/palette.dart';
 import 'package:flame/text.dart';
 import 'package:flame_rive/flame_rive.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +44,8 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
 
   @override
   bool get debugMode => false;
+  final knobPaint = BasicPalette.blue.withAlpha(200).paint();
+  final backgroundPaint = BasicPalette.blue.withAlpha(100).paint();
 
   @override
   Future<void> onLoad() async {
@@ -130,6 +133,15 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
       position: Vector2(66, 2),
       size: Vector2.all(16),
     )..add(creditTextComponent));
+    final joystick = JoystickComponent(
+      knob: CircleComponent(radius: 30, paint: knobPaint),
+      background: CircleComponent(radius: 100, paint: backgroundPaint),
+      margin: const EdgeInsets.only(left: 40, bottom: 40),
+      position: Vector2(100, 100),
+      size: 1000,
+    );
+    // size = Vector2.all(100);
+    add(joystick);
 
     game.playerData.credits.addListener(onCreditChange);
     game.playerData.health.addListener(onHealthChange);
@@ -239,7 +251,6 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
     healthTextComponent.text = '${max(game.playerData.health.value, 0)}/100';
     healthBarComponent.width = 150 * max(game.playerData.health.value, 0) / 100;
 
-    // Load game over overlay if health is zero.
     if (game.playerData.health.value <= 0) {
       // AudioManager.stopBgm();
       // game.pauseEngine();

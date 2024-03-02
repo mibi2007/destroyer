@@ -135,7 +135,7 @@ class DestroyerGameWorld extends World with HasGameReference<DestroyerGame> {
     super.onMount();
     // When the world is mounted in the game we add a back button widget as an
     // overlay so that the player can go back to the previous screen.
-    game.overlays.add(GameScreen.backButtonKey);
+    if (game.screenSize.height > 500) game.overlays.add(GameScreen.backButtonKey);
   }
 
   @override

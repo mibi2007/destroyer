@@ -35,7 +35,7 @@ class SettingsController {
   ValueNotifier<bool> musicOn = ValueNotifier(true);
 
   /// Whether or not the music is on.
-  ValueNotifier<bool> quickCastOn = ValueNotifier(true);
+  ValueNotifier<bool> gamepadOn = ValueNotifier(true);
 
   /// Creates a new instance of [SettingsController] backed by [store].
   ///
@@ -66,9 +66,9 @@ class SettingsController {
     _store.saveSoundsOn(soundsOn.value);
   }
 
-  void toggleQuickCastOn() {
-    quickCastOn.value = !quickCastOn.value;
-    _store.saveQuickCastOn(soundsOn.value);
+  void toggleGamepadOn() {
+    gamepadOn.value = !gamepadOn.value;
+    _store.saveUseGamepad(soundsOn.value);
   }
 
   /// Asynchronously loads values from the injected persistence store.
