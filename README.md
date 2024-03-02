@@ -1,31 +1,31 @@
-## Inspiration
+## Inspiration:
 
-I love to play platformer games with items, skills and fantasy game story. Dota 2 is also my favorite game so I took some skills from it put to my game just for fun.
+I enjoy platformer games with abilities, skills, and fantasy storylines. As a passionate Dota 2 player, I decided to incorporate some skills from it into my own game as a personal project.
 
-## What it does
+## What the Game Offers:
 
-This game build with Flutter and Flame engine, a perfect match to create indie game for now IMHO
+This game is built using Flutter and the Flame engine, which are ideal for indie game development.
 
-## How we built it
+## Development Process:
 
-I made it in 2 months. Most of the assets I made is in the [design](https://github.com/mibi2007/destroyer/tree/main/design) folder. I created (game story)[https://github.com/mibi2007/destroyer/blob/main/README/game_play.md] first. Then started coding follow it. My game progress was updated in Flutter Vietnam post (here)[https://www.facebook.com/groups/fluttervn/permalink/1587034758499623/]
-A lot of my friends in this small community give me the inspiration. The **Flutter Game Community** on Discord (here)[https://discord.gg/KpTYYRRv] is my best companion
+I created this game over a period of two months. The game assets are mostly stored in the [design](https://github.com/mibi2007/destroyer/tree/main/design) folder. I began by outlining the (game story)[https://github.com/mibi2007/destroyer/blob/main/README/game_play.md] and then coding the game based on it. I shared my progress updates on the post (here)[https://www.facebook.com/groups/fluttervn/permalink/1587034758499623/]
+where I received valuable support from the community. The **Flutter Game Community** on Discord (here)[https://discord.gg/KpTYYRRv] also provided me with constant encouragement.
 
-## Challenges we ran into
+## Challenges:
 
-This is my very first game that I have completed so I have sometimes stroggle with my own ideas because I am not sure it is doable. Ex use mouse left and right click, aiming direction between mouse and player. I have to center my player on the screen to do that but I will happier if I can make the camera follow with bounds. The skills is very complicated to me, thanks to flame_behaviors I can split the logic and reuse it
+As this is my first completed game, I sometimes struggled with my own ideas, questioning their feasibility. For example, the ability to use left and right mouse clicks to aim between the mouse and player required centering the player on the screen. However, I would have preferred a camera that followed the player with bounds. Designing the skills was also complex, but I managed to simplify them and reuse logic thanks to the flame_behaviors library.
 
-## Accomplishments that we're proud of
+## Accomplishments:
 
-After finish it, I play a lot, many many ideas are coming, I can't wait to add it to my game, quire addicted
+After completing the game, I played it extensively and was filled with ideas for future additions. I am eager to implement these upgrades, as I find it quite addictive.
 
-## What we learned
+## Lessons Learned:
 
-I learn so many things, from editing image, create sprite animation, create game map with Tiled app, working with collisions and timing effects. I have build my own effects system that can reflect exactly the skill effect that I need
+Through this project, I gained experience in image editing, sprite animation, game map creation using Tiled, collision detection, and timing effects. I even created my own effects system that accurately reflects the intended skill effects.
 
-## What's next for Destroyer
+## Future Plans for "Destroyer":
 
-For now my game only has 2 maps, I will add 5 more to complete it. More than that, the most exiting is I will add support for multiplayer, I already have gave server for it. The game effect will improve with Flutter shader when it is stable
+Currently, my game has only two maps, but I plan to add five more to complete it. Additionally, I am thrilled to announce that multiplayer support will be added soon, with a dedicated server already in place. Furthermore, I intend to enhance the game's visuals using Flutter shaders once they are stabilized.
 
 # Processing
 
