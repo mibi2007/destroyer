@@ -35,7 +35,7 @@ const double defaultMoveSpeed = 150;
 const double flySpeed = 75;
 const double timeWalkSpeed = 350;
 const double playerGravity = 800;
-final Vector2 _up = Vector2(0, -1);
+const slashTime = 0.25;
 
 class PlayerEntity extends PositionComponent with ParentIsA<SceneComponent> {
   final Artboard artboard;
@@ -210,7 +210,7 @@ class PlayerAnimationEntity extends RiveComponent
   Future<void> onLoad() async {
     // Player behaviors
     await addAll([
-      PropagatingCollisionBehavior(CircleHitbox(isSolid: true), key: ComponentKey.named('player')),
+      PropagatingCollisionBehavior(CircleHitbox(), key: ComponentKey.named('player')),
       MoveOnPlatform(),
       HitByEnemy(),
     ]);
@@ -387,15 +387,16 @@ class PlayerAnimationEntity extends RiveComponent
     // Allow jump only if jump input is pressed
     // and player is already on ground.
     if (_jumpInput) {
-      if (isOnGround && _jumpCount == 0) {
+      if (_jumpCount == 0) {
         isOnGround = false;
+        isPendingAfterJump = true;
         _jumpCount++;
         // AudioManager.playSfx('Jump_15.wav');
         // _velocity.y = -jumpSpeed;
         // _controller.findInput<double>('Level')?.value = 1;
         velocity.y = -jumpSpeed;
         _jumpTrigger?.fire();
-      } else if (!isOnGround && _jumpCount == 1) {
+      } else if (_jumpCount == 1) {
         _jumpCount++;
         // _velocity.y = -jumpSpeed;
         velocity.y = -jumpSpeed;
@@ -410,6 +411,7 @@ class PlayerAnimationEntity extends RiveComponent
       _landTrigger?.fire();
     }
     // through platforms at very high velocities.
+    // print('isOnGround: $isOnGround');
     if (isOnGround || isLightning) {
       _velocity.y = 0;
       _jumpCount = 0;
@@ -501,33 +503,7 @@ class PlayerAnimationEntity extends RiveComponent
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    // if (other is Platform && !isLightning) {
-    //   if (intersectionPoints.length == 2) {
-    //     // Calculate the collision normal and separation distance.
-    //     final mid = (intersectionPoints.elementAt(0) + intersectionPoints.elementAt(1)) / 2;
-
-    //     final newCollisionNormal = absoluteCenter - mid;
-    //     final separationDistance = (size.x / 2) - newCollisionNormal.length;
-    //     newCollisionNormal.normalize();
-    //     // If collision normal is almost upwards,
-    //     // player must be on ground.
-    //     if (_up.dot(newCollisionNormal) > 0.7) {
-    //       _isOnGround = true;
-    //       _jumpCount = 0;
-    //     } else {
-    //       _isOnGround = false;
-    //     }
-
-    //     // Resolve collision by moving player along
-    //     // collision normal by separation distance.
-    //     position += newCollisionNormal.scaled(separationDistance);
-    //     collisionNormal = newCollisionNormal;
-    //   }
-    // }
-
     if (other is EquipmentComponent) {
-      print('picked up ${other.item.name}');
-      print(other.isMounted);
       game.addEquipment(other.item);
       if (other is SwordComponent) {
         final newSword = other.item as Sword;
@@ -824,7 +800,7 @@ class HalfCircleHitbox extends CircleComponent {
         );
 
   @override
-  bool get debugMode => false;
+  bool get debugMode => true;
 
   @override
   Future<void> onLoad() async {
@@ -846,7 +822,7 @@ class Slash extends PolygonComponent with CollisionCallbacks {
             final theta = pi * i / (numberOfPoints - 1) - pi / 2; // Half-circle (180 degrees)
             return Vector2(radius * cos(theta), radius * sin(theta));
           }),
-          position: Vector2.all(radius),
+          position: Vector2(-radius, radius),
           anchor: Anchor.centerLeft,
           paint: Paint()..color = const Color(0x00FFFFFF),
         );
@@ -856,5 +832,6 @@ class Slash extends PolygonComponent with CollisionCallbacks {
     // Add a hitbox to the component
     final hitbox = PolygonHitbox(vertices, position: Vector2(size.x / 2, size.y / 2), anchor: Anchor.center);
     add(hitbox);
+    add(MoveEffect.by(Vector2(30, 0), LinearEffectController(slashTime)));
   }
 }

@@ -6,15 +6,29 @@ import '../entities/player.entity.dart';
 
 final Vector2 _up = Vector2(0, -1);
 const double g = 300;
-const double threshold = 1;
+const double collisionThreshold = 0.1;
+const double jumpThreshold = 0.1;
 
 class MoveOnPlatform extends CollisionBehavior<Platform, OnGround> {
   double _timer = 0;
+  double _lastPositionX = 0;
+  double _lastPositionTimer = 0;
   @override
   void onCollision(Set<Vector2> intersectionPoints, Platform other) {
-    if (!isMounted) return;
+    if (!parent.isMounted) return;
     if (parent is PlayerAnimationEntity && (parent as PlayerAnimationEntity).isLightning) return;
     if (intersectionPoints.length == 2) {
+      // final collisionFromTop = intersectionPoints.any((point) => point.y >= other.position.y - collisionThreshold);
+
+      // if (collisionFromTop && parent.velocity.y > 0) {
+      //   parent.isOnGround = true;
+      //   parent.velocity.y = 0; // Stop downward movement
+      //   // Adjust the player's position to be on top of the platform
+      //   parent.position.y = other.position.y - parent.size.y / 2;
+      // } else {
+      //   // parent.isOnGround = false;
+      // }
+      // parent.isOnGround = false;
       // Calculate the collision normal and separation distance.
       final mid = (intersectionPoints.elementAt(0) + intersectionPoints.elementAt(1)) / 2;
 
@@ -25,7 +39,7 @@ class MoveOnPlatform extends CollisionBehavior<Platform, OnGround> {
       // player must be on ground.
       // print(_up.dot(newCollisionNormal));
       if (_up.dot(newCollisionNormal) > 0.9) {
-        parent.isOnGround = true;
+        if (!parent.isPendingAfterJump) parent.isOnGround = true;
       }
 
       // Resolve collision by moving player along
@@ -33,30 +47,53 @@ class MoveOnPlatform extends CollisionBehavior<Platform, OnGround> {
       parent.position += newCollisionNormal.scaled(separationDistance);
       parent.collisionNormal = newCollisionNormal;
     }
+    super.onCollision(intersectionPoints, other);
   }
 
   @override
   void onCollisionEnd(Platform other) {
     if (!isMounted) return;
-    // print(parent.position.distanceTo(parent.lastPosition));
-    // if (parent.position.distanceTo(parent.lastPosition) == 0) {
+    // print('${parent.position.x} - $_lastPositionX');
+    // if (parent.position.x - _lastPositionX == 0) {
     //   // If the player hasn't moved beyond the threshold, ignore the collision end
     // } else {
-    //   parent.isOnGround = false;
-    // }
+    // print('isOnGround = false');
     parent.isOnGround = false;
+    // }
+    // parent.isOnGround = false;
   }
 
   @override
   update(double dt) {
-    parent.lastPosition = parent.position.clone();
+    // print(parent.position.x);
+    if (_lastPositionTimer > 1) {
+      _lastPositionTimer = 0;
+      if (parent is PlayerAnimationEntity) {
+        // print('save');
+        // print(parent.position.x);
+      }
+      _lastPositionX = parent.position.x;
+    }
+    _lastPositionTimer += dt;
+    if (parent.isPendingAfterJump) {
+      if (_timer == 0) {
+        // print('start timer');
+      }
+      if (_timer > jumpThreshold) {
+        // print('reset timer');
+        parent.isPendingAfterJump = false;
+        _timer = 0;
+      } else {
+        _timer += dt;
+      }
+    }
     if (!parent.isOnGround) {
       parent.velocity.y += parent.gravity * dt;
       // Clamp velocity along y to avoid player tunneling
       parent.velocity.y = parent.velocity.y.clamp(-jumpSpeed, parent.terminalVelocity);
       // _timer = 0;
     } else {
-      parent.velocity.y = 0;
+      // parent.velocity.y = 0;
     }
     // game.playerData.position.value = parent.position;
     // if (parent is PlayerAnimationEntity) {
@@ -76,5 +113,6 @@ mixin OnGround on EntityMixin, PositionComponent {
   Vector2 collisionNormal = Vector2.zero();
   Vector2 velocity = Vector2.zero();
   final double terminalVelocity = 150;
-  Vector2 lastPosition = Vector2.zero();
+  // Vector2 lastPosition = Vector2.zero();
+  bool isPendingAfterJump = false;
 }

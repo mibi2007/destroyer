@@ -292,11 +292,9 @@ class SceneComponent extends Component
             } else if (script is Level6Script) {
               (script as Level6Script).door = door;
             } else {
-              print('Script not found');
               add(door);
             }
           } else {
-            print('Script not found 2');
             add(door);
           }
 
