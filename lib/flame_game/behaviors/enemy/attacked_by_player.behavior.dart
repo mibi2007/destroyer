@@ -86,7 +86,7 @@ class BurnSkill extends Component with HasGameRef<DestroyerGame> {
   }
 
   @override
-  bool get debugMode => true;
+  bool get debugMode => false;
 
   void onCollisionStart<T extends EnemyCollision>(double dmg, double burnTime) {
     final parent = behavior.parent as T;
@@ -127,6 +127,7 @@ class BurnSkill extends Component with HasGameRef<DestroyerGame> {
         //   print(isMounted); // Must be false
         // });
       },
+      removeOnFinish: true,
     ));
   }
 }
@@ -162,7 +163,7 @@ class HitByRequiemOfSouls extends CollisionBehavior<RequiemOfSoulsSkillComponent
     if (parent is EnemyEntity) {
       final typeCast = parent as EnemyEntity;
       if (typeCast.isCursed) return;
-      final dmg = other.skill.damage - typeCast.enemy.armor;
+      final dmg = other.skill.damage * (game.playerData.souls.value + 1) - typeCast.enemy.armor;
       final burnSkill = BurnSkill.fromRequiemOfSoulsSkillComponent(this);
       game.add(burnSkill);
       burnSkill.onCollisionStart(dmg, _burnTime);
@@ -170,7 +171,7 @@ class HitByRequiemOfSouls extends CollisionBehavior<RequiemOfSoulsSkillComponent
     if (parent is EnemyAnimationEntity) {
       final typeCast = parent as EnemyAnimationEntity;
       if (typeCast.isCursed) return;
-      final dmg = other.skill.damage - typeCast.enemy.armor;
+      final dmg = other.skill.damage * (game.playerData.souls.value + 1) - typeCast.enemy.armor;
       final burnSkill = BurnSkill.fromRequiemOfSoulsSkillComponent(this);
       game.add(burnSkill);
       burnSkill.onCollisionStart(dmg, _burnTime);
@@ -234,6 +235,7 @@ class ElectricShockEffect extends Component with HasGameRef<DestroyerGame> {
         parent.checkIfDead();
         removeFromParent();
       },
+      removeOnFinish: true,
     ));
   }
 }

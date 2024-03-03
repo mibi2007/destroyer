@@ -219,12 +219,10 @@ class SceneComponent extends Component
         case 'Enemy':
           // Find the target object.
           final targetObjectId = spawnPoint.properties.getValue<int>('Target');
-          final flip = spawnPoint.properties.getValue<bool>('Flip');
           final type = spawnPoint.properties.getValue<String>('Type');
           TiledObject? target = getObjectFromTargetById(spawnPointsLayer.objects, targetObjectId);
           Enemy enemy;
           Vector2 enemySize = Vector2.all(32);
-          String asset;
           PositionComponent enemyComponent;
           if (type == 'Boss') {
             script.boss!.position = position;
@@ -239,7 +237,7 @@ class SceneComponent extends Component
                   ? 'assets/images/enemies/garbage1.png'
                   : 'assets/images/enemies/garbage2.png',
               maxHealth: 100,
-              armor: level.number * 10,
+              armor: level.number * 3,
             );
             enemyComponent = GarbageEntity(
               enemy,
@@ -273,6 +271,7 @@ class SceneComponent extends Component
             position: position,
             size: size,
             onPlayerEnter: () {
+              _player.animation.isOnGround = false;
               if (nextDoor != null) {
                 final targetObjectId = spawnPoint.properties.getValue<int>('Target');
                 TiledObject target = getObjectFromTargetById(spawnPointsLayer.objects, targetObjectId)!;

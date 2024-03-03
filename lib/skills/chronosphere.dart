@@ -42,6 +42,7 @@ class ChronosphereSkillComponent extends SpriteComponent with CollisionCallbacks
           },
         ));
       },
+      removeOnFinish: true,
     ));
   }
 

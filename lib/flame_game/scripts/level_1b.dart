@@ -89,6 +89,7 @@ class Level1BScript extends Script {
       onTick: () {
         game.overlays.add(PurifySword2PickedDialog.id);
       },
+      removeOnFinish: true,
     ));
   }
 

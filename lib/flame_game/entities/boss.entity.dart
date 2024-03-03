@@ -36,8 +36,8 @@ class BossEntity extends EnemyAnimationEntity with Steerable, OnGround {
       level: game.level.number,
       asset: rnd.nextDouble() * 2 < 1 ? 'assets/images/enemies/garbage1.png' : 'assets/images/enemies/garbage2.png',
       maxHealth: 100,
-      armor: game.level.number * 10,
-      damage: 20 + game.level.number * 5,
+      armor: game.level.number * 5,
+      damage: 10 + game.level.number * 5,
     );
     garbageBullet = GarbageEntity(garbage, game.images.fromCache(garbage.asset),
         position: Vector2(0, 0), targetPosition: Vector2(0, 0), size: Vector2.all(32), anchor: Anchor.center);
@@ -51,7 +51,7 @@ class BossEntity extends EnemyAnimationEntity with Steerable, OnGround {
           maxDistance: 2 * relativeValue,
           maxAcceleration: 10 * relativeValue,
         ),
-        PursueBehavior(parent.children.whereType<PlayerEntity>().first, pursueRange: 400),
+        PursueBehavior(parent.children.whereType<PlayerEntity>().first, pursueRange: 700),
       ]
     ]);
     _timer = Timer(1, repeat: true, onTick: () {
@@ -65,6 +65,7 @@ class BossEntity extends EnemyAnimationEntity with Steerable, OnGround {
           onTick: () {
             removeFromParent();
           },
+          removeOnFinish: true,
         ));
       }
       if (isAutonomous && game.level.number > 2) {
@@ -75,6 +76,7 @@ class BossEntity extends EnemyAnimationEntity with Steerable, OnGround {
             onTick: () {
               move();
             },
+            removeOnFinish: true,
           ));
         }
       }

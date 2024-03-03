@@ -6,6 +6,7 @@ import 'package:flame_steering_behaviors/flame_steering_behaviors.dart';
 
 import '../../models/player_data/player_data.dart';
 import '../behaviors/move_on_platform.behavior.dart';
+import '../components/skills.dart';
 import 'enemy.entity.dart';
 
 const relativeValue = 16.0;
@@ -84,5 +85,12 @@ class GarbageMonsterEntity extends EnemyEntity with Steerable, OnGround {
       healthBar.position.x = 0;
     }
     super.flipHorizontallyAroundCenter();
+  }
+
+  void purge() {
+    add(Purifier(Vector2.zero(), size));
+    // parent.add(GarbageMonsterEntity(enemy, game.images.fromCache('assets/images/enemies/garbage_monster.png'),
+    //     position: position));
+    // removeFromParent();
   }
 }

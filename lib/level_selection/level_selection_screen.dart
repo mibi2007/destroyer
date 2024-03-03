@@ -21,8 +21,9 @@ class LevelSelectionScreen extends StatelessWidget {
     final palette = context.watch<Palette>();
     final playerProgress = context.watch<PlayerProgress>();
     final levelTextStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.4);
-    final gap =
-        MediaQuery.of(context).size.height < 500 ? const SizedBox(height: 20, width: 20) : const SizedBox(height: 50);
+    final gap = MediaQuery.of(context).size.height < 500
+        ? const SizedBox(height: 20, width: 20)
+        : const SizedBox(height: 50, width: 50);
     final gap2 =
         MediaQuery.of(context).size.height < 500 ? const SizedBox(height: 10, width: 10) : const SizedBox(height: 30);
     const gapBig = SizedBox(width: 100);

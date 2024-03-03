@@ -52,6 +52,7 @@ class Platform extends PositionComponent with CollisionCallbacks {
         onTick: () {
           parent!.removeFromParent();
         },
+        removeOnFinish: true,
       ));
     }
     super.onCollisionStart(intersectionPoints, other);

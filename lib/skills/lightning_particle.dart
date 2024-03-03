@@ -157,6 +157,7 @@ class ThunderStrikeEffects extends PositionComponent with CollisionCallbacks {
       onTick: () {
         if (isMounted) remove(hitbox);
       },
+      removeOnFinish: true,
     ));
   }
 

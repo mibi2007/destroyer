@@ -38,6 +38,7 @@ class RequiemOfSoulsSkillComponent extends SpriteComponent with CollisionCallbac
           },
         ));
       },
+      removeOnFinish: true,
     ));
   }
 }

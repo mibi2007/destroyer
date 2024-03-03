@@ -5,6 +5,7 @@ import 'dart:ui' hide TextStyle;
 import 'package:destroyer/flame_game/entities/enemy.entity.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/particles.dart';
 import 'package:flame/text.dart';
@@ -12,7 +13,11 @@ import 'package:flutter/animation.dart';
 
 import '../../hud/hud.dart';
 import '../../level_selection/level.dart';
+import '../../models/enemies.dart';
 import '../../models/skills.dart';
+import '../../utils/utils.dart';
+import '../entities/garbage.entity.dart';
+import '../entities/garbage_monster.entity.dart';
 import '../game.dart';
 import 'platform.dart';
 
@@ -20,6 +25,7 @@ const beginColor = Color.fromARGB(255, 255, 60, 0);
 const endColor = Color.fromARGB(255, 255, 187, 0);
 
 mixin Countdown on PositionComponent {
+  Timer? _timer;
   CountdownComponent? countdownComponent;
 
   void startCountdown(double countdownTime) {
@@ -28,21 +34,26 @@ mixin Countdown on PositionComponent {
 
     final clipComponent = ClipComponent.rectangle(position: Vector2(0, 0), size: size, children: [countdownComponent!]);
     add(clipComponent);
-    add(TimerComponent(
-      period: countdownTime, // The period in seconds
+    _timer = Timer(
+      countdownTime, // The period in seconds
       onTick: () {
         if (countdownComponent != null) countdownComponent!.removeFromParent();
         countdownComponent = null;
       },
-    ));
+    );
   }
 
-  // @override
-  // void render(Canvas canvas) {
-  //   super.render(canvas);
+  void stopCountdown() {
+    if (_timer != null) _timer!.stop();
+    if (countdownComponent != null) countdownComponent!.removeFromParent();
+    countdownComponent = null;
+  }
 
-  //   if (countdownComponent != null) countdownComponent!.render(canvas);
-  // }
+  @override
+  void update(double dt) {
+    if (_timer != null) _timer!.update(dt);
+    super.update(dt);
+  }
 }
 
 class CountdownComponent extends PositionComponent {
@@ -240,15 +251,6 @@ class Fireball extends SpriteComponent
       removeFromParent();
     }
   }
-
-  // /// An [SpriteAnimationParticle] takes a Flame [SpriteAnimation]
-  // /// and plays it during the particle lifespan.
-  // Particle animationParticle() {
-  //   return SpriteAnimationParticle(
-  //     animation: getBoomAnimation(),
-  //     size: Vector2(128, 128),
-  //   );
-  // }
 }
 
 class EffectComponent extends PositionComponent with HasGameRef<DestroyerGame>, Countdown {
@@ -280,6 +282,37 @@ class EffectComponent extends PositionComponent with HasGameRef<DestroyerGame>, 
               style: const TextStyle(
             fontFamily: 'Press Start 2P',
           ))));
+    }
+  }
+}
+
+class Purifier extends PositionComponent with HasGameRef<DestroyerGame> {
+  Purifier(Vector2 position, Vector2 size) : super(position: position, size: size);
+
+  @override
+  FutureOr<void> onLoad() {
+    final clipping = ClipComponent.circle(position: Vector2.all(width / 2), size: size * 1.5, anchor: Anchor.center);
+    add(clipping);
+    if (parent is GarbageMonsterEntity) {
+      final typeCast = parent as GarbageMonsterEntity;
+      final image = game.images.fromCache(
+          rnd.nextDouble() * 2 < 1 ? 'assets/images/enemies/garbage1.png' : 'assets/images/enemies/garbage2.png');
+      clipping.add(SpriteComponent.fromImage(
+          game.images.fromCache(
+            'assets/images/skills-and-effects/purifier.png',
+          ),
+          srcSize: Vector2.all(300),
+          size: clipping.size,
+          position: Vector2(0, 50))
+        ..add(MoveEffect.by(Vector2(0, -100), LinearEffectController(0.5), onComplete: () {
+          if (parent is GarbageMonsterEntity) {
+            typeCast.add(OpacityEffect.fadeOut(LinearEffectController(1), onComplete: () {
+              typeCast.parent.add(GarbageEntity(Garbage.purgedFromMonster(typeCast.enemy), image,
+                  position: typeCast.position, targetPosition: typeCast.position));
+              typeCast.removeFromParent();
+            }));
+          }
+        })));
     }
   }
 }

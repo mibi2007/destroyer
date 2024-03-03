@@ -128,9 +128,11 @@ class IntroScript extends Script {
                 onTick: () {
                   playerDialogs[1].removeFromParent();
                 },
+                removeOnFinish: true,
               ));
             }
           },
+          removeOnFinish: true,
         ));
       }
       if (game.playerData.position.value.x > 860 && !isShownFirstBossDialog) {
@@ -150,9 +152,11 @@ class IntroScript extends Script {
                   onTick: () {
                     bossDialogs[1].removeFromParent();
                   },
+                  removeOnFinish: true,
                 ));
               }
             },
+            removeOnFinish: true,
           ));
         }
       }
@@ -213,12 +217,16 @@ class IntroScript extends Script {
                     parent.add(oracleDialogs[2]);
                     reward();
                   },
+                  removeOnFinish: true,
                 ));
               },
+              removeOnFinish: true,
             ));
           },
+          removeOnFinish: true,
         ));
       },
+      removeOnFinish: true,
     ));
   }
 
@@ -275,6 +283,7 @@ class IntroScript extends Script {
       onTick: () {
         game.overlays.add(PurifySwordPickedDialog.id);
       },
+      removeOnFinish: true,
     ));
   }
 

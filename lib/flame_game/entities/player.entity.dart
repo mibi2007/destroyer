@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:destroyer/flame_game/behaviors/move_on_platform.behavior.dart';
+import 'package:destroyer/flame_game/entities/garbage_monster.entity.dart';
+import 'package:destroyer/flame_game/game_world.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
@@ -62,6 +64,7 @@ class PlayerEntity extends PositionComponent with ParentIsA<SceneComponent> {
 class PlayerAnimationEntity extends RiveComponent
     with
         HasGameRef<DestroyerGame>,
+        HasWorldReference<DestroyerGameWorld>,
         CollisionCallbacks,
         KeyboardHandler,
         HasPaint,
@@ -315,12 +318,13 @@ class PlayerAnimationEntity extends RiveComponent
     gravity = 0;
     final sword = game.getEquipments().firstWhere((e) => e is Sword) as Sword;
     // });
-    _changeToSword(sword.type);
     add(TimerComponent(
       period: 1, // The period in seconds
       onTick: () {
         gravity = playerGravity;
+        _changeToSword(sword.type);
       },
+      removeOnFinish: true,
     ));
   }
 
@@ -563,6 +567,7 @@ class PlayerAnimationEntity extends RiveComponent
       onTick: () {
         if (!slash.isRemoved) remove(slash);
       },
+      removeOnFinish: true,
     ));
     if (game.playerData.effects.value.contains(SkillEffects.fireball)) {
       final firePosition = Vector2(position.x, position.y);
@@ -620,7 +625,29 @@ class PlayerAnimationEntity extends RiveComponent
         lookingConstraint!.rotation = pi / 180;
       }
       if (skill.name == 'Repel') {
+        add(TimerComponent(
+          period: 0.5, // The period in seconds
+          onTick: () {
+            if (game.playerData.selectedTarget.value != null) {
+              final target = game.playerData.selectedTarget.value!;
+              if (target is GarbageMonsterEntity) {
+                target.purge();
+              }
+            }
+          },
+        ));
       } else if (skill.name == 'Guardian Engel') {
+        add(TimerComponent(
+          period: 2, // The period in seconds
+          onTick: () {
+            final visibleGarbageMonster =
+                parent.parent.children.whereType<GarbageMonsterEntity>().where((e) => world.customCamera.canSee(e));
+            for (final monster in visibleGarbageMonster) {
+              monster.purge();
+            }
+          },
+          removeOnFinish: true,
+        ));
       } else if (skill.name == 'Time Walk') {
         game.playerData.casting.value = Skills.timeWalk;
 
@@ -659,6 +686,7 @@ class PlayerAnimationEntity extends RiveComponent
           onTick: () {
             parent.parent.add(skillComponent);
           },
+          removeOnFinish: true,
         ));
       } else if (skill.name == 'Ball Lightning') {
         _castLightning(skill);
@@ -682,6 +710,7 @@ class PlayerAnimationEntity extends RiveComponent
 
   void _onEffectsChangeHandler() {
     _effectsTriggers[0]?.fire();
+    isOnGround = false;
     final effects = game.playerData.effects.value;
     for (var e in effects) {
       // print(e);
@@ -725,6 +754,7 @@ class PlayerAnimationEntity extends RiveComponent
         add(MoveEffect.to(end, LinearEffectController(1)));
         parent.parent.add(lightningParticle);
       },
+      removeOnFinish: true,
     ));
     add(TimerComponent(
       period: 1.5, // The period in seconds
@@ -732,6 +762,7 @@ class PlayerAnimationEntity extends RiveComponent
         lightningParticle.removeFromParent();
         isLightning = false;
       },
+      removeOnFinish: true,
     ));
   }
 
@@ -746,6 +777,7 @@ class PlayerAnimationEntity extends RiveComponent
       onTick: () {
         effect.removeFromParent();
       },
+      removeOnFinish: true,
     ));
 
     final lightningEffect = ThunderStrikeEffects(
@@ -760,6 +792,7 @@ class PlayerAnimationEntity extends RiveComponent
       onTick: () {
         parent.parent.add(lightningEffect);
       },
+      removeOnFinish: true,
     ));
     add(TimerComponent(
       period: totalDuration, // The period in seconds
@@ -768,6 +801,7 @@ class PlayerAnimationEntity extends RiveComponent
         isLightning = false;
         game.playerData.casting.value = null;
       },
+      removeOnFinish: true,
     ));
   }
 }

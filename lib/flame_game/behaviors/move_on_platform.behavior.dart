@@ -11,8 +11,10 @@ const double jumpThreshold = 0.1;
 
 class MoveOnPlatform extends CollisionBehavior<Platform, OnGround> {
   double _timer = 0;
-  double _lastPositionX = 0;
-  double _lastPositionTimer = 0;
+  // double _lastPositionX = 0;
+  // double _lastPositionTimer = 0;
+  double _canEndCollisionLeft = 0;
+  double _canEndCollisionRight = 0;
   @override
   void onCollision(Set<Vector2> intersectionPoints, Platform other) {
     if (!parent.isMounted) return;
@@ -38,8 +40,10 @@ class MoveOnPlatform extends CollisionBehavior<Platform, OnGround> {
       // If collision normal is almost upwards,
       // player must be on ground.
       // print(_up.dot(newCollisionNormal));
-      if (_up.dot(newCollisionNormal) > 0.9) {
-        if (!parent.isPendingAfterJump) parent.isOnGround = true;
+      if (_up.dot(newCollisionNormal) > 0.9 && !parent.isPendingAfterJump) {
+        parent.isOnGround = true;
+        _canEndCollisionLeft = other.position.x;
+        _canEndCollisionRight = other.position.x + other.size.x;
       }
 
       // Resolve collision by moving player along
@@ -58,9 +62,14 @@ class MoveOnPlatform extends CollisionBehavior<Platform, OnGround> {
     // } else {
     // print('${parent.position.x} - $_lastPositionX');
     // print('isOnGround = false');
-    parent.isOnGround = false;
-    // }
     // parent.isOnGround = false;
+    // }
+    // print(_canEndCollisionLeft);
+    // print(_canEndCollisionRight);
+    // print(' player x = ${parent.position.x}');
+    if (parent.position.x < _canEndCollisionLeft + 2 || parent.position.x > _canEndCollisionRight - 2) {
+      parent.isOnGround = false;
+    }
   }
 
   @override

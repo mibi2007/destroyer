@@ -17,11 +17,18 @@ abstract class Enemy {
 }
 
 class Garbage extends Enemy {
-  Garbage({super.asset = '', super.damage = 20, required super.maxHealth, super.armor = 5, required super.level});
+  Garbage({super.asset = '', super.damage = 10, required super.maxHealth, super.armor = 3, required super.level});
 
   @override
   String toString() {
     return 'Garbage $level';
+  }
+
+  factory Garbage.purgedFromMonster(Enemy monster) {
+    return Garbage(
+      level: monster.level,
+      maxHealth: 100,
+    );
   }
 }
 
@@ -36,6 +43,6 @@ class GarbageMonster extends Enemy {
       {super.asset = 'assets/images/enemies/garbage_monster.png',
       super.damage = 20,
       super.maxHealth = 200,
-      super.armor = 20,
+      super.armor = 15,
       required super.level});
 }

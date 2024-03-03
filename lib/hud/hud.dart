@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:destroyer/models/skills.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
@@ -166,27 +167,58 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
         game.pauseEngine();
         game.overlays.add(PauseMenu.id);
       } else if (keysPressed.contains(LogicalKeyboardKey.keyQ)) {
-        _castSkill(0);
+        _castSkill('Q');
       } else if (keysPressed.contains(LogicalKeyboardKey.keyE)) {
-        _castSkill(1);
-      } else if (keysPressed.contains(LogicalKeyboardKey.keyR)) {
-        _castSkill(2);
+        _castSkill('E');
+        // } else if (keysPressed.contains(LogicalKeyboardKey.keyR)) {
+        //   _castSkill('R');
       }
     }
     return true;
   }
 
-  void _castSkill(int skillIndex) {
-    if (skillIndex > game.playerData.sword.value.skills.length - 1) return;
+  void _cancelSkill(Skill skill, int index) {
+    game.playerData.effects.remove(skill.effects.first, shouldNotify: true);
+    game.playerData.skillCountdown.updateAt(index, false);
+    final skillComponent = skills.firstWhere((c) => c.skill == skill);
+    skillComponent.stopCountdown();
+  }
+
+  void _castSkill(String keyboard) {
+    // if (skillIndex > game.playerData.sword.value.skills.length - 1) return;
     if (game.playerData.casting.value != null) return;
-    final skill = game.playerData.sword.value.skills[skillIndex];
-    final index = game.playerData.skills.value.indexWhere((s) => s == skill);
-    if (skill.cooldown == 0) return;
-    if (game.playerData.skillCountdown.value[index]) return;
+    final skill = game.playerData.sword.value.skills.firstWhere((s) => s.keyboard == keyboard);
+    if (skill.cooldown == 0 && !skill.autoCast) return;
+    final index = game.playerData.skills.value.where((s) => s.cooldown != 0).toList().indexWhere((s) => s == skill);
+    // print(index);
+    // print(game.playerData.skillCountdown);
+
+    // if (game.playerData.skillCountdown.value[index]) {
+    //   if (skill.autoCast) _cancelSkill(skill);
+    //   return;
+    // }
+    // else{
+
+    //   if (skill.autoCast) game.playerData.skillCountdown.updateAt(index, true);
+    //   return;
+    // }
+    // if (skill.autoCast) {
+    // print('autocast skill ${game.playerData.skillCountdown.value[index]}');
+
+    if (game.playerData.skillCountdown.value[index]) {
+      if (skill.autoCast) _cancelSkill(skill, index);
+
+      return;
+    }
+    // } else {
+    //   if (game.playerData.skillCountdown.value[index]) {
+    //     return;
+    //   }
+    // }
     add(TimerComponent(
       period: skill.castTime, // The period in seconds
       onTick: () {
-        if (skill.effects.isNotEmpty && !skill.passive) {
+        if (skill.effects.isNotEmpty) {
           // print(skill.effects);
           for (var effect in skill.effects) {
             if (effect.duration != 0) {
@@ -194,8 +226,9 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
               add(TimerComponent(
                 period: effect.duration, // The period in seconds
                 onTick: () {
-                  game.playerData.effects.remove(effect);
+                  game.playerData.effects.remove(effect, shouldNotify: true);
                 },
+                removeOnFinish: true,
               ));
             }
           }
@@ -205,30 +238,22 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
         game.playerData.casting.value = null;
         // print('set null');
       },
+      removeOnFinish: true,
     ));
     add(TimerComponent(
-      period: game.isTesting ? 1 : skill.cooldown, // The period in seconds
+      period: skill.cooldown, // The period in seconds
       onTick: () {
         game.playerData.skillCountdown.updateAt(index, false);
       },
+      removeOnFinish: true,
     ));
 
     game.playerData.casting.value = skill;
     game.playerData.skillCountdown.updateAt(index, true);
 
     final skillComponent = skills.firstWhere((c) => c.skill == skill);
-    skillComponent.startCountdown(game.isTesting ? 1 : skill.cooldown);
+    skillComponent.startCountdown(skill.cooldown);
   }
-
-  // Detect if player cast same skill key twice to target self
-  // void _selfCast(int skillIndex) {
-  //   lastKeyPress = null;
-  //   _castSkill(skillIndex);
-  // }
-
-  // _selectSkill(int indexOfSkillInSword) {
-  //   game.playerData.selectedSkill.value = game.playerData.sword.value.skills[indexOfSkillInSword];
-  // }
 
   @override
   void onRemove() {
@@ -279,7 +304,7 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
         skills.addAll(
             equipment.skills.map((skill) => SkillComponent(skill, size: Vector2.all(skillSize), position: position)));
         game.playerData.skills.value.addAll(equipment.skills);
-        game.playerData.skillCountdown.value.addAll(equipment.skills.map((_) => false));
+        game.playerData.skillCountdown.value.addAll(equipment.skills.where((s) => s.cooldown != 0).map((_) => false));
         index++;
       }
     }
@@ -339,9 +364,9 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
       // print(autoCasts);
       if (autoCasts.isNotEmpty) {
         for (final skill in autoCasts) {
-          final index = game.playerData.sword.value.skills.indexOf(skill);
+          // final skill = game.playerData.sword.value.skills..firstWhere((s)=>s.autoCast);
           // print(index);
-          _castSkill(index);
+          if (skill.keyboard != null) _castSkill(skill.keyboard!);
         }
       }
     }
@@ -350,11 +375,12 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
   Future<void> renderSkills() async {
     // print('remove skills');
     children.whereType<SkillFrame>().forEach((e) => remove(e));
-    for (var i = 0; i < skills.length; i++) {
-      final com = skills[i];
+    final renderSkills = skills.where((s) => !(s.skill.cooldown == 0.0 && s.skill.passive)).toList();
+    for (var i = 0; i < renderSkills.length; i++) {
+      final com = renderSkills[i];
 
       // Position
-      final x = (game.fixedResolution.x - (skills.length - 1) * skillGap - skillSize * skills.length) / 2;
+      final x = (game.fixedResolution.x - (renderSkills.length - 1) * skillGap - skillSize * renderSkills.length) / 2;
       com.position = Vector2(x + i * (skillSize + skillGap), game.fixedResolution.y - skillSize / 2 - 7);
       // add(skillFrame..position = com.position);
       add(SkillFrame(game.images.fromCache('assets/images/skills-and-effects/skill-frame.png'),

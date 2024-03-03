@@ -184,6 +184,7 @@ class DestroyerGame extends FlameGame
     await images.load('assets/images/skills-and-effects/Chronosphere_effect.png');
     await images.load('assets/images/skills-and-effects/night.png');
     await images.load('assets/images/skills-and-effects/electrict.png');
+    await images.load('assets/images/skills-and-effects/purifier.png');
 
     // Negative effects
     await images.load('assets/images/skills-and-effects/Kinetic_Field_icon.webp');

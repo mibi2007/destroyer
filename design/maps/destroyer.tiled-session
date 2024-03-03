@@ -55,8 +55,8 @@
             "scale": 0.75,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 362,
-                "y": 304.6666666666666
+                "x": 800.6666666666665,
+                "y": 480.6666666666666
             }
         },
         "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map2.tmx": {
@@ -79,8 +79,8 @@
             "scale": 0.25,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 2314,
-                "y": 1218
+                "x": 2306,
+                "y": 1210
             }
         },
         "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map2_2.tmx": {
@@ -90,8 +90,8 @@
             "scale": 0.5556510416666666,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 960.1349768008624,
-                "y": 960.1349768008625
+                "x": 958.335286122698,
+                "y": 956.5355954445331
             }
         },
         "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map3.tmx": {
@@ -102,8 +102,8 @@
             "scale": 0.5,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 1107,
-                "y": 585
+                "x": 1103,
+                "y": 581
             }
         },
         "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map4.tmx": {
@@ -113,8 +113,8 @@
             "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 2506.5,
-                "y": 780.5
+                "x": 2504.5,
+                "y": 778.5
             }
         },
         "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map5.tmx": {
@@ -227,11 +227,11 @@
             "expandedObjectLayers": [
                 3
             ],
-            "scale": 1,
+            "scale": 0.25,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 1219.5,
-                "y": 1226.5
+                "x": 1566,
+                "y": 614
             }
         }
     },

@@ -45,6 +45,7 @@ class Level1AScript extends Script {
             handWithDarkShard.removeFromParent();
             isCursed = true;
           },
+          removeOnFinish: true,
         ));
       }
       if (isCursed && parent.children.whereType<GarbageMonsterEntity>().isEmpty) {
