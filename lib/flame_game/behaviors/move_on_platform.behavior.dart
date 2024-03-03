@@ -53,10 +53,10 @@ class MoveOnPlatform extends CollisionBehavior<Platform, OnGround> {
   @override
   void onCollisionEnd(Platform other) {
     if (!isMounted) return;
-    // print('${parent.position.x} - $_lastPositionX');
-    // if (parent.position.x - _lastPositionX == 0) {
+    // if (parent.position.x - _lastPositionX < 1) {
     //   // If the player hasn't moved beyond the threshold, ignore the collision end
     // } else {
+    // print('${parent.position.x} - $_lastPositionX');
     // print('isOnGround = false');
     parent.isOnGround = false;
     // }
@@ -66,15 +66,15 @@ class MoveOnPlatform extends CollisionBehavior<Platform, OnGround> {
   @override
   update(double dt) {
     // print(parent.position.x);
-    if (_lastPositionTimer > 1) {
-      _lastPositionTimer = 0;
-      if (parent is PlayerAnimationEntity) {
-        // print('save');
-        // print(parent.position.x);
-      }
-      _lastPositionX = parent.position.x;
-    }
-    _lastPositionTimer += dt;
+    // if (_lastPositionTimer > 0.5) {
+    //   _lastPositionTimer = 0;
+    //   if (parent is PlayerAnimationEntity) {
+    //     print('save');
+    //     print(parent.position.x);
+    //   }
+    //   _lastPositionX = parent.position.x;
+    // }
+    // _lastPositionTimer += dt;
     if (parent.isPendingAfterJump) {
       if (_timer == 0) {
         // print('start timer');

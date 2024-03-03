@@ -13,8 +13,11 @@ class HitByEnemy extends CollisionBehavior<EntityMixin, PlayerAnimationEntity> w
     if (other is EnemyEntity) {
       if (game.playerData.health.value > 0 &&
           other.currentHealth > 0 &&
-          !game.playerData.effects.value.any(
-              (effect) => effect.name == 'invincible' || effect.name == 'timeWalk' || effect.name == 'ballLightning')) {
+          !game.playerData.effects.value.any((effect) =>
+              effect.name == 'invincible' ||
+              effect.name == 'timeWalk' ||
+              effect.name == 'ballLightning' ||
+              effect.name == 'guardianEngel')) {
         parent.hit();
         final dmg = other.enemy.damage - game.playerData.armor.value;
         game.playerData.health.value -= max(dmg.round(), 0);

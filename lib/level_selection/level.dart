@@ -256,7 +256,7 @@ class SceneComponent extends Component
               enemy,
               game.images.fromCache(enemy.asset),
               // isAutonomous: true,
-              position: position,
+              position: position - Vector2(0, 20),
             );
           }
           // if (flip == true) enemyComponent.flipHorizontallyAroundCenter();

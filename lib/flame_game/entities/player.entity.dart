@@ -685,9 +685,8 @@ class PlayerAnimationEntity extends RiveComponent
     final effects = game.playerData.effects.value;
     for (var e in effects) {
       // print(e);
-      if (e.name == 'purified') {
-        game.playerData.health.value =
-            game.playerData.health.value + 30 < 100 ? game.playerData.health.value + 30 : 100;
+      if (e.name == 'purified' || e.name == 'guardianEngel') {
+        game.playerData.health.value = min(100, game.playerData.health.value + e.healPoint!);
       }
       if (e.triggerIndex != null) {
         _effectsTriggers[e.triggerIndex!]?.fire();
@@ -800,7 +799,7 @@ class HalfCircleHitbox extends CircleComponent {
         );
 
   @override
-  bool get debugMode => true;
+  bool get debugMode => false;
 
   @override
   Future<void> onLoad() async {

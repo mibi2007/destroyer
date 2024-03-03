@@ -71,7 +71,7 @@ class Skills {
     cooldown: 60,
     castTime: 2,
     damage: 0,
-    effects: [SkillEffects.purified],
+    effects: [SkillEffects.guardianEngel],
     triggerIndex: 1,
     keyboard: 'E',
   );
@@ -195,16 +195,19 @@ class SkillEffect {
   final bool canDebuff;
   final bool isGlobal;
   final double duration;
+  final int? healPoint;
 
-  SkillEffect(
-      {required this.name,
-      required this.description,
-      this.triggerIndex,
-      required this.duration,
-      this.slow,
-      required this.sprite,
-      this.canDebuff = false,
-      this.isGlobal = false});
+  SkillEffect({
+    required this.name,
+    required this.description,
+    this.triggerIndex,
+    required this.duration,
+    this.slow,
+    required this.sprite,
+    this.canDebuff = false,
+    this.isGlobal = false,
+    this.healPoint = 0,
+  });
 
   @override
   bool operator ==(Object other) {
@@ -231,6 +234,16 @@ class SkillEffects {
     triggerIndex: 1,
     canDebuff: true,
     duration: 0.5,
+    healPoint: 30,
+  );
+  static final guardianEngel = SkillEffect(
+    sprite: 'assets/images/skills-and-effects/Guardian_Angel_icon.webp',
+    name: 'guardianEngel',
+    description: 'Effect of Repel and Guardian Engel, receive 30 health points and detoxify poison',
+    triggerIndex: 1,
+    canDebuff: true,
+    duration: 0.5,
+    healPoint: 100,
   );
   static final poisoned = SkillEffect(
     sprite: 'assets/images/skills-and-effects/Poison_Sting_icon.webp',
