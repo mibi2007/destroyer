@@ -5,7 +5,7 @@ import 'package:flame_behaviors/flame_behaviors.dart';
 import '../entities/player.entity.dart';
 
 final Vector2 _up = Vector2(0, -1);
-const double g = 300;
+const double g = 500;
 const double collisionThreshold = 0.1;
 const double jumpThreshold = 0.1;
 
@@ -121,7 +121,7 @@ mixin OnGround on EntityMixin, PositionComponent {
   bool isOnGround = false;
   Vector2 collisionNormal = Vector2.zero();
   Vector2 velocity = Vector2.zero();
-  final double terminalVelocity = 150;
+  double terminalVelocity = 500;
   // Vector2 lastPosition = Vector2.zero();
   bool isPendingAfterJump = false;
 }

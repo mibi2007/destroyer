@@ -254,7 +254,7 @@ class SceneComponent extends Component
               enemy,
               game.images.fromCache(enemy.asset),
               // isAutonomous: true,
-              position: position - Vector2(0, 20),
+              position: position - Vector2(0, 50),
             );
           }
           // if (flip == true) enemyComponent.flipHorizontallyAroundCenter();
@@ -384,8 +384,10 @@ class SceneComponent extends Component
       onRewardPicked = (script as Level1BScript).onRewardPicked;
     } else if (level == GameLevel.lv4 && sceneIndex == 1) {
       script = Level4BScript();
+      onBossKilled = (script as Level4BScript).onBossKilled;
     } else if (level == GameLevel.lv5 && sceneIndex == 1) {
       script = Level4BScript();
+      onBossKilled = (script as Level4BScript).onBossKilled;
     } else if (level == GameLevel.lv6) {
       script = Level6Script();
       onBossKilled = (script as Level6Script).onBossKilled;

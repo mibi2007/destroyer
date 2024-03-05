@@ -38,10 +38,10 @@ class Level1BScript extends Script {
     boss!.boss
       ..moveAnimation = SpriteAnimation.spriteList(
           await Future.wait([
-            Sprite.load(_asset, srcSize: _srcSize, srcPosition: Vector2(128 * 0, -20)),
-            Sprite.load(_asset, srcSize: _srcSize, srcPosition: Vector2(128 * 1, -20)),
-            Sprite.load(_asset, srcSize: _srcSize, srcPosition: Vector2(128 * 2, -20)),
-            Sprite.load(_asset, srcSize: _srcSize, srcPosition: Vector2(128 * 3, -20)),
+            Sprite.load(_asset, srcSize: _srcSize, srcPosition: Vector2(128 * 0, 0)),
+            Sprite.load(_asset, srcSize: _srcSize, srcPosition: Vector2(128 * 1, 0)),
+            Sprite.load(_asset, srcSize: _srcSize, srcPosition: Vector2(128 * 2, 0)),
+            Sprite.load(_asset, srcSize: _srcSize, srcPosition: Vector2(128 * 3, 0)),
           ]),
           stepTime: 0.5)
       ..attackAnimation = SpriteAnimation.spriteList(

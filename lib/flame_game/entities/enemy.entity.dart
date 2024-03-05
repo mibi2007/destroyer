@@ -30,6 +30,7 @@ class EnemyEntity extends SpriteComponent
   // bool isDamaging = false;
 
   final Enemy enemy;
+  final Image image;
   SequenceEffect? effect;
   void Function()? onKilled;
   final Vector2? targetPosition;
@@ -37,7 +38,7 @@ class EnemyEntity extends SpriteComponent
 
   EnemyEntity(
     this.enemy,
-    Image image, {
+    this.image, {
     super.position,
     this.targetPosition,
     Vector2? size,
@@ -56,32 +57,6 @@ class EnemyEntity extends SpriteComponent
           anchor: anchor,
           priority: priority,
         ) {
-    // if (targetPosition != null && position != null) {
-    //   // Need to sequence two move to effects so that we can
-    //   // tap into the onFinishCallback and flip the component.
-    //   effect = SequenceEffect(
-    //     [
-    //       MoveToEffect(
-    //         targetPosition,
-    //         EffectController(speed: 100),
-    //         onComplete: () {
-    //           flipHorizontallyAroundCenter();
-    //           direction = _right;
-    //         },
-    //       ),
-    //       MoveToEffect(
-    //         position + Vector2(32, 0), // Need to offset by 32 due to flip
-    //         EffectController(speed: 100),
-    //         onComplete: () {
-    //           flipHorizontallyAroundCenter();
-    //           direction = _left;
-    //         },
-    //       ),
-    //     ],
-    //     infinite: true,
-    //   );
-    //   add(effect!);
-    // }
     initHealthBar(enemy.maxHealth, width);
   }
 

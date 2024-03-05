@@ -25,6 +25,9 @@ class GarbageMonsterEntity extends EnemyEntity with Steerable, OnGround {
   late final Direction direction;
 
   @override
+  get terminalVelocity => 500;
+
+  @override
   Future<FutureOr<void>> onLoad() async {
     super.onLoad();
     direction = Direction(Vector2(game.playerData.direction.value.x, 0));

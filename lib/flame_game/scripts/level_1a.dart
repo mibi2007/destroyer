@@ -18,9 +18,27 @@ class Level1AScript extends Script {
   bool isShownDialog = false;
   bool isCursed = false;
   late final SpriteComponent handWithDarkShard;
+  bool isGarbageToHead = false;
+  final List<TextBoxComponent> playerDialogs = [];
 
   @override
   FutureOr<void> onLoad() {
+    playerDialogs.addAll([
+      TextBoxComponent(
+        text: 'OMG, don\'t litter trash like this. It\'s hurt',
+        textRenderer: textRenderer,
+        boxConfig: boxConfig,
+        anchor: Anchor.bottomCenter,
+        priority: 2,
+      ),
+      TextBoxComponent(
+        text: 'Burning Garbage is too dangerous',
+        textRenderer: textRenderer,
+        boxConfig: boxConfig,
+        anchor: Anchor.bottomCenter,
+        priority: 2,
+      ),
+    ]);
     handWithDarkShard = SpriteComponent.fromImage(
       game.images.fromCache('assets/images/hand-hold-dark-shard.png'),
       srcSize: Vector2(50, 50),
@@ -35,6 +53,7 @@ class Level1AScript extends Script {
         // parent.add(handWithDarkShard);
       }
       if (game.playerData.garbages.value > 5 && !isCursed) {
+        isCursed = true;
         parent.add(handWithDarkShard);
         parent.children.whereType<GarbageEntity>().forEach((garbage) {
           if (garbage.isMounted) garbage.curse();
@@ -43,13 +62,20 @@ class Level1AScript extends Script {
           period: 3.5, // The period in seconds
           onTick: () {
             handWithDarkShard.removeFromParent();
-            isCursed = true;
+            playerDialogs[0].removeFromParent();
+            playerDialogs[1].position = game.playerData.position.value + Vector2(0, -50);
+            parent.add(playerDialogs[1]);
           },
           removeOnFinish: true,
         ));
       }
       if (isCursed && parent.children.whereType<GarbageMonsterEntity>().isEmpty) {
-        parent.add(door);
+        if (!parent.children.any((element) => element is Door)) parent.add(door);
+      }
+      if (!isGarbageToHead && game.playerData.health.value < 100) {
+        isGarbageToHead = true;
+        playerDialogs[0].position = game.playerData.position.value + Vector2(0, -50);
+        parent.add(playerDialogs[0]);
       }
     }, repeat: true);
   }

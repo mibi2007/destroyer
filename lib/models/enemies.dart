@@ -30,6 +30,16 @@ class Garbage extends Enemy {
       maxHealth: 100,
     );
   }
+
+  Garbage clone(String newAsset) {
+    return Garbage(
+      level: level,
+      maxHealth: maxHealth,
+      armor: armor,
+      damage: damage,
+      asset: newAsset,
+    );
+  }
 }
 
 class Boss extends Enemy {

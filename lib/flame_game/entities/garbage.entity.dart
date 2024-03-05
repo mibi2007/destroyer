@@ -4,6 +4,7 @@ import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/sprite.dart';
 
+import '../../models/enemies.dart';
 import 'enemy.entity.dart';
 
 const String curseAsset = 'assets/animations/flame.png';
@@ -83,6 +84,20 @@ class GarbageEntity extends EnemyEntity {
   void onRemove() {
     game.playerData.garbages.value++;
     super.onRemove();
+  }
+
+  GarbageEntity cloneCursed(Garbage newGarbage, Vector2 newPosition) {
+    return GarbageEntity(
+      newGarbage,
+      image,
+      position: newPosition,
+      targetPosition: targetPosition,
+      size: size,
+      scale: scale,
+      angle: angle,
+      anchor: anchor,
+      priority: priority,
+    );
   }
 }
 

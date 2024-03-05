@@ -76,6 +76,8 @@ class PlayerAnimationEntity extends RiveComponent
   bool _jumpInput = false;
   // bool isOnGround = false;
   final double _moveSpeed = defaultMoveSpeed;
+  @override
+  get terminalVelocity => 150;
   int _jumpCount = 0;
   // Direction direction = Direction(Vector2(1, 0));
   // double aim = 0;
@@ -336,7 +338,10 @@ class PlayerAnimationEntity extends RiveComponent
 
   @override
   void update(double dt) {
-    if (game.playerData.isDead.value) return;
+    if (game.playerData.isDead.value) {
+      moveBackground(Vector2(0, 0));
+      return;
+    }
     super.update(dt);
 
     if (interval != null) interval!.update(dt);

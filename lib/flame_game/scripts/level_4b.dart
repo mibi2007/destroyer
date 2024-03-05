@@ -54,27 +54,16 @@ class Level4BScript extends Script {
           stepTime: 0.25);
     _timer = Timer(1, onTick: () {
       // seconds++;
-      if (game.playerData.garbages.value == 1 && !isShownDialog) {
-        isShownDialog = true;
-        parent.add(showFirstDialog());
-      }
       if (boss!.currentHealth <= boss!.maxHealth * 0.3) {
         for (int i = 0; i < 10; i++) {
           boss!.attack();
         }
       }
-      if (boss!.currentHealth <= 0) {
-        parent.add(door);
-      }
     }, repeat: true);
   }
 
-  TextBoxComponent showFirstDialog() {
-    return TextBoxComponent(
-      text: 'Your text here', // The text you want to display
-      boxConfig: textBoxConfig,
-      // Other properties for your text box...
-    );
+  void onBossKilled(PositionComponent killedBoss) {
+    if (!parent.children.any((element) => element is Door)) parent.add(door);
   }
 
   @override

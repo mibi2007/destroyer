@@ -15,13 +15,13 @@ import 'player.entity.dart';
 class BossEntity extends EnemyAnimationEntity with Steerable, OnGround {
   final bool isAutonomous;
   late final Direction direction;
-  BossEntity(
-      {this.isAutonomous = true,
-      required this.boss,
-      required super.size,
-      required super.position,
-      required super.priority})
-      : super(enemy: boss);
+  BossEntity({
+    this.isAutonomous = true,
+    required this.boss,
+    required super.size,
+    required super.position,
+    required super.priority,
+  }) : super(enemy: boss);
 
   final Boss boss;
   late final GarbageEntity garbageBullet;
@@ -69,7 +69,8 @@ class BossEntity extends EnemyAnimationEntity with Steerable, OnGround {
         ));
       }
       if (isAutonomous && game.level.number > 2) {
-        if (_secondCount % 5 == 0) {
+        final distanceToPlayer = position.distanceTo(game.playerData.position.value);
+        if (_secondCount % 5 == 0 && distanceToPlayer < 1000) {
           attack();
           add(TimerComponent(
             period: 0.6, // The period in seconds

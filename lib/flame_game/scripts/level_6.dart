@@ -10,6 +10,7 @@ import 'package:nes_ui/nes_ui.dart';
 
 import '../../models/enemies.dart';
 import '../../models/equipments.dart';
+import '../../utils/utils.dart';
 import '../components/equipments/weapon.dart';
 import '../entities/boss.entity.dart';
 import '../game.dart';
@@ -25,17 +26,45 @@ class Level6Script extends Script {
 
   late final Door door;
   late final Timer _timer;
-  // int seconds = 0;
+  int seconds = 0;
   bool isShownDialog = false;
+  late final Garbage garbage;
+  final List<Vector2> mountain = [
+    Vector2.zero(),
+    Vector2(-32, 32),
+    Vector2(0, 32),
+    Vector2(32, 32),
+    Vector2(-64, 64),
+    Vector2(-32, 64),
+    Vector2(0, 64),
+    Vector2(32, 64),
+    Vector2(64, 64),
+    Vector2(-96, 96),
+    Vector2(-64, 96),
+    Vector2(-32, 96),
+    Vector2(0, 96),
+    Vector2(32, 96),
+    Vector2(64, 96),
+    Vector2(96, 96),
+  ];
 
   @override
   Future<FutureOr<void>> onLoad() async {
+    garbage = Garbage(
+      level: game.level.number,
+      asset: rnd.nextDouble() * 2 < 1 ? 'assets/images/enemies/garbage1.png' : 'assets/images/enemies/garbage2.png',
+      maxHealth: 100,
+      armor: game.level.number * 5,
+      damage: 10 + game.level.number * 5,
+    );
     boss = BossEntity(
       boss: Boss(asset: _asset, level: 5, maxHealth: 5000, armor: 10),
       size: Vector2.all(128),
       position: Vector2.zero(),
       priority: 1,
     );
+    // print(boss!.garbageBullet);
+    boss!.currentHealth = boss!.maxHealth * 0.29;
     boss!.boss
       ..moveAnimation = SpriteAnimation.spriteList(
           await Future.wait([
@@ -53,15 +82,27 @@ class Level6Script extends Script {
           ]),
           stepTime: 0.25);
     _timer = Timer(1, onTick: () {
-      // seconds++;
-      if (game.playerData.garbages.value == 1 && !isShownDialog) {
-        isShownDialog = true;
-        parent.add(showFirstDialog());
+      seconds++;
+      if (seconds == 1) {
+        // garbageMountain = PositionComponent(
+        //   position: boss!.position - Vector2(0, 1000),
+        // );
+        // garbageMountain.add(boss!.garbageBullet);
+        // garbageMountain.addAll([
+        //   boss!.garbageBullet..position = Vector2(-32, 32),
+        //   boss!.garbageBullet..position = Vector2(0, 32),
+        //   boss!.garbageBullet..position = Vector2(32, 32),
+        // ]);
+        // garbageMountain.addAll([
+        //   boss!.garbageBullet..position = Vector2(-64, 64),
+        //   boss!.garbageBullet..position = Vector2(-32, 64),
+        //   boss!.garbageBullet..position = Vector2(0, 64),
+        //   boss!.garbageBullet..position = Vector2(32, 64),
+        //   boss!.garbageBullet..position = Vector2(64, 64),
+        // ]);
       }
-      if (boss!.currentHealth <= boss!.maxHealth * 0.3) {
-        for (int i = 0; i < 2; i++) {
-          boss!.attack();
-        }
+      if (boss!.currentHealth < boss!.maxHealth * 0.3 && seconds % 10 == 0) {
+        dropCursedGarbage();
       }
     }, repeat: true);
   }
@@ -120,6 +161,23 @@ class Level6Script extends Script {
   void onRemove() {
     _timer.stop();
     super.onRemove();
+  }
+
+  void dropCursedGarbage() {
+    boss!.currentHealth += boss!.maxHealth * 0.3;
+    boss!.updateHealthBar(boss!.currentHealth);
+    // garbageMountain = PositionComponent(
+    //   position: boss!.position - Vector2(0, 1000),
+    // );
+    for (final pos in mountain) {
+      final newBullet = boss!.garbageBullet.cloneCursed(
+          garbage.clone(
+              rnd.nextDouble() * 2 < 1 ? 'assets/images/enemies/garbage1.png' : 'assets/images/enemies/garbage2.png'),
+          boss!.position + pos + Vector2(-boss!.width / 2, -1000));
+      parent.add(newBullet);
+      newBullet.curse();
+      newBullet.add(MoveEffect.by(Vector2(0, 1000), LinearEffectController(1)));
+    }
   }
 }
 
