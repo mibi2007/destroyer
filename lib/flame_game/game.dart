@@ -56,6 +56,8 @@ class DestroyerGame extends FlameGame
 
   DestroyerGame(this.level, this.sceneIndex, {required this.screenSize, this.isTesting = false}) {
     images.prefix = '';
+    // print(screenSize.height);
+    // print(fixedResolution.x);
     fixedResolution = screenSize.height < 500
         ? Vector2(screenSize.width, screenSize.height) * 0.94
         : Vector2(screenSize.width, screenSize.height) * 0.57;
@@ -83,10 +85,10 @@ class DestroyerGame extends FlameGame
       // Fix bug where the mouse position is not correct with different screen sizes and resolutions
       double x = info.eventPosition.global.x;
       double y = info.eventPosition.global.y;
-      if (screenSize.width > size.x) {
-        x = x - (screenSize.width - size.x) / 2;
-      } else if (screenSize.height > size.y) {
-        y = y - (screenSize.height - size.y) / 2;
+      if (fixedResolution.x > size.x) {
+        x = x - (fixedResolution.x - size.x) / 2;
+      } else if (fixedResolution.y > size.y) {
+        y = y - (fixedResolution.y - size.y) / 2;
       }
       playerData.currentMousePosition.value = Vector2(x, y);
     }
@@ -119,9 +121,9 @@ class DestroyerGame extends FlameGame
 
   @override
   Future<void> onLoad() async {
-    zoom = (screenSize.width / 640 * 454) < screenSize.height
-        ? screenSize.width / fixedResolution.x
-        : screenSize.height / fixedResolution.y;
+    zoom = (fixedResolution.x / 640 * 454) < fixedResolution.y
+        ? fixedResolution.x / fixedResolution.x
+        : fixedResolution.y / fixedResolution.y;
     // mapTiled = await TiledComponent.load(
     //   level.mapTiled,
     //   Vector2.all(32),

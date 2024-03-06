@@ -56,6 +56,15 @@ class AttackButton extends PositionComponent with HasGameReference<DestroyerGame
     super.onTapUp(event);
   }
 
+  stop() {
+    if (!game.playerData.autoAttack.value) return;
+    game.playerData.autoAttack.value = false;
+    add(shadow);
+    effectController.setToStart();
+    final effect = RotateEffect.by(pi / 6, effectController);
+    imageBtn.add(effect);
+  }
+
   // @override
   // void onTapDown(TapDownEvent event) {
   //   add(shadow);

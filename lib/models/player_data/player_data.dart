@@ -30,6 +30,7 @@ class PlayerData {
   final armor = ValueNotifier<int>(5);
   final inventory = ValueNotifierList<Equipment>([]);
   final sword = SwordChangeNotifier(Sword.desolator());
+  final changeSwordAnimation = ValueNotifier<int>(0);
   final lastSword = ValueNotifier<Sword?>(null);
   final skills = ValueNotifierList<Skill>([]);
   final position = ValueNotifier<Vector2>(Vector2.zero());

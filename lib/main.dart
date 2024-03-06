@@ -22,7 +22,7 @@ void main() async {
     DeviceOrientation.landscapeRight,
   ]).then((value) => runApp(const ProviderScope(child: MyGame())));
   // }
-  runApp(const ProviderScope(child: MyGame()));
+  // runApp(const MyGame());
 }
 
 class MyGame extends StatelessWidget {

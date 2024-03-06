@@ -82,7 +82,6 @@ class Level1BScript extends Script {
     newEquipments.removeWhere((item) => item is Sword && item.type == SwordType.purifier);
     newEquipments.add(equipment.item);
     game.setEquipments(newEquipments);
-    world.nextLevel();
     add(TimerComponent(
       period: 1, // The period in seconds
       onTick: () {

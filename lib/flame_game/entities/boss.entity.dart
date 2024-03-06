@@ -43,17 +43,7 @@ class BossEntity extends EnemyAnimationEntity with Steerable, OnGround {
         position: Vector2(0, 0), targetPosition: Vector2(0, 0), size: Vector2.all(32), anchor: Anchor.center);
     super.onLoad();
     direction = Direction(Vector2(-game.playerData.direction.value.x, 0));
-    await addAll([
-      MoveOnPlatform(),
-      if (isAutonomous) ...[
-        SeparationBehavior(
-          parent.children.query<GarbageMonsterEntity>(),
-          maxDistance: 2 * relativeValue,
-          maxAcceleration: 10 * relativeValue,
-        ),
-        PursueBehavior(parent.children.whereType<PlayerEntity>().first, pursueRange: 700),
-      ]
-    ]);
+
     _timer = Timer(1, repeat: true, onTick: () {
       if (!isMounted) return;
       if (direction.x * (position.x - game.playerData.position.value.x) < 0) {
@@ -89,6 +79,23 @@ class BossEntity extends EnemyAnimationEntity with Steerable, OnGround {
       _secondCount++;
     });
     move();
+  }
+
+  @override
+  Future<void> onActivate() async {
+    super.onActivate();
+
+    await addAll([
+      MoveOnPlatform(),
+      if (isAutonomous) ...[
+        SeparationBehavior(
+          parent.children.query<GarbageMonsterEntity>(),
+          maxDistance: 2 * relativeValue,
+          maxAcceleration: 10 * relativeValue,
+        ),
+        PursueBehavior(parent.children.whereType<PlayerEntity>().first, pursueRange: 700),
+      ]
+    ]);
   }
 
   @override

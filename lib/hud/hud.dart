@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:destroyer/flame_game/game_world.dart';
 import 'package:destroyer/models/skills.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
@@ -26,7 +27,8 @@ const skillSize = 32.0;
 const effectSize = 32.0;
 const effectGap = -14.0;
 
-class Hud extends PositionComponent with HasGameReference<DestroyerGame>, KeyboardHandler {
+class Hud extends PositionComponent
+    with HasGameReference<DestroyerGame>, HasWorldReference<DestroyerGameWorld>, KeyboardHandler {
   late final TextComponent creditTextComponent;
   late final TextComponent healthTextComponent;
   late final RectangleComponent healthBarComponent;
@@ -43,6 +45,7 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
   // Skill? selectedSkill;
   LogicalKeyboardKey? lastKeyPress;
   late final HudCursor cursor;
+  AttackButton? attackButton;
 
   Hud({super.children, super.priority});
 
@@ -153,12 +156,13 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
     // add(RectangleComponent.square(size: 100, position: Vector2(100, 100))..add(joystick));
     if (game.isMobile) {
       add(joystick);
-      add(AttackButton(
-        position: Vector2(game.screenSize.width - 160, game.screenSize.height - 180),
+      attackButton = AttackButton(
+        position: Vector2(game.fixedResolution.x - 160, game.screenSize.height - 180),
         size: Vector2.all(64),
-      ));
+      );
+      add(attackButton!);
       add(JumpButton(
-        position: Vector2(game.screenSize.width - 230, game.screenSize.height - 130),
+        position: Vector2(game.fixedResolution.x - 230, game.screenSize.height - 130),
         size: Vector2.all(64),
       ));
     }
@@ -168,16 +172,16 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
     game.playerData.sword.addListener(_onSwordChangeHandler);
     game.playerData.equipments.addListener(_onEquipmentsChangeHandler);
     game.playerData.effects.addListener(_onEffectsChangeHandler);
-    // game.playerData.currentMousePosition.addListener(_mouseMoveHandler);
+    game.playerData.currentMousePosition.addListener(_mouseMoveHandler);
     game.playerData.inventory.addListener(_onInventoryChangeHandler);
 
     _onEquipmentsChangeHandler();
     _onInventoryChangeHandler();
   }
 
-  // void _mouseMoveHandler() {
-  //   cursor.position = game.playerData.currentMousePosition.value / game.zoom;
-  // }
+  void _mouseMoveHandler() {
+    cursor.position = game.playerData.currentMousePosition.value / game.zoom;
+  }
 
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
@@ -202,8 +206,15 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
     game.playerData.effects.remove(skill.effects.first, shouldNotify: true);
   }
 
-  void castSkill(Skill skill) {
-    // if (skillIndex > game.playerData.sword.value.skills.length - 1) return;
+  Future<void> castSkill(Skill skill) async {
+    // final sword = game.getEquipments().firstWhere((e) {
+    //   return (e is Sword) && e.type == skill.swordType;
+    // }) as Sword;
+
+    // game.playerData.changeSwordAnimation.value = sword.triggerIndex;
+
+    // // await Future.delayed(Duration(milliseconds: 5000));
+    // return;
     if (game.playerData.casting.value != null) return;
     if (skill.cooldown == 0 && !skill.autoCast) return;
     final index = game.playerData.skills.value.where((s) => s.cooldown != 0).toList().indexWhere((s) => s == skill);
@@ -231,6 +242,7 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
     //     return;
     //   }
     // }
+    if (game.isMobile && attackButton != null) attackButton!.stop();
     add(TimerComponent(
       period: skill.castTime, // The period in seconds
       onTick: () {
@@ -296,7 +308,7 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
       // AudioManager.stopBgm();
       // game.pauseEngine();
       final timeWalkSkillIndex = skills.indexWhere((s) => s.skill == Skills.timeWalk);
-      if (game.playerData.skillCountdown.value[timeWalkSkillIndex]) {
+      if (timeWalkSkillIndex == -1 || game.playerData.skillCountdown.value[timeWalkSkillIndex]) {
         game.playerData.isDead.value = true;
       } else {
         game.playerData.sword.value =
@@ -337,28 +349,30 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
   Future<void> _onSwordChangeHandler() async {
     // print('update sword');
     final newSword = game.playerData.sword.value;
-    final newIndex = equipments.indexWhere(((c) => (c.item as Sword).type == newSword.type));
+    if (!game.isMobile) {
+      final newIndex = equipments.indexWhere(((c) => (c.item as Sword).type == newSword.type));
 
-    for (var i = 0; i < equipments.length; i++) {
-      for (final e in equipments[i].children.whereType<Effect>()) {
-        // if (e is ColorEffect) {
-        e.removeFromParent();
-        // }
+      for (var i = 0; i < equipments.length; i++) {
+        for (final e in equipments[i].children.whereType<Effect>()) {
+          // if (e is ColorEffect) {
+          e.removeFromParent();
+          // }
+        }
+        if (i != newIndex) {
+          await equipments[i].add(InactiveEffect());
+          equipments[i].add(ScaleEffect.to(
+            Vector2.all(0.5),
+            EffectController(duration: 0.1),
+          ));
+        }
       }
-      if (i != newIndex) {
-        await equipments[i].add(InactiveEffect());
-        equipments[i].add(ScaleEffect.to(
-          Vector2.all(0.5),
-          EffectController(duration: 0.1),
-        ));
-      }
+      if (newIndex == -1) return;
+      await equipments[newIndex].add(SelectAndActiveEffect());
+      equipments[newIndex].add(ScaleEffect.to(
+        Vector2.all(1),
+        EffectController(duration: 0.1),
+      ));
     }
-    if (newIndex == -1) return;
-    await equipments[newIndex].add(SelectAndActiveEffect());
-    equipments[newIndex].add(ScaleEffect.to(
-      Vector2.all(1),
-      EffectController(duration: 0.1),
-    ));
 
     updateSkill();
 

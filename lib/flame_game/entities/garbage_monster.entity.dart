@@ -31,15 +31,6 @@ class GarbageMonsterEntity extends EnemyEntity with Steerable, OnGround {
   Future<FutureOr<void>> onLoad() async {
     super.onLoad();
     direction = Direction(Vector2(game.playerData.direction.value.x, 0));
-    await addAll([
-      MoveOnPlatform(),
-      SeparationBehavior(
-        parent.children.query<GarbageMonsterEntity>(),
-        maxDistance: 2 * relativeValue,
-        maxAcceleration: 10 * relativeValue,
-      ),
-      PursueBehavior(parent.children.whereType<PlayerEntity>().first, pursueRange: 250),
-    ]);
     _timer = Timer(1, onTick: () {
       if (direction.x * (position.x - game.playerData.position.value.x) < 0) {
         flipHorizontallyAroundCenter();
@@ -52,6 +43,21 @@ class GarbageMonsterEntity extends EnemyEntity with Steerable, OnGround {
       }
       // print('isHit $isHit, isBurned $isBurned, isElectricShocked $isElectricShocked, isRolling $isRolling');
     }, repeat: true);
+  }
+
+  @override
+  Future<void> onActivate() async {
+    super.onActivate();
+
+    await addAll([
+      MoveOnPlatform(),
+      SeparationBehavior(
+        parent.children.query<GarbageMonsterEntity>(),
+        maxDistance: 2 * relativeValue,
+        maxAcceleration: 10 * relativeValue,
+      ),
+      PursueBehavior(parent.children.whereType<PlayerEntity>().first, pursueRange: 250),
+    ]);
   }
 
   @override

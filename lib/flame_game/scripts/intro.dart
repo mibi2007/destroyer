@@ -51,6 +51,7 @@ class IntroScript extends Script {
             Sprite.load(_asset, srcSize: Vector2.all(128), srcPosition: Vector2(128 * 0, -20)),
           ]),
           stepTime: 5);
+    boss!.gravity = 0;
     playerDialogs.addAll([
       TextBoxComponent(
         text: 'The world are breaking its balance',
@@ -185,7 +186,9 @@ class IntroScript extends Script {
         // player.animation.resetLast2Second();
         // game.camera.stop();
         // world.customCamera.follow(player, maxSpeed: kCameraSpeed, snap: true);
-        if (door != null) parent.movePlayerToPosition(Vector2(door!.x + door!.width / 2, door!.y));
+        if (door != null) {
+          parent.movePlayerToPosition(Vector2(door!.x + door!.width / 2, door!.y));
+        }
         game.background.parallax!.baseVelocity.y = 5;
         // for (int i = 0; i < game.camera.backdrop.children.length; i++) {
         //   if (game.camera.backdrop.children.elementAt(i) is Background) {
@@ -277,7 +280,6 @@ class IntroScript extends Script {
     final newEquipments = game.getEquipments();
     newEquipments.removeWhere((item) => item is Sword && item.type == SwordType.desolator);
     game.setEquipments(newEquipments);
-    world.nextLevel();
     add(TimerComponent(
       period: 1, // The period in seconds
       onTick: () {

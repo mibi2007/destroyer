@@ -1,3 +1,5 @@
+import 'package:destroyer/models/equipments.dart';
+
 class Skill {
   final String name;
   final String description;
@@ -8,6 +10,7 @@ class Skill {
   final bool autoCast;
   final String sprite;
   final String? keyboard;
+  final SwordType? swordType;
   double duration;
   List<SkillEffect> effects = [];
   int? triggerIndex;
@@ -21,9 +24,10 @@ class Skill {
     required this.castTime,
     required this.damage,
     required this.sprite,
+    required this.effects,
     this.autoCast = false,
     this.duration = 0,
-    required this.effects,
+    this.swordType,
     this.triggerIndex,
     this.passive = false,
     this.keyboard,
@@ -51,6 +55,7 @@ class Skill {
 class Skills {
   // Purifier Sword's skills
   static final repel = Skill(
+    swordType: SwordType.purifier,
     name: 'Repel',
     sprite: 'assets/images/skills-and-effects/Repel_icon.webp',
     description: 'Heal you and detoxify poison',
@@ -64,6 +69,7 @@ class Skills {
   );
 
   static final guardianEngel = Skill(
+    swordType: SwordType.purifier,
     sprite: 'assets/images/skills-and-effects/Guardian_Angel_icon.webp',
     name: 'Guardian Engel',
     description: 'Purify all objects on screen',
@@ -78,6 +84,7 @@ class Skills {
 
   // Time Sword's skills
   static final timeWalk = Skill(
+    swordType: SwordType.time,
     sprite: 'assets/images/skills-and-effects/Time_Walk_icon.webp',
     name: 'Time Walk',
     description: 'Backtracking the last 2 seconds for you or revert lifetime of a destroyed object',
@@ -93,6 +100,7 @@ class Skills {
   );
 
   static final chronosphere = Skill(
+    swordType: SwordType.time,
     sprite: 'assets/images/skills-and-effects/Chronosphere_icon.webp',
     name: 'Chronosphere',
     description:
@@ -108,6 +116,7 @@ class Skills {
   );
 
   static final fireball = Skill(
+    swordType: SwordType.flame,
     sprite: 'assets/images/skills-and-effects/Fireblast_icon.webp',
     name: 'Fireball',
     description: 'Your sword will release a fireball to attack the target',
@@ -120,6 +129,7 @@ class Skills {
   );
 
   static final flameCloak = Skill(
+    swordType: SwordType.flame,
     sprite: 'assets/images/skills-and-effects/Flame_Cloak_icon.webp',
     name: 'Flame Cloak',
     description: 'Turn you into a flying unit upon use. You can fly over impassable terrain but not under the sea',
@@ -133,6 +143,7 @@ class Skills {
   );
 
   static final requiemOfSouls = Skill(
+    swordType: SwordType.flame,
     sprite: 'assets/images/skills-and-effects/Requiem_of_Souls_icon.webp',
     name: 'Requiem of Souls',
     description: 'Release souls hit all enemy in the screen with damage from all souls you have collected',
@@ -148,6 +159,7 @@ class Skills {
   );
 
   static final ballLightning = Skill(
+    swordType: SwordType.lightning,
     sprite: 'assets/images/skills-and-effects/Ball_Lightning_icon.webp',
     name: 'Ball Lightning',
     description: 'Becomes volatile electricity, charging across the battlefield until reaches your target',
@@ -161,6 +173,7 @@ class Skills {
   );
 
   static final thunderStrike = Skill(
+    swordType: SwordType.lightning,
     sprite: 'assets/images/skills-and-effects/Thunder_Strike_icon.webp',
     name: 'Thunder Strike',
     description: 'You control the lightning, make a massive damage to all enemies',

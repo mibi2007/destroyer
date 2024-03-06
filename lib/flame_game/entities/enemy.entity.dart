@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:destroyer/flame_game/game_world.dart';
 import 'package:destroyer/level_selection/level.dart';
 import 'package:destroyer/models/equipments.dart';
 import 'package:flame/collisions.dart';
@@ -20,14 +21,12 @@ class EnemyEntity extends SpriteComponent
     with
         ParentIsA<SceneComponent>,
         HasGameReference<DestroyerGame>,
+        HasWorldReference<DestroyerGameWorld>,
         HealthBar,
         EnemyCollision,
         EntityMixin,
         ShowDamageText {
-  // bool isHit = false;
-  // bool isShockElectric = false;
-  // bool isBurned = false;
-  // bool isDamaging = false;
+  bool isActivated = false;
 
   final Enemy enemy;
   final Image image;
@@ -63,8 +62,15 @@ class EnemyEntity extends SpriteComponent
   @override
   bool get debugMode => false;
 
+  void onActivate() {}
+
   @override
   void update(double dt) {
+    if (!isActivated && world.customCamera.canSee(this)) {
+      isActivated = true;
+      onActivate();
+    }
+    if (!isActivated) return;
     super.update(dt);
 
     if (isHit || isInsideChronosphere || isElectricShocked || isBurned) {
@@ -127,6 +133,7 @@ class EnemyEntity extends SpriteComponent
 class EnemyAnimationEntity extends SpriteAnimationComponent
     with
         HasGameRef<DestroyerGame>,
+        HasWorldReference<DestroyerGameWorld>,
         HealthBar,
         CollisionCallbacks,
         EnemyCollision,
@@ -136,6 +143,8 @@ class EnemyAnimationEntity extends SpriteAnimationComponent
   final Enemy enemy;
 
   void Function()? onKilled;
+
+  bool isActivated = false;
 
   EnemyAnimationEntity({required this.enemy, required super.size, required super.position, required super.priority}) {
     initHealthBar(enemy.maxHealth, width);
@@ -169,4 +178,15 @@ class EnemyAnimationEntity extends SpriteAnimationComponent
       return false;
     }
   }
+
+  @override
+  void update(double dt) {
+    if (!isActivated && world.customCamera.canSee(this)) {
+      isActivated = true;
+      onActivate();
+    }
+    super.update(dt);
+  }
+
+  void onActivate() {}
 }

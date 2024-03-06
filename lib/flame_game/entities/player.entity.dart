@@ -260,9 +260,10 @@ class PlayerAnimationEntity extends RiveComponent
     game.playerData.equipments.addListener(_onEquipmentsChangeHandler);
     game.playerData.casting.addListener(_onCastingHandler);
     game.playerData.effects.addListener(_onEffectsChangeHandler);
-    game.playerData.autoAttack.addListener(_onDoubleTapHandler);
+    game.playerData.autoAttack.addListener(_autoAttackHandler);
     game.playerData.jump.addListener(_onJumpHandler);
     game.playerData.revertDead.addListener(_revertDeadHandler);
+    game.playerData.changeSwordAnimation.addListener(changeSwordAnimation);
     _onEquipmentsChangeHandler();
 
     // game.playerData.sword.addListener(_onSwordChangeHandler);
@@ -375,6 +376,10 @@ class PlayerAnimationEntity extends RiveComponent
     super.update(dt);
     if (game.playerData.isDead.value || game.playerData.casting.value != null) {
       moveBackground(Vector2(0, 0));
+      if (game.playerData.isDead.value) {
+        isAutoAttack = false;
+        onAttackDelay = false;
+      }
     }
 
     if (interval != null) interval!.update(dt);
@@ -660,21 +665,35 @@ class PlayerAnimationEntity extends RiveComponent
 
   @override
   void onRemove() {
-    game.playerData.credits.removeListener(_onMousePositionChanged);
     game.playerData.equipments.removeListener(_onEquipmentsChangeHandler);
     game.playerData.casting.removeListener(_onCastingHandler);
     game.playerData.effects.removeListener(_onEffectsChangeHandler);
-    game.playerData.autoAttack.removeListener(_onDoubleTapHandler);
+    game.playerData.autoAttack.removeListener(_autoAttackHandler);
+    game.playerData.jump.removeListener(_onJumpHandler);
+    game.playerData.revertDead.removeListener(_revertDeadHandler);
+    game.playerData.changeSwordAnimation.removeListener(changeSwordAnimation);
 
     if (interval != null) interval!.stop();
     if (_savePositionTimer != null) _savePositionTimer!.stop();
     super.onRemove();
   }
 
+  void changeSwordAnimation() {
+    final triggerIndex = game.playerData.changeSwordAnimation.value;
+    _sword?.value = triggerIndex.toDouble();
+    _swordTriggers[triggerIndex]?.fire();
+  }
+
   void _onCastingHandler() {
     // test1.text = game.playerData.casting.value == null ? 'null' : game.playerData.casting.value!.name;
     if (game.playerData.casting.value != null) {
       final skill = game.playerData.casting.value!;
+      if (skill.swordType != null && skill.swordType != game.playerData.sword.value.type) {
+        final newSword = game.getEquipments().firstWhere((e) => e is Sword && e.type == skill.swordType) as Sword;
+        final triggerIndex = newSword.triggerIndex;
+        _sword?.value = triggerIndex.toDouble();
+        _swordTriggers[newSword.triggerIndex]?.fire();
+      }
       _attackTimer = 0;
       if (skill.triggerIndex != null) {
         _skillsTriggers[skill.triggerIndex!]?.fire();
@@ -770,12 +789,12 @@ class PlayerAnimationEntity extends RiveComponent
     _last2SecondPositions = [];
   }
 
-  void _onDoubleTapHandler() {
+  void _autoAttackHandler() {
     isAutoAttack = game.playerData.autoAttack.value;
-    onAttackDelay = !onAttackDelay;
-    if (!isAutoAttack) {
-      attack();
-    }
+    onAttackDelay = isAutoAttack;
+    // if (!isAutoAttack) {
+    //   attack();
+    // }
   }
 
   void _castLightning(Skill skill) {

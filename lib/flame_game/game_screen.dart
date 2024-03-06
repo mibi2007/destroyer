@@ -1,5 +1,6 @@
+import 'package:flame/game.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -69,14 +70,14 @@ class GameScreen extends StatelessWidget {
                       }
                     }
                   },
-            child: RiverpodAwareGameWidget<DestroyerGame>(
+            child: GameWidget<DestroyerGame>(
               key: gameWidgetKey,
               game: myGame,
               overlayBuilderMap: {
                 backButtonKey: (BuildContext context, DestroyerGame game) {
                   return Positioned(
-                    bottom: 7,
-                    left: 14,
+                    top: 00,
+                    right: 0,
                     child: NesButton(
                       type: NesButtonType.normal,
                       onPressed: GoRouter.of(context).pop,

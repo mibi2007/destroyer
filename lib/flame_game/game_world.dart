@@ -27,7 +27,7 @@ class DestroyerGameWorld extends World with HasGameReference<DestroyerGame> {
   DestroyerGameWorld();
 
   /// The properties of the current level.
-  SceneComponent? _currentScene;
+  SceneComponent? currentScene;
 
   /// Used to see what the current progress of the player is and to update the
   /// progress if a level is finished.
@@ -45,15 +45,6 @@ class DestroyerGameWorld extends World with HasGameReference<DestroyerGame> {
   late final DateTime timeStarted;
   Vector2 get size => (parent as FlameGame).size;
   int levelCompletedIn = 0;
-
-  double speed = 100;
-
-  /// The gravity is defined in virtual pixels per second squared.
-  /// These pixels are in relation to how big the [FixedResolutionViewport] is.
-  final double gravity = 30;
-
-  /// Where the ground is located in the world and things should stop falling.
-  late final double groundLevel = (size.y / 2) - (size.y / 5);
 
   final hud = Hud(priority: 1);
   late CameraComponent customCamera;
@@ -116,7 +107,6 @@ class DestroyerGameWorld extends World with HasGameReference<DestroyerGame> {
     //     game.overlays.add(GameScreen.winDialogKey);
     //   }
     // });
-
     customCamera = CameraComponent.withFixedResolution(
       world: this,
       width: game.fixedResolution.x,
@@ -135,7 +125,7 @@ class DestroyerGameWorld extends World with HasGameReference<DestroyerGame> {
     super.onMount();
     // When the world is mounted in the game we add a back button widget as an
     // overlay so that the player can go back to the previous screen.
-    if (!game.isMobile) game.overlays.add(GameScreen.backButtonKey);
+    game.overlays.add(GameScreen.backButtonKey);
   }
 
   @override
@@ -184,7 +174,7 @@ class DestroyerGameWorld extends World with HasGameReference<DestroyerGame> {
   }
 
   void loadScene() {
-    _currentScene = SceneComponent(game.level, sceneIndex: game.sceneIndex);
-    add(_currentScene!);
+    currentScene = SceneComponent(game.level, sceneIndex: game.sceneIndex);
+    add(currentScene!);
   }
 }

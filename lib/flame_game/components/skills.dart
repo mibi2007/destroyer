@@ -15,6 +15,7 @@ import 'package:flutter/animation.dart';
 import '../../hud/hud.dart';
 import '../../level_selection/level.dart';
 import '../../models/enemies.dart';
+import '../../models/equipments.dart';
 import '../../models/skills.dart';
 import '../../utils/utils.dart';
 import '../entities/garbage.entity.dart';
@@ -109,10 +110,10 @@ class CountdownComponent extends PositionComponent {
 }
 
 class SkillComponent extends PositionComponent
-    with HasGameReference<DestroyerGame>, Countdown, CollisionCallbacks, TapCallbacks, ParentIsA<Hud> {
+    with HasGameReference<DestroyerGame>, Countdown, CollisionCallbacks, TapCallbacks, ParentIsA<Hud>, HoverCallbacks {
   final Skill skill;
   late SpriteComponent iconComponent;
-  late Component tooltip;
+  late final Component tooltip;
 
   SkillComponent(
     this.skill, {
@@ -181,9 +182,18 @@ class SkillComponent extends PositionComponent
 
   @override
   void onTapDown(TapDownEvent event) {
-    print(skill);
+    if (!game.isMobile) return;
     parent.castSkill(skill);
     super.onTapDown(event);
+  }
+
+  @override
+  void onHoverEnter() {
+    final sword = game.getEquipments().firstWhere((e) {
+      return (e is Sword) && e.type == skill.swordType;
+    }) as Sword;
+    game.playerData.changeSwordAnimation.value = sword.triggerIndex;
+    super.onHoverEnter();
   }
 }
 

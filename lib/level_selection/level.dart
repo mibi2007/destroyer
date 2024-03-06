@@ -42,7 +42,7 @@ class SceneComponent extends Component
         DoubleTapCallbacks,
         KeyboardHandler {
   final GameLevel level;
-  late final PlayerEntity _player;
+  late final PlayerEntity player;
   late final Artboard artboard;
   late final Artboard garbageArtboard;
   late final TiledComponent mapTiled;
@@ -99,8 +99,8 @@ class SceneComponent extends Component
   }
 
   _onLeftClickHander() {
-    _player.animation.isAutoAttack = false;
-    _player.animation.attack();
+    player.animation.isAutoAttack = false;
+    player.animation.attack();
   }
 
   void _setupStartLevel(bool initLevelEquipments) {
@@ -176,7 +176,7 @@ class SceneComponent extends Component
           //   game.mapTiled.size.y - halfSize.y,
           // );
 
-          _player = PlayerEntity(
+          player = PlayerEntity(
             artboard: artboard,
             position: position,
             size: size,
@@ -198,8 +198,8 @@ class SceneComponent extends Component
           //   //   ),
           //   // ],
           // );
-          add(_player);
-          movePlayerToPosition(_player.position);
+          add(player);
+          movePlayerToPosition(player.position);
           // if (settings != null) {
           // _player.animation.gravity = double.parse(settings.properties.first.value.toString());
           // }
@@ -271,7 +271,7 @@ class SceneComponent extends Component
             position: position,
             size: size,
             onPlayerEnter: () {
-              _player.animation.isOnGround = false;
+              player.animation.isOnGround = false;
               if (nextDoor != null) {
                 final targetObjectId = spawnPoint.properties.getValue<int>('Target');
                 TiledObject target = getObjectFromTargetById(spawnPointsLayer.objects, targetObjectId)!;
@@ -399,10 +399,11 @@ class SceneComponent extends Component
   }
 
   void movePlayerToPosition(Vector2 position) {
-    _player.animation.resetLast2Second();
-    _player.position = position + Vector2(30, -30);
-    parent.customCamera.moveTo(_player.position, speed: double.infinity);
-    parent.customCamera.follow(_player, maxSpeed: kCameraSpeed, snap: true);
+    player.animation.resetLast2Second();
+    player.position = position + Vector2(30, -30);
+    parent.customCamera.moveTo(player.position, speed: double.infinity);
+    parent.customCamera.follow(player, maxSpeed: kCameraSpeed, snap: true);
+    player.animation.isOnGround = false;
   }
 }
 
