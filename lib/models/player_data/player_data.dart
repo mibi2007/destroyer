@@ -29,7 +29,7 @@ class PlayerData {
   final health = ValueNotifier<int>(100);
   final armor = ValueNotifier<int>(5);
   final inventory = ValueNotifierList<Equipment>([]);
-  final sword = ValueNotifier<Sword>(Sword.desolator());
+  final sword = SwordChangeNotifier(Sword.desolator());
   final lastSword = ValueNotifier<Sword?>(null);
   final skills = ValueNotifierList<Skill>([]);
   final position = ValueNotifier<Vector2>(Vector2.zero());
@@ -46,6 +46,7 @@ class PlayerData {
   final souls = ValueNotifier<int>(0);
   final garbages = ValueNotifier<int>(0);
   final isDead = ValueNotifier<bool>(false);
+  final revertDead = RevertDead();
 }
 
 class ValueNotifierList<T> extends ValueNotifier<List<T>> {
@@ -98,6 +99,20 @@ class EquipmentsNotifier extends ChangeNotifier {
 
 class DoubleTapNotifier extends ChangeNotifier {
   void trigger() {
+    notifyListeners();
+  }
+}
+
+class RevertDead extends ChangeNotifier {
+  void trigger() {
+    notifyListeners();
+  }
+}
+
+class SwordChangeNotifier extends ValueNotifier<Sword> {
+  SwordChangeNotifier(super.value);
+
+  void change() {
     notifyListeners();
   }
 }

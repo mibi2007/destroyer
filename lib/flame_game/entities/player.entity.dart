@@ -229,6 +229,7 @@ class PlayerAnimationEntity extends RiveComponent
     game.playerData.casting.addListener(_onCastingHandler);
     game.playerData.effects.addListener(_onEffectsChangeHandler);
     game.playerData.autoAttack.addListener(_onDoubleTapHandler);
+    game.playerData.revertDead.addListener(_revertDeadHandler);
     _onEquipmentsChangeHandler();
 
     // game.playerData.sword.addListener(_onSwordChangeHandler);
@@ -318,13 +319,13 @@ class PlayerAnimationEntity extends RiveComponent
 
     // For super hero landing animation
     gravity = 0;
-    final sword = game.getEquipments().firstWhere((e) => e is Sword) as Sword;
+    final newSword = game.getEquipments().firstWhere((e) => e is Sword) as Sword;
     // });
     add(TimerComponent(
       period: 1, // The period in seconds
       onTick: () {
         gravity = playerGravity;
-        _changeToSword(sword.type);
+        changeToSword(newSword);
       },
       removeOnFinish: true,
     ));
@@ -338,11 +339,10 @@ class PlayerAnimationEntity extends RiveComponent
 
   @override
   void update(double dt) {
-    if (game.playerData.isDead.value) {
-      moveBackground(Vector2(0, 0));
-      return;
-    }
     super.update(dt);
+    if (game.playerData.isDead.value || game.playerData.casting.value != null) {
+      moveBackground(Vector2(0, 0));
+    }
 
     if (interval != null) interval!.update(dt);
 
@@ -435,15 +435,15 @@ class PlayerAnimationEntity extends RiveComponent
     moveBackground(_velocity);
   }
 
-  void moveBackground(Vector2 v) {
+  void moveBackground(Vector2 velocity) {
     if (collisionNormal.x > -0.9 && collisionNormal.x < 0.9) {
-      game.background.parallax!.baseVelocity.x = v.x / 50;
+      game.background.parallax!.baseVelocity.x = velocity.x / 50;
     } else {
       game.background.parallax!.baseVelocity.x = 0;
     }
     if (game.level == GameLevel.lv2) return;
     if (collisionNormal.y > -0.9 && collisionNormal.y < 0.9) {
-      game.background.parallax!.baseVelocity.y = v.y / 50;
+      game.background.parallax!.baseVelocity.y = velocity.y / 50;
     } else {
       game.background.parallax!.baseVelocity.y = 0;
     }
@@ -475,19 +475,39 @@ class PlayerAnimationEntity extends RiveComponent
           _walkTrigger?.fire();
         }
       }
-      if (keysPressed.contains(LogicalKeyboardKey.digit0) && has0) {
-        _changeToSword(SwordType.desolator);
-      } else if (keysPressed.contains(LogicalKeyboardKey.digit1) && has1) {
-        _changeToSword(SwordType.purifier);
-      } else if (keysPressed.contains(LogicalKeyboardKey.digit2) && has2) {
-        _changeToSword(SwordType.time);
-      } else if (keysPressed.contains(LogicalKeyboardKey.digit3) && has3) {
-        _changeToSword(SwordType.flame);
-      } else if (keysPressed.contains(LogicalKeyboardKey.digit4) && has4) {
-        _changeToSword(SwordType.lightning);
-      } else if (keysPressed.contains(LogicalKeyboardKey.digit5) && has5) {
-        _sword?.value = 5;
-        _swordTriggers[5]?.fire();
+      if (keysPressed.any((key) {
+        return [LogicalKeyboardKey.control, LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.controlRight]
+            .contains(key);
+      })) {
+        // print(keysPressed);
+        if (keysPressed.contains(LogicalKeyboardKey.digit1) && has1) {
+          moveSwordToSlot(0);
+        } else if (keysPressed.contains(LogicalKeyboardKey.digit2) && has2) {
+          moveSwordToSlot(1);
+        } else if (keysPressed.contains(LogicalKeyboardKey.digit3) && has3) {
+          moveSwordToSlot(2);
+        } else if (keysPressed.contains(LogicalKeyboardKey.digit4) && has4) {
+          moveSwordToSlot(3);
+        } else if (keysPressed.contains(LogicalKeyboardKey.digit5) && has5) {
+          moveSwordToSlot(4);
+        }
+      } else {
+        if (keysPressed.contains(LogicalKeyboardKey.digit1) && has1) {
+          final newSword = (game.getEquipments()[0] as Sword);
+          changeToSword(newSword);
+        } else if (keysPressed.contains(LogicalKeyboardKey.digit2) && has2) {
+          final newSword = (game.getEquipments()[1] as Sword);
+          changeToSword(newSword);
+        } else if (keysPressed.contains(LogicalKeyboardKey.digit3) && has3) {
+          final newSword = (game.getEquipments()[2] as Sword);
+          changeToSword(newSword);
+        } else if (keysPressed.contains(LogicalKeyboardKey.digit4) && has4) {
+          final newSword = (game.getEquipments()[3] as Sword);
+          changeToSword(newSword);
+        } else if (keysPressed.contains(LogicalKeyboardKey.digit5) && has5) {
+          final newSword = (game.getEquipments()[4] as Sword);
+          changeToSword(newSword);
+        }
       }
 
       if (keysPressed.contains(LogicalKeyboardKey.space)) {
@@ -516,7 +536,7 @@ class PlayerAnimationEntity extends RiveComponent
       game.addEquipment(other.item);
       if (other is SwordComponent) {
         final newSword = other.item as Sword;
-        _changeToSword(newSword.type);
+        changeToSword(newSword);
         parent.parent.onRewardPicked?.call(other);
       }
       other.removeFromParent();
@@ -531,20 +551,13 @@ class PlayerAnimationEntity extends RiveComponent
 
   void _onEquipmentsChangeHandler() {
     final equipments = game.getEquipments();
-    for (var e in equipments) {
-      if (e is Sword) {
-        if (e.type == SwordType.desolator) {
-          has0 = true;
-        } else if (e.type == SwordType.purifier) {
-          has1 = true;
-        } else if (e.type == SwordType.time) {
-          has2 = true;
-        } else if (e.type == SwordType.flame) {
-          has3 = true;
-        } else if (e.type == SwordType.lightning) {
-          has4 = true;
-        }
-      }
+
+    for (int i = 0; i < equipments.whereType<Sword>().length; i++) {
+      if (i == 0) has1 = true;
+      if (i == 1) has2 = true;
+      if (i == 2) has3 = true;
+      if (i == 3) has4 = true;
+      if (i == 4) has5 = true;
     }
   }
 
@@ -601,7 +614,7 @@ class PlayerAnimationEntity extends RiveComponent
     final currentIndex = equipments.indexWhere((element) => (element as Sword).type == sword.type);
     final nextIndex = (currentIndex + 1) % equipments.length;
     final nextSword = equipments[nextIndex] as Sword;
-    _changeToSword(nextSword.type);
+    changeToSword(nextSword);
   }
 
   @override
@@ -654,26 +667,7 @@ class PlayerAnimationEntity extends RiveComponent
           removeOnFinish: true,
         ));
       } else if (skill.name == 'Time Walk') {
-        game.playerData.casting.value = Skills.timeWalk;
-
-        interval = Timer(
-          skill.duration / 20, // Interval duration in seconds
-          onTick: () {
-            // _velocity.x = last2SecondPositions.last.x;
-            // _velocity.y = last2SecondPositions.last.y;
-            position = _last2SecondPositions.last;
-            _last2SecondPositions.removeLast();
-            game.playerData.health.value = _last2SecondHealth.last;
-            _last2SecondHealth.removeLast();
-            if (_last2SecondPositions.isEmpty) interval!.stop();
-          }, // Callback function to execute
-          repeat: true, // Whether the timer should repeat
-        );
-        if (skill.effects.isNotEmpty) {
-          for (var effect in skill.effects) {
-            if (effect.triggerIndex != null) _effectsTriggers[effect.triggerIndex!]?.fire();
-          }
-        }
+        _castTimeWalk(skill);
       } else if (skill.name == 'Chronosphere') {
         final selectedLocation = game.playerData.selectedLocation.value != null
             ? game.camera.globalToLocal(game.playerData.selectedLocation.value!)
@@ -701,11 +695,13 @@ class PlayerAnimationEntity extends RiveComponent
     }
   }
 
-  void _changeToSword(SwordType type) {
+  void changeToSword(Sword newSword) {
     // print('_changeToSword: $type');
-    if (game.playerData.sword.value.type == type) return;
+    if (game.playerData.sword.value == newSword) {
+      game.playerData.sword.change();
+      return;
+    }
     game.playerData.lastSword.value = game.playerData.sword.value;
-    final newSword = game.getEquipments().firstWhere((e) => e is Sword && e.type == type) as Sword;
     game.playerData.sword.value = newSword;
 
     final triggerIndex = newSword.triggerIndex;
@@ -807,6 +803,49 @@ class PlayerAnimationEntity extends RiveComponent
         game.playerData.casting.value = null;
       },
       removeOnFinish: true,
+    ));
+  }
+
+  void _revertDeadHandler() {
+    final newSword = game.getEquipments().firstWhere((e) => e is Sword && e.type == SwordType.time) as Sword;
+    changeToSword(newSword);
+  }
+
+  void _castTimeWalk(Skill skill) {
+    game.playerData.casting.value = Skills.timeWalk;
+
+    interval = Timer(
+      skill.duration / 20, // Interval duration in seconds
+      onTick: () {
+        // _velocity.x = last2SecondPositions.last.x;
+        // _velocity.y = last2SecondPositions.last.y;
+        position = _last2SecondPositions.last;
+        _last2SecondPositions.removeLast();
+        game.playerData.health.value = _last2SecondHealth.last;
+        _last2SecondHealth.removeLast();
+        if (_last2SecondPositions.isEmpty) interval!.stop();
+      }, // Callback function to execute
+      repeat: true, // Whether the timer should repeat
+    );
+    if (skill.effects.isNotEmpty) {
+      for (var effect in skill.effects) {
+        if (effect.triggerIndex != null) _effectsTriggers[effect.triggerIndex!]?.fire();
+      }
+    }
+  }
+
+  void moveSwordToSlot(int i) {
+    final sword = game.playerData.sword.value;
+    final newEquipments = game.getEquipments();
+    newEquipments.removeWhere((e) => e is Sword && e.type == sword.type);
+    newEquipments.insert(i, sword);
+    game.setEquipments(newEquipments);
+    game.playerData.equipments.change();
+    add(TimerComponent(
+      period: 0.2, // The period in seconds
+      onTick: () {
+        changeToSword(sword);
+      },
     ));
   }
 }

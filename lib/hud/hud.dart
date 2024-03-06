@@ -179,9 +179,6 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
 
   void _cancelSkill(Skill skill, int index) {
     game.playerData.effects.remove(skill.effects.first, shouldNotify: true);
-    game.playerData.skillCountdown.updateAt(index, false);
-    final skillComponent = skills.firstWhere((c) => c.skill == skill);
-    skillComponent.stopCountdown();
   }
 
   void _castSkill(String keyboard) {
@@ -203,7 +200,6 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
     //   return;
     // }
     // if (skill.autoCast) {
-    // print('autocast skill ${game.playerData.skillCountdown.value[index]}');
 
     if (game.playerData.skillCountdown.value[index]) {
       if (skill.autoCast) _cancelSkill(skill, index);
@@ -279,7 +275,14 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
     if (game.playerData.health.value <= 0) {
       // AudioManager.stopBgm();
       // game.pauseEngine();
-      game.playerData.isDead.value = true;
+      final timeWalkSkillIndex = skills.indexWhere((s) => s.skill == Skills.timeWalk);
+      if (game.playerData.skillCountdown.value[timeWalkSkillIndex]) {
+        game.playerData.isDead.value = true;
+      } else {
+        game.playerData.sword.value =
+            game.getEquipments().firstWhere((e) => e is Sword && e.type == SwordType.time) as Sword;
+        game.playerData.revertDead.trigger();
+      }
     }
   }
 

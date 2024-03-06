@@ -89,6 +89,7 @@ class Skills {
     triggerIndex: 2,
     effects: [SkillEffects.timeWalk0s5],
     keyboard: 'Q',
+    autoCast: true,
   );
 
   static final chronosphere = Skill(

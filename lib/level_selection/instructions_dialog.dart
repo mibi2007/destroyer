@@ -1,5 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flame/widgets.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nes_ui/nes_ui.dart';
@@ -23,7 +24,7 @@ class _InstructionsDialogState extends State<InstructionsDialog> {
           'Instructions',
           style: TextStyle(
             fontFamily: GoogleFonts.pressStart2p().fontFamily,
-            fontSize: 25,
+            fontSize: MediaQuery.of(context).size.width < 500 ? 16 : 24,
           ),
         ),
         const SizedBox(height: 30),
@@ -44,8 +45,10 @@ class _InstructionsDialogState extends State<InstructionsDialog> {
                   : null,
             ),
             SizedBox(
-              width: 350,
-              height: 100,
+              width: MediaQuery.of(context).size.width * 0.8 - 200 > 500
+                  ? 500
+                  : MediaQuery.of(context).size.width * 0.8 - 100,
+              height: 300,
               child: PageView(
                 controller: _pageController,
                 onPageChanged: (int newPage) {
@@ -58,25 +61,35 @@ class _InstructionsDialogState extends State<InstructionsDialog> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Flexible(
-                        flex: 7,
+                        flex: 1,
                         child: Text(
                           'Move using A, W, S and D, jump with Space and attack with left click.',
                         ),
                       ),
                     ],
                   ),
-                  Row(
+                  Flex(
+                    direction: MediaQuery.of(context).size.width < 500 ? Axis.vertical : Axis.horizontal,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Flexible(
                         flex: 7,
-                        child: Text(
-                          'Use 1, 2 ,3 and 4 or Tab to switch between your swords.',
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Use 1, 2 ,3 and 4 or Tab to switch between your swords.',
+                            ),
+                            SizedBox(height: 16),
+                            Text(
+                              'Press Ctrl + 1, 2, 3 or 4 to rearrange your current sword.',
+                            ),
+                          ],
                         ),
                       ),
                       const SizedBox(width: 20),
                       Flexible(
-                        flex: 3,
+                        flex: MediaQuery.of(context).size.width < 500 ? 7 : 3,
                         child: SizedBox(
                           width: 60,
                           height: 60,
@@ -99,7 +112,7 @@ class _InstructionsDialogState extends State<InstructionsDialog> {
                       Flexible(
                         flex: 7,
                         child: Text(
-                          'Optional right click can select target and then press Q, E or R to use your skills.',
+                          'Optional right click can select target and then press Q or E to use your skills.',
                         ),
                       ),
                     ],
