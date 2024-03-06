@@ -22,7 +22,6 @@ class Level1BScript extends Script {
     timePerChar: 0.05, // Time in seconds to wait before showing the next character
     // Other configurations for your text box...
   );
-
   late final Timer _timer;
   // int seconds = 0;
   bool isShownDialog = false;

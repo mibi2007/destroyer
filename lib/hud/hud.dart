@@ -18,6 +18,8 @@ import '../flame_game/components/skills.dart';
 import '../flame_game/game.dart';
 import '../models/equipments.dart';
 import '../overlays/pause_menu.dart';
+import 'attack_button.dart';
+import 'jump_button.dart';
 
 const skillGap = 8.0;
 const skillSize = 32.0;
@@ -28,6 +30,7 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
   late final TextComponent creditTextComponent;
   late final TextComponent healthTextComponent;
   late final RectangleComponent healthBarComponent;
+  late final JoystickComponent joystick;
   final List<EquipmentComponent> equipments = [];
   final List<SkillComponent> skills = [];
   final List<EffectComponent> effects = [];
@@ -45,8 +48,7 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
 
   @override
   bool get debugMode => false;
-  final knobPaint = BasicPalette.blue.withAlpha(200).paint();
-  final backgroundPaint = BasicPalette.blue.withAlpha(100).paint();
+  final backgroundPaint = BasicPalette.white.withAlpha(40).paint();
 
   @override
   Future<void> onLoad() async {
@@ -134,31 +136,48 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
       position: Vector2(66, 2),
       size: Vector2.all(16),
     )..add(creditTextComponent));
-    final joystick = JoystickComponent(
-      knob: CircleComponent(radius: 30, paint: knobPaint),
-      background: CircleComponent(radius: 100, paint: backgroundPaint),
-      margin: const EdgeInsets.only(left: 40, bottom: 40),
-      position: Vector2(100, 100),
-      size: 1000,
+    joystick = PlayerJoystick(
+      knob: SpriteComponent.fromImage(
+          game.images.fromCache(
+            'assets/images/hud/pad.png',
+          ),
+          srcSize: Vector2.all(100),
+          size: Vector2(game.screenSize.height * 0.2, game.screenSize.height * 0.2)),
+      background: CircleComponent(radius: game.screenSize.height * 0.2, paint: backgroundPaint),
+      // margin: const EdgeInsets.only(left: 40, bottom: 40),
+      position: Vector2(game.screenSize.height * 0.2 + 20, game.screenSize.height - game.screenSize.height * 0.2 - 40),
+      size: 200,
+      priority: 3,
     );
     // size = Vector2.all(100);
-    add(joystick);
+    // add(RectangleComponent.square(size: 100, position: Vector2(100, 100))..add(joystick));
+    if (game.isMobile) {
+      add(joystick);
+      add(AttackButton(
+        position: Vector2(game.screenSize.width - 160, game.screenSize.height - 180),
+        size: Vector2.all(64),
+      ));
+      add(JumpButton(
+        position: Vector2(game.screenSize.width - 230, game.screenSize.height - 130),
+        size: Vector2.all(64),
+      ));
+    }
 
     game.playerData.credits.addListener(onCreditChange);
     game.playerData.health.addListener(onHealthChange);
     game.playerData.sword.addListener(_onSwordChangeHandler);
     game.playerData.equipments.addListener(_onEquipmentsChangeHandler);
     game.playerData.effects.addListener(_onEffectsChangeHandler);
-    game.playerData.currentMousePosition.addListener(_mouseMoveHandler);
+    // game.playerData.currentMousePosition.addListener(_mouseMoveHandler);
     game.playerData.inventory.addListener(_onInventoryChangeHandler);
 
     _onEquipmentsChangeHandler();
     _onInventoryChangeHandler();
   }
 
-  void _mouseMoveHandler() {
-    cursor.position = game.playerData.currentMousePosition.value / game.zoom;
-  }
+  // void _mouseMoveHandler() {
+  //   cursor.position = game.playerData.currentMousePosition.value / game.zoom;
+  // }
 
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
@@ -167,9 +186,11 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
         game.pauseEngine();
         game.overlays.add(PauseMenu.id);
       } else if (keysPressed.contains(LogicalKeyboardKey.keyQ)) {
-        _castSkill('Q');
+        final skill = game.playerData.sword.value.skills.firstWhere((s) => s.keyboard == 'Q');
+        castSkill(skill);
       } else if (keysPressed.contains(LogicalKeyboardKey.keyE)) {
-        _castSkill('E');
+        final skill = game.playerData.sword.value.skills.firstWhere((s) => s.keyboard == 'E');
+        castSkill(skill);
         // } else if (keysPressed.contains(LogicalKeyboardKey.keyR)) {
         //   _castSkill('R');
       }
@@ -181,10 +202,9 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
     game.playerData.effects.remove(skill.effects.first, shouldNotify: true);
   }
 
-  void _castSkill(String keyboard) {
+  void castSkill(Skill skill) {
     // if (skillIndex > game.playerData.sword.value.skills.length - 1) return;
     if (game.playerData.casting.value != null) return;
-    final skill = game.playerData.sword.value.skills.firstWhere((s) => s.keyboard == keyboard);
     if (skill.cooldown == 0 && !skill.autoCast) return;
     final index = game.playerData.skills.value.where((s) => s.cooldown != 0).toList().indexWhere((s) => s == skill);
     // print(index);
@@ -369,7 +389,7 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
         for (final skill in autoCasts) {
           // final skill = game.playerData.sword.value.skills..firstWhere((s)=>s.autoCast);
           // print(index);
-          if (skill.keyboard != null) _castSkill(skill.keyboard!);
+          if (skill.keyboard != null) castSkill(skill);
         }
       }
     }
@@ -413,7 +433,7 @@ class Hud extends PositionComponent with HasGameReference<DestroyerGame>, Keyboa
       for (final e in com.children.whereType<Effect>()) {
         com.remove(e);
       }
-
+      if (game.isMobile) return;
       if (game.playerData.sword.value.skills.contains(skills[i].skill)) {
         com.add(ActiveColorEffect());
       } else {
@@ -536,7 +556,7 @@ class SkillFrame extends SpriteComponent with HasGameRef<DestroyerGame> {
 
   @override
   FutureOr<void> onLoad() {
-    if (skillKey != null) {
+    if (skillKey != null && !game.isMobile) {
       add(TextComponent(
         text: skillKey,
         position: Vector2(width - 10, height - 13),
@@ -580,5 +600,58 @@ class HudCursor extends CircleComponent with CollisionCallbacks {
   Future<void> onLoad() async {
     super.onLoad();
     add(CircleHitbox());
+  }
+}
+
+class PlayerJoystick extends JoystickComponent with ParentIsA<Hud> {
+  // @override
+  // DestroyerGame game;
+  late final Timer _timer;
+  PlayerJoystick(
+      {required super.knob,
+      required super.background,
+      required super.position,
+      required super.size,
+      required super.priority});
+
+  @override
+  Future<void> onLoad() {
+    _timer = Timer(
+      0.045, // The period in seconds
+      onTick: () {
+        parent.game.playerData.joystickDelta.value = relativeDelta;
+      },
+      repeat: true,
+    );
+    return super.onLoad();
+  }
+
+  // @override
+  // bool onDragUpdate(DragUpdateEvent event) {
+  //   parent.game.playerData.joystickDelta.value = relativeDelta;
+  //   return super.onDragUpdate(event);
+  // }
+
+  // @override
+  // bool onDragEnd(DragEndEvent _) {
+  //   print('end');
+  //   return super.onDragEnd(_);
+  // }
+
+  // @override
+  // bool onDragStart(DragStartEvent event) {
+  //   print('start');
+  //   return super.onDragStart(event);
+  // }
+  @override
+  void update(double dt) {
+    _timer.update(dt);
+    super.update(dt);
+  }
+
+  @override
+  void onRemove() {
+    _timer.stop();
+    super.onRemove();
   }
 }

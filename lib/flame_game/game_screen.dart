@@ -58,7 +58,7 @@ class GameScreen extends StatelessWidget {
       body: SafeArea(
         child: Center(
           child: Listener(
-            onPointerDown: kIsWeb
+            onPointerDown: kIsWeb || MediaQuery.of(context).size.height < 500
                 ? null
                 : (PointerDownEvent event) {
                     if (event.kind == PointerDeviceKind.mouse) {

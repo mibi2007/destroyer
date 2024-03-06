@@ -23,7 +23,7 @@ class Level4BScript extends Script {
     // Other configurations for your text box...
   );
 
-  late final Door door;
+  Door? door;
   late final Timer _timer;
   // int seconds = 0;
   bool isShownDialog = false;
@@ -63,7 +63,7 @@ class Level4BScript extends Script {
   }
 
   void onBossKilled(PositionComponent killedBoss) {
-    if (!parent.children.any((element) => element is Door)) parent.add(door);
+    if (door != null) parent.add(door!);
   }
 
   @override

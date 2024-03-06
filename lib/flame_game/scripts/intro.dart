@@ -18,7 +18,7 @@ import 'script.dart';
 const _asset = 'assets/images/enemies/boss-intro.png';
 
 class IntroScript extends Script {
-  late final Door door;
+  Door? door;
   late final SpriteComponent oracle;
   late final Timer _timer;
   int _seconds = 0;
@@ -185,7 +185,7 @@ class IntroScript extends Script {
         // player.animation.resetLast2Second();
         // game.camera.stop();
         // world.customCamera.follow(player, maxSpeed: kCameraSpeed, snap: true);
-        parent.movePlayerToPosition(Vector2(door.x + door.width / 2, door.y));
+        if (door != null) parent.movePlayerToPosition(Vector2(door!.x + door!.width / 2, door!.y));
         game.background.parallax!.baseVelocity.y = 5;
         // for (int i = 0; i < game.camera.backdrop.children.length; i++) {
         //   if (game.camera.backdrop.children.elementAt(i) is Background) {

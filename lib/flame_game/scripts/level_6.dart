@@ -24,7 +24,7 @@ class Level6Script extends Script {
     // Other configurations for your text box...
   );
 
-  late final Door door;
+  Door? door;
   late final Timer _timer;
   int seconds = 0;
   bool isShownDialog = false;
@@ -64,7 +64,7 @@ class Level6Script extends Script {
       priority: 1,
     );
     // print(boss!.garbageBullet);
-    boss!.currentHealth = boss!.maxHealth * 0.29;
+    boss!.currentHealth = boss!.maxHealth * 0.31;
     boss!.boss
       ..moveAnimation = SpriteAnimation.spriteList(
           await Future.wait([
@@ -122,7 +122,7 @@ class Level6Script extends Script {
   }
 
   void onBossKilled(PositionComponent killedBoss) {
-    world.nextLevel();
+    if (door != null) parent.add(door!);
   }
 
   void reward() {

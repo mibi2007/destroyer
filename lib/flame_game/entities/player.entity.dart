@@ -126,7 +126,7 @@ class PlayerAnimationEntity extends RiveComponent
   // List<Skill> skills = [];
   // late Sword sword;
 
-  TransformComponent? lookingConstraint;
+  TransformComponent? joystickDelta;
 
   // late Image purifierSprite;
   bool isAutoAttack = false;
@@ -179,7 +179,7 @@ class PlayerAnimationEntity extends RiveComponent
 
   // Updates score text on hud.
   void _onMousePositionChanged() {
-    if (lookingConstraint == null) return;
+    if (joystickDelta == null) return;
     Vector2 mousePosition = game.camera.globalToLocal(game.playerData.currentMousePosition.value);
     game.playerData.angleToSigned.value = (mousePosition).angleToSigned(Vector2(0, 1));
     double angle = (mousePosition).angleToSigned(game.playerData.direction.value.direction) * 180 / pi;
@@ -193,8 +193,36 @@ class PlayerAnimationEntity extends RiveComponent
     if (game.playerData.casting.value == null) {
       game.playerData.aim.value =
           -game.playerData.direction.value.x * (mousePosition).angleToSigned(game.playerData.direction.value.direction);
-      lookingConstraint!.rotation = -game.playerData.direction.value.x * angle * pi / 180;
+      joystickDelta!.rotation = -game.playerData.direction.value.x * angle * pi / 180;
     }
+  }
+
+  void _onDragJoystick() {
+    // print(game.playerData.joystickDelta.value);
+    if (joystickDelta == null) return;
+    final mousePosition = game.playerData.joystickDelta.value;
+    // print(mousePosition);
+    if (mousePosition != Vector2.zero()) {
+      game.playerData.angleToSigned.value = (mousePosition).angleToSigned(Vector2(0, 1));
+    }
+    double angle = (mousePosition).angleToSigned(game.playerData.direction.value.direction) * 180 / pi;
+    if (angle > 90 || angle < -90) {
+      if (game.playerData.casting.value == null) {
+        flipHorizontally();
+        // After fliping the player, the angle should be flipped as well
+        angle = -angle;
+      }
+    }
+    if (game.playerData.casting.value == null && mousePosition != Vector2.zero()) {
+      game.playerData.aim.value =
+          -game.playerData.direction.value.x * (mousePosition).angleToSigned(game.playerData.direction.value.direction);
+      joystickDelta!.rotation = -game.playerData.direction.value.x * angle * pi / 180;
+    }
+    _hAxisInput = 0;
+    _hAxisInput += mousePosition.x > 0.5 ? 1 : 0;
+    _hAxisInput += mousePosition.x < -0.5 ? -1 : 0;
+    _vAxisInput += mousePosition.y > 0.5 ? 1 : 0;
+    _vAxisInput += mousePosition.y < -0.5 ? -1 : 0;
   }
 
   void onTick() {
@@ -224,11 +252,16 @@ class PlayerAnimationEntity extends RiveComponent
     // add(test3);
     _savePositionTimer = Timer(0.1, onTick: onTick, repeat: true);
 
-    game.playerData.currentMousePosition.addListener(_onMousePositionChanged);
+    if (game.isMobile) {
+      game.playerData.joystickDelta.addListener(_onDragJoystick);
+    } else {
+      game.playerData.currentMousePosition.addListener(_onMousePositionChanged);
+    }
     game.playerData.equipments.addListener(_onEquipmentsChangeHandler);
     game.playerData.casting.addListener(_onCastingHandler);
     game.playerData.effects.addListener(_onEffectsChangeHandler);
     game.playerData.autoAttack.addListener(_onDoubleTapHandler);
+    game.playerData.jump.addListener(_onJumpHandler);
     game.playerData.revertDead.addListener(_revertDeadHandler);
     _onEquipmentsChangeHandler();
 
@@ -312,7 +345,7 @@ class PlayerAnimationEntity extends RiveComponent
       ];
     }
 
-    lookingConstraint = artboard.component('LookingConstraint');
+    joystickDelta = artboard.component('LookingConstraint');
 
     // Start with the first sword, trigger _changeToSword after all animations are initialized
     // print(game.playerData.sword.value);
@@ -429,6 +462,14 @@ class PlayerAnimationEntity extends RiveComponent
       _velocity.y = velocity.y;
     }
 
+    if (game.isMobile) {
+      // _velocity.x = _velocity.x;
+      // position += _velocity * dt;
+      // game.playerData.position.value = position;
+      // return;
+    } else {
+      // print(_velocity * dt);
+    }
     // delta movement = velocity * time
     position += _velocity * dt;
     game.playerData.position.value = position;
@@ -640,7 +681,7 @@ class PlayerAnimationEntity extends RiveComponent
 
         // Set posture to cast skill
         game.playerData.aim.value = 0;
-        lookingConstraint!.rotation = pi / 180;
+        joystickDelta!.rotation = pi / 180;
       }
       if (skill.name == 'Repel') {
         add(TimerComponent(
@@ -730,8 +771,11 @@ class PlayerAnimationEntity extends RiveComponent
   }
 
   void _onDoubleTapHandler() {
-    isAutoAttack = true;
-    onAttackDelay = true;
+    isAutoAttack = game.playerData.autoAttack.value;
+    onAttackDelay = !onAttackDelay;
+    if (!isAutoAttack) {
+      attack();
+    }
   }
 
   void _castLightning(Skill skill) {
@@ -847,6 +891,10 @@ class PlayerAnimationEntity extends RiveComponent
         changeToSword(sword);
       },
     ));
+  }
+
+  void _onJumpHandler() {
+    _jumpInput = true;
   }
 }
 

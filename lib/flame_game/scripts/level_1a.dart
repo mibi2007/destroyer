@@ -12,7 +12,7 @@ class Level1AScript extends Script {
     // Other configurations for your text box...
   );
 
-  late final Door door;
+  Door? door;
   late final Timer _timer;
   int seconds = 0;
   bool isShownDialog = false;
@@ -70,7 +70,7 @@ class Level1AScript extends Script {
         ));
       }
       if (isCursed && parent.children.whereType<GarbageMonsterEntity>().isEmpty) {
-        if (!parent.children.any((element) => element is Door)) parent.add(door);
+        if (door != null) parent.add(door!);
       }
       if (!isGarbageToHead && game.playerData.health.value < 100) {
         isGarbageToHead = true;

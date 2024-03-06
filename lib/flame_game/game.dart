@@ -52,12 +52,14 @@ class DestroyerGame extends FlameGame
   late BuildContext context;
   late bool isTesting;
   late final double zoom;
+  late final bool isMobile;
 
   DestroyerGame(this.level, this.sceneIndex, {required this.screenSize, this.isTesting = false}) {
     images.prefix = '';
     fixedResolution = screenSize.height < 500
         ? Vector2(screenSize.width, screenSize.height) * 0.94
         : Vector2(screenSize.width, screenSize.height) * 0.57;
+    isMobile = screenSize.height < 500;
   }
   late Image spriteSheet;
 
@@ -74,8 +76,9 @@ class DestroyerGame extends FlameGame
 
   @override
   void onMouseMove(PointerHoverInfo info) {
-    if (_timer > 0.045 && isMounted) {
-      _timer = 0;
+    // if (_timer > 0.045 && isMounted) {
+    if (isMounted) {
+      // _timer = 0;
 
       // Fix bug where the mouse position is not correct with different screen sizes and resolutions
       double x = info.eventPosition.global.x;
@@ -91,7 +94,7 @@ class DestroyerGame extends FlameGame
 
   @override
   void onLongPressEnd(LongPressEndInfo info) {
-    playerData.autoAttack.trigger();
+    playerData.autoAttack.value = true;
   }
 
   void leftClickHandler() {
@@ -147,6 +150,9 @@ class DestroyerGame extends FlameGame
     spriteSheet = await images.load('assets/tiles/Spritesheet.png');
     await images.load('assets/images/hud/hud.png');
     await images.load('assets/images/hud/avatar-frame.png');
+    await images.load('assets/images/hud/attack-button.png');
+    await images.load('assets/images/hud/jump-button.png');
+    await images.load('assets/images/hud/pad.png');
 
     // Characters
     await images.load('assets/images/npcs/oracle.png');
@@ -211,7 +217,7 @@ class DestroyerGame extends FlameGame
   @override
   void update(double dt) {
     super.update(dt);
-    _timer += dt;
+    // _timer += dt;
 
     // camera.
   }

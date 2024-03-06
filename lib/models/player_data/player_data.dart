@@ -37,12 +37,14 @@ class PlayerData {
   final direction = ValueNotifier<Direction>(Direction(Vector2(1, 0)));
   final angleToSigned = ValueNotifier<double>(0);
   final currentMousePosition = ValueNotifier<Vector2>(Vector2.zero());
+  final joystickDelta = ValueNotifier<Vector2>(Vector2.zero());
   final effects = ValueNotifierList<SkillEffect>([]);
   final selectedTarget = ValueNotifier<PositionComponent?>(null);
   final selectedLocation = ValueNotifier<Vector2?>(null);
   final skillCountdown = ValueNotifierList<bool>([]);
   final casting = ValueNotifier<Skill?>(null);
-  final autoAttack = DoubleTapNotifier();
+  final autoAttack = ValueNotifier(false);
+  final jump = JumpNotifier();
   final souls = ValueNotifier<int>(0);
   final garbages = ValueNotifier<int>(0);
   final isDead = ValueNotifier<bool>(false);
@@ -113,6 +115,12 @@ class SwordChangeNotifier extends ValueNotifier<Sword> {
   SwordChangeNotifier(super.value);
 
   void change() {
+    notifyListeners();
+  }
+}
+
+class JumpNotifier extends ChangeNotifier {
+  void trigger() {
     notifyListeners();
   }
 }

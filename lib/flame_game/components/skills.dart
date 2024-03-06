@@ -6,6 +6,7 @@ import 'package:destroyer/flame_game/entities/enemy.entity.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
+import 'package:flame/events.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/particles.dart';
 import 'package:flame/text.dart';
@@ -107,7 +108,8 @@ class CountdownComponent extends PositionComponent {
   }
 }
 
-class SkillComponent extends PositionComponent with HasGameReference<DestroyerGame>, Countdown, CollisionCallbacks {
+class SkillComponent extends PositionComponent
+    with HasGameReference<DestroyerGame>, Countdown, CollisionCallbacks, TapCallbacks, ParentIsA<Hud> {
   final Skill skill;
   late SpriteComponent iconComponent;
   late Component tooltip;
@@ -175,6 +177,13 @@ class SkillComponent extends PositionComponent with HasGameReference<DestroyerGa
 
   void hideTooltip() {
     remove(tooltip);
+  }
+
+  @override
+  void onTapDown(TapDownEvent event) {
+    print(skill);
+    parent.castSkill(skill);
+    super.onTapDown(event);
   }
 }
 
