@@ -58,7 +58,7 @@ class PlayerEntity extends PositionComponent with ParentIsA<SceneComponent> {
   }
 
   @override
-  bool get debugMode => false;
+  bool get debugMode => true;
 }
 
 class PlayerAnimationEntity extends RiveComponent
@@ -201,7 +201,7 @@ class PlayerAnimationEntity extends RiveComponent
     // print(game.playerData.joystickDelta.value);
     if (joystickDelta == null) return;
     final mousePosition = game.playerData.joystickDelta.value;
-    // print(mousePosition);
+    print(mousePosition);
     if (mousePosition != Vector2.zero()) {
       game.playerData.angleToSigned.value = (mousePosition).angleToSigned(Vector2(0, 1));
     }
@@ -579,13 +579,15 @@ class PlayerAnimationEntity extends RiveComponent
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     if (other is EquipmentComponent) {
+      print(other.item);
+      print(other.position);
       game.addEquipment(other.item);
       if (other is SwordComponent) {
         final newSword = other.item as Sword;
         changeToSword(newSword);
         parent.parent.onRewardPicked?.call(other);
       }
-      other.removeFromParent();
+      // other.removeFromParent();
     }
 
     if (other is ChronosphereSkillComponent) {

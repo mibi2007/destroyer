@@ -11,7 +11,7 @@ class SwordComponent extends EquipmentComponent with CollisionCallbacks {
   });
 
   @override
-  bool get debugMode => false;
+  bool get debugMode => true;
 
   @override
   Future<void> onLoad() async {
