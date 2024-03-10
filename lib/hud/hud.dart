@@ -611,6 +611,9 @@ class HudCursor extends CircleComponent with CollisionCallbacks {
         );
 
   @override
+  bool get debugMode => false;
+
+  @override
   Future<void> onLoad() async {
     super.onLoad();
     add(CircleHitbox());

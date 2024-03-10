@@ -84,6 +84,9 @@ class Level6Script extends Script {
     _timer = Timer(1, onTick: () {
       seconds++;
       if (seconds == 1) {
+        // if (door != null) {
+        //   parent.add(door!);
+        // }
         // garbageMountain = PositionComponent(
         //   position: boss!.position - Vector2(0, 1000),
         // );

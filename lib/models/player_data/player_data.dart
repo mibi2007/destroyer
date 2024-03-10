@@ -80,10 +80,10 @@ class ValueNotifierList<T> extends ValueNotifier<List<T>> {
     notifyListeners();
   }
 
-  void add(T newValue) {
+  void add(T newValue, {bool shouldNotify = false}) {
     if (!value.contains(newValue)) {
       value.add(newValue);
-      notifyListeners();
+      if (shouldNotify) notifyListeners();
     }
   }
 }

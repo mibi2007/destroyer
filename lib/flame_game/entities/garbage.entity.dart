@@ -39,19 +39,20 @@ class GarbageEntity extends EnemyEntity {
   void update(double dt) {
     super.update(dt);
     if (isDropped) return;
-    if (game.playerData.position.value.x > position.x) {
+    if (targetPosition != null && game.playerData.position.value.x > position.x) {
       add(effect!);
     }
   }
 
   Future<void> garbageLoad() async {
-    effect = SequenceEffect([
-      if (targetPosition != null)
+    if (targetPosition != null) {
+      effect = SequenceEffect([
         MoveToEffect(
           targetPosition!,
           EffectController(speed: 800),
         ),
-    ]);
+      ]);
+    }
   }
 
   void curse() {

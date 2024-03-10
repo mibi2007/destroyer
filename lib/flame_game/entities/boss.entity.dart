@@ -40,7 +40,7 @@ class BossEntity extends EnemyAnimationEntity with Steerable, OnGround {
       damage: 10 + game.level.number * 5,
     );
     garbageBullet = GarbageEntity(garbage, game.images.fromCache(garbage.asset),
-        position: Vector2(0, 0), targetPosition: Vector2(0, 0), size: Vector2.all(32), anchor: Anchor.center);
+        position: Vector2(0, 0), size: Vector2.all(32), anchor: Anchor.center);
     super.onLoad();
     direction = Direction(Vector2(-game.playerData.direction.value.x, 0));
 

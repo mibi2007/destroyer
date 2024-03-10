@@ -121,9 +121,7 @@ class DestroyerGame extends FlameGame
 
   @override
   Future<void> onLoad() async {
-    zoom = (fixedResolution.x / 640 * 454) < fixedResolution.y
-        ? fixedResolution.x / fixedResolution.x
-        : fixedResolution.y / fixedResolution.y;
+    zoom = screenSize.width / fixedResolution.x;
     // mapTiled = await TiledComponent.load(
     //   level.mapTiled,
     //   Vector2.all(32),

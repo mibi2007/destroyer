@@ -49,7 +49,7 @@ class ChronosphereSkillComponent extends SpriteComponent with CollisionCallbacks
   @override
   void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
     if (other is PlayerAnimationEntity) {
-      game.playerData.effects.add(SkillEffects.timeWalk5s);
+      game.playerData.effects.add(SkillEffects.timeWalk5s, shouldNotify: true);
     }
     if (other is EnemyEntity) {
       other.isInsideChronosphere = true;
@@ -66,7 +66,7 @@ class ChronosphereSkillComponent extends SpriteComponent with CollisionCallbacks
   @override
   void onCollisionEnd(PositionComponent other) {
     if (other is PlayerAnimationEntity) {
-      game.playerData.effects.remove(SkillEffects.timeWalk5s);
+      game.playerData.effects.remove(SkillEffects.timeWalk5s, shouldNotify: true);
     }
     if (other is EnemyEntity) {
       other.isInsideChronosphere = false;
