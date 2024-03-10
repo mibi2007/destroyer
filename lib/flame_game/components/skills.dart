@@ -181,19 +181,20 @@ class SkillComponent extends PositionComponent
   }
 
   @override
-  void onTapDown(TapDownEvent event) {
-    if (!game.isMobile) return;
+  void onTapUp(TapUpEvent event) {
     parent.castSkill(skill);
-    super.onTapDown(event);
+    super.onTapUp(event);
   }
 
   @override
-  void onHoverEnter() {
-    final sword = game.getEquipments().firstWhere((e) {
+  void onTapDown(TapDownEvent event) {
+    if (!game.isMobile) return;
+    final newSword = game.getEquipments().firstWhere((e) {
       return (e is Sword) && e.type == skill.swordType;
     }) as Sword;
-    game.playerData.changeSwordAnimation.value = sword.triggerIndex;
-    super.onHoverEnter();
+    game.playerData.changeSwordAnimation.value = newSword.triggerIndex;
+    game.playerData.sword.value = newSword;
+    super.onTapDown(event);
   }
 }
 

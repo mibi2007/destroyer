@@ -153,6 +153,7 @@ class DestroyerGame extends FlameGame
     await images.load('assets/images/hud/attack-button.png');
     await images.load('assets/images/hud/jump-button.png');
     await images.load('assets/images/hud/pad.png');
+    await images.load('assets/images/switch-swords.png');
 
     // Characters
     await images.load('assets/images/npcs/oracle.png');

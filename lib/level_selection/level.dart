@@ -59,7 +59,7 @@ class SceneComponent extends Component
   // @override
   // bool containsLocalPoint(Vector2 point) => true;
   @override
-  bool get debugMode => true;
+  bool get debugMode => false;
 
   @override
   Future<void> onLoad() async {

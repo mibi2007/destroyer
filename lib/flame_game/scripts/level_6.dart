@@ -63,8 +63,6 @@ class Level6Script extends Script {
       position: Vector2.zero(),
       priority: 1,
     );
-    // print(boss!.garbageBullet);
-    boss!.currentHealth = boss!.maxHealth * 0.31;
     boss!.boss
       ..moveAnimation = SpriteAnimation.spriteList(
           await Future.wait([

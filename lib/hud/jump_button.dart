@@ -33,13 +33,13 @@ class JumpButton extends PositionComponent with HasGameReference<DestroyerGame>,
 
   @override
   void onTapUp(TapUpEvent event) {
-    game.playerData.jump.trigger();
     add(shadow);
     super.onTapUp(event);
   }
 
   @override
   void onTapDown(TapDownEvent event) {
+    game.playerData.jump.trigger();
     remove(shadow);
     super.onTapDown(event);
   }

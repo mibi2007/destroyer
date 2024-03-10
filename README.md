@@ -8,16 +8,16 @@ This game is built using Flutter and the Flame engine, which are ideal for indie
 
 ## Development Process:
 
-I created this game over a period of two months. The game assets are mostly stored in the [design](https://github.com/mibi2007/destroyer/tree/main/design) folder. I began by outlining the (game story)[https://github.com/mibi2007/destroyer/blob/main/README/game_play.md] and then coding the game based on it. I shared my progress updates on the post (here)[https://www.facebook.com/groups/fluttervn/permalink/1587034758499623/]
-where I received valuable support from the community. The **Flutter Game Community** on Discord (here)[https://discord.gg/KpTYYRRv] also provided me with constant encouragement.
+I created this game over a period of two months. The game assets are mostly stored in the [design](https://github.com/mibi2007/destroyer/tree/main/design) folder. I began by outlining the [game story](https://github.com/mibi2007/destroyer/blob/main/README/game_play.md) and then coding the game based on it. I shared my progress updates on the post [here](https://www.facebook.com/groups/fluttervn/permalink/1587034758499623/)
+where I received valuable support from the community. The **Flutter Game Community** on Discord [here](https://discord.gg/KpTYYRRv) also provided me with constant encouragement.
 
 ## Challenges:
 
-As this is my first completed game, I sometimes struggled with my own ideas, questioning their feasibility. For example, the ability to use left and right mouse clicks to aim between the mouse and player required centering the player on the screen. However, I would have preferred a camera that followed the player with bounds. Designing the skills was also complex, but I managed to simplify them and reuse logic thanks to the flame_behaviors library.
+As this is my first completed game, I sometimes struggled with my own ideas, questioning their feasibility. For example, the ability to use left and right mouse clicks to aim between the mouse and player required centering the player on the screen. However, I would have preferred a camera that followed the player with bounds. Designing the [skills](https://docs.google.com/document/d/1SkZcQCbS1xXX0g-EWKh6Wfhe5EqCJsat30RK-UWMxYc/edit#heading=h.o04ctsrryum5) was also complex, but I managed to simplify them and reuse logic thanks to the flame_behaviors library.
 
 ## Accomplishments:
 
-After completing the game, I played it extensively and was filled with ideas for future additions. I am eager to implement these upgrades, as I find it quite addictive.
+After completing the game, I played it extensively and was filled with ideas for future additions. I am eager to implement these upgrades, as I find it quite addictive. Destroyer currently support web, windows and android, the most completed features is on desktop.
 
 ## Lessons Learned:
 

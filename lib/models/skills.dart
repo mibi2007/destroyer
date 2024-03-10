@@ -72,7 +72,7 @@ class Skills {
     swordType: SwordType.purifier,
     sprite: 'assets/images/skills-and-effects/Guardian_Angel_icon.webp',
     name: 'Guardian Engel',
-    description: 'Purify all objects on the screen',
+    description: 'Purify all objects on the screen by Repel',
     requirement: 'Purifier Sword Lv.4',
     cooldown: 10,
     castTime: 2,
@@ -93,10 +93,10 @@ class Skills {
     castTime: 0,
     damage: 0,
     duration: 0.5,
+    autoCast: true,
     triggerIndex: 2,
     effects: [SkillEffects.timeWalk0s5],
     keyboard: 'Q',
-    autoCast: true,
   );
 
   static final chronosphere = Skill(
@@ -152,9 +152,9 @@ class Skills {
     cooldown: 10,
     castTime: 2,
     damage: 200,
+    passive: true,
     triggerIndex: 4,
     keyboard: 'E',
-    passive: true,
     effects: [SkillEffects.souls],
   );
 

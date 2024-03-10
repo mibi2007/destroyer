@@ -169,7 +169,7 @@ class Hud extends PositionComponent
 
     game.playerData.credits.addListener(onCreditChange);
     game.playerData.health.addListener(onHealthChange);
-    game.playerData.sword.addListener(_onSwordChangeHandler);
+    game.playerData.sword.addListener(onSwordChangeHandler);
     game.playerData.equipments.addListener(_onEquipmentsChangeHandler);
     game.playerData.effects.addListener(_onEffectsChangeHandler);
     game.playerData.currentMousePosition.addListener(_mouseMoveHandler);
@@ -287,7 +287,7 @@ class Hud extends PositionComponent
   void onRemove() {
     game.playerData.credits.removeListener(onCreditChange);
     game.playerData.health.removeListener(onHealthChange);
-    game.playerData.sword.removeListener(_onSwordChangeHandler);
+    game.playerData.sword.removeListener(onSwordChangeHandler);
     game.playerData.equipments.removeListener(_onEquipmentsChangeHandler);
     game.playerData.effects.removeListener(_onEffectsChangeHandler);
     game.playerData.inventory.removeListener(_onInventoryChangeHandler);
@@ -346,33 +346,31 @@ class Hud extends PositionComponent
     renderSkills();
   }
 
-  Future<void> _onSwordChangeHandler() async {
+  Future<void> onSwordChangeHandler() async {
     // print('update sword');
     final newSword = game.playerData.sword.value;
-    if (!game.isMobile) {
-      final newIndex = equipments.indexWhere(((c) => (c.item as Sword).type == newSword.type));
+    final newIndex = equipments.indexWhere(((c) => (c.item as Sword).type == newSword.type));
 
-      for (var i = 0; i < equipments.length; i++) {
-        for (final e in equipments[i].children.whereType<Effect>()) {
-          // if (e is ColorEffect) {
-          e.removeFromParent();
-          // }
-        }
-        if (i != newIndex) {
-          await equipments[i].add(InactiveEffect());
-          equipments[i].add(ScaleEffect.to(
-            Vector2.all(0.5),
-            EffectController(duration: 0.1),
-          ));
-        }
+    for (var i = 0; i < equipments.length; i++) {
+      for (final e in equipments[i].children.whereType<Effect>()) {
+        // if (e is ColorEffect) {
+        e.removeFromParent();
+        // }
       }
-      if (newIndex == -1) return;
-      await equipments[newIndex].add(SelectAndActiveEffect());
-      equipments[newIndex].add(ScaleEffect.to(
-        Vector2.all(1),
-        EffectController(duration: 0.1),
-      ));
+      if (i != newIndex) {
+        await equipments[i].add(InactiveEffect());
+        equipments[i].add(ScaleEffect.to(
+          Vector2.all(0.5),
+          EffectController(duration: 0.1),
+        ));
+      }
     }
+    if (newIndex == -1) return;
+    await equipments[newIndex].add(SelectAndActiveEffect());
+    equipments[newIndex].add(ScaleEffect.to(
+      Vector2.all(1),
+      EffectController(duration: 0.1),
+    ));
 
     updateSkill();
 
@@ -396,14 +394,15 @@ class Hud extends PositionComponent
         // print(passiveEffects);
         game.playerData.effects.addAll(passiveEffects);
       }
-
-      final autoCasts = game.playerData.sword.value.skills.where((s) => s.autoCast).toList();
-      // print(autoCasts);
-      if (autoCasts.isNotEmpty) {
-        for (final skill in autoCasts) {
-          // final skill = game.playerData.sword.value.skills..firstWhere((s)=>s.autoCast);
-          // print(index);
-          if (skill.keyboard != null) castSkill(skill);
+      if (!game.isMobile) {
+        final autoCasts = game.playerData.sword.value.skills.where((s) => s.autoCast).toList();
+        // print(autoCasts);
+        if (autoCasts.isNotEmpty) {
+          for (final skill in autoCasts) {
+            // final skill = game.playerData.sword.value.skills..firstWhere((s)=>s.autoCast);
+            // print(index);
+            if (skill.keyboard != null) castSkill(skill);
+          }
         }
       }
     }
