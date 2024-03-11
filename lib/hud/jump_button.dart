@@ -40,7 +40,7 @@ class JumpButton extends PositionComponent with HasGameReference<DestroyerGame>,
   @override
   void onTapDown(TapDownEvent event) {
     game.playerData.jump.trigger();
-    remove(shadow);
+    if (shadow.isMounted) remove(shadow);
     super.onTapDown(event);
   }
 }

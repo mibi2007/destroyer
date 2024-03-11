@@ -127,7 +127,7 @@ class DestroyerGame extends FlameGame
     // if (level == GameLevel.lv2) {
     //   background.position = Vector2(background.position.x, background.position.y - 150);
     // }
-    camera.backdrop.add(background);
+    // camera.backdrop.add(background);
 
     rightClick.addListener(rightClickHandler);
     leftClick.addListener(leftClickHandler);

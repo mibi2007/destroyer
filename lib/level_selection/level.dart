@@ -78,7 +78,7 @@ class SceneComponent extends Component
     await add(mapTiled);
 
     _spawnActors();
-    leftClick.addListener(_onLeftClickHander);
+    if (!game.isMobile) leftClick.addListener(_onLeftClickHander);
 
     // Wait until the _player is added to the scene
     // add(TimerComponent(

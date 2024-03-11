@@ -220,8 +220,16 @@ class PlayerAnimationEntity extends RiveComponent
     }
     _hAxisInput = 0;
     _vAxisInput = 0;
-    _hAxisInput += mousePosition.x > 0.5 ? 1 : 0;
-    _hAxisInput += mousePosition.x < -0.5 ? -1 : 0;
+    if (mousePosition.x > 0.5) {
+      _hAxisInput += 1;
+      _walkTrigger?.fire();
+    }
+    ;
+    if (mousePosition.x < -0.5) {
+      _hAxisInput -= 1;
+      _walkTrigger?.fire();
+    }
+    ;
     _vAxisInput += mousePosition.y > 0.5 ? 1 : 0;
     _vAxisInput += mousePosition.y < -0.5 ? -1 : 0;
   }
