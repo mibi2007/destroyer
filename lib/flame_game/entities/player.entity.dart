@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:destroyer/flame_game/behaviors/move_on_platform.behavior.dart';
+import 'package:destroyer/flame_game/components/equipments/armor.dart';
 import 'package:destroyer/flame_game/entities/garbage_monster.entity.dart';
 import 'package:destroyer/flame_game/game_world.dart';
 import 'package:flame/collisions.dart';
@@ -352,6 +353,7 @@ class PlayerAnimationEntity extends RiveComponent
 
     // For super hero landing animation
     gravity = 0;
+    print(game.getEquipments());
     final newSword = game.getEquipments().firstWhere((e) => e is Sword) as Sword;
     // });
     add(TimerComponent(
@@ -578,13 +580,18 @@ class PlayerAnimationEntity extends RiveComponent
   @override
   void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
     if (other is EquipmentComponent) {
+      print('run');
       game.addEquipment(other.item);
       if (other is SwordComponent) {
         final newSword = other.item as Sword;
         changeToSword(newSword);
         parent.parent.onRewardPicked?.call(other);
       }
-      // other.removeFromParent();
+      if (other is ArmorComponent) {
+        print('run');
+        game.playerData.inventory.add(other.item);
+      }
+      other.removeFromParent();
     }
 
     if (other is ChronosphereSkillComponent) {

@@ -43,7 +43,7 @@ class PlayerProgress extends ChangeNotifier {
     }
     final equipments = await _store.getEquipments();
     if (!listEquals(_equipments, equipments)) {
-      _equipments = equipments;
+      _equipments = List.from(equipments);
       notifyListeners();
     }
   }
@@ -92,7 +92,7 @@ class PlayerProgress extends ChangeNotifier {
   bool setEquipments(List<Equipment> newEquipments) {
     if (newEquipments.length != _equipments.length ||
         newEquipments.any((equipment) => !_equipments.contains(equipment))) {
-      _equipments = newEquipments;
+      _equipments = List.from(newEquipments);
       notifyListeners();
       unawaited(_store.saveEquipments(_equipments));
       return true;

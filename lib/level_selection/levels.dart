@@ -10,10 +10,10 @@ final gameLevels = <GameLevel>[
 ];
 
 class GameLevel {
-  int number;
-  String title;
-  List<Equipment> equipments;
-  List<Scene> scenes;
+  final int number;
+  final String title;
+  final List<Equipment> equipments;
+  final List<Scene> scenes;
   int sceneIndex = 0;
   Scene get currentScene => scenes[sceneIndex];
   set currentScene(Scene scene) {
@@ -91,7 +91,7 @@ class GameLevel {
 
   @override
   String toString() {
-    return 'GameLevel(number: $number, title: $title, equipments: $equipments)';
+    return 'GameLevel(number: $number, title: $title, equipments: $equipments, currentScene: $currentScene)';
   }
 
   @override

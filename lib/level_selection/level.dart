@@ -66,9 +66,8 @@ class SceneComponent extends Component
     cursor = Cursor();
     // cursor.debugMode = true;
     // add(cursor);
-    _startScript();
-
     _setupStartLevel(game.isTesting);
+    _startScript();
 
     artboard = await loadArtboard(RiveFile.asset('assets/animations/character.riv'));
     garbageArtboard = await loadArtboard(RiveFile.asset('assets/animations/garbage_monster.riv'));
@@ -109,8 +108,9 @@ class SceneComponent extends Component
     game.playerData.effects.value = [];
     game.playerData.casting.value = null;
     game.playerData.skillCountdown.value = [];
+    print('equipments ${gameLevels[level.number - 1].equipments}');
     if (initLevelEquipments || game.getEquipments().isEmpty) {
-      game.setEquipments(level.equipments);
+      game.setEquipments(gameLevels[level.number - 1].equipments);
     }
     for (final equipment in game.getEquipments()) {
       if (equipment is Armor) {
