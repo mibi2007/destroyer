@@ -178,8 +178,8 @@ class PlayerAnimationEntity extends RiveComponent
   //   game.playerData.sword.value = game.getEquipments().firstWhere((e) => e is Sword) as Sword;
   // }
 
-  // Updates score text on hud.
   void _onMousePositionChanged() {
+    print('_onMousePositionChanged');
     if (joystickDelta == null) return;
     Vector2 mousePosition = game.camera.globalToLocal(game.playerData.currentMousePosition.value);
     game.playerData.angleToSigned.value = (mousePosition).angleToSigned(Vector2(0, 1));
@@ -219,6 +219,7 @@ class PlayerAnimationEntity extends RiveComponent
       joystickDelta!.rotation = -game.playerData.direction.value.x * angle * pi / 180;
     }
     _hAxisInput = 0;
+    _vAxisInput = 0;
     _hAxisInput += mousePosition.x > 0.5 ? 1 : 0;
     _hAxisInput += mousePosition.x < -0.5 ? -1 : 0;
     _vAxisInput += mousePosition.y > 0.5 ? 1 : 0;

@@ -1,5 +1,4 @@
 import 'package:flame/game.dart';
-import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -17,8 +16,6 @@ import 'scripts/intro.dart';
 import 'scripts/level_1b.dart';
 import 'scripts/level_4b.dart';
 
-final GlobalKey<RiverpodAwareGameWidgetState<DestroyerGame>> gameWidgetKey =
-    GlobalKey<RiverpodAwareGameWidgetState<DestroyerGame>>();
 // A single instance to avoid creation of
 // multiple instances in every build.
 // final _game = DestroyerGame();
@@ -71,7 +68,6 @@ class GameScreen extends StatelessWidget {
                     }
                   },
             child: GameWidget<DestroyerGame>(
-              key: gameWidgetKey,
               game: myGame,
               overlayBuilderMap: {
                 backButtonKey: (BuildContext context, DestroyerGame game) {
