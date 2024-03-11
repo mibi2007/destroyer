@@ -489,6 +489,7 @@ class Hud extends PositionComponent
   }
 
   void _onInventoryChangeHandler() {
+    print('run');
     removeAll(inventory);
     inventory.clear();
 

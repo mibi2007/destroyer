@@ -353,7 +353,6 @@ class PlayerAnimationEntity extends RiveComponent
 
     // For super hero landing animation
     gravity = 0;
-    print(game.getEquipments());
     final newSword = game.getEquipments().firstWhere((e) => e is Sword) as Sword;
     // });
     add(TimerComponent(
@@ -580,7 +579,6 @@ class PlayerAnimationEntity extends RiveComponent
   @override
   void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
     if (other is EquipmentComponent) {
-      print('run');
       game.addEquipment(other.item);
       if (other is SwordComponent) {
         final newSword = other.item as Sword;
@@ -588,8 +586,7 @@ class PlayerAnimationEntity extends RiveComponent
         parent.parent.onRewardPicked?.call(other);
       }
       if (other is ArmorComponent) {
-        print('run');
-        game.playerData.inventory.add(other.item);
+        game.playerData.inventory.add(other.item, shouldNotify: true);
       }
       other.removeFromParent();
     }

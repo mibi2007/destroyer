@@ -108,7 +108,6 @@ class SceneComponent extends Component
     game.playerData.effects.value = [];
     game.playerData.casting.value = null;
     game.playerData.skillCountdown.value = [];
-    print('equipments ${gameLevels[level.number - 1].equipments}');
     if (initLevelEquipments || game.getEquipments().isEmpty) {
       game.setEquipments(gameLevels[level.number - 1].equipments);
     }
