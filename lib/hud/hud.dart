@@ -311,9 +311,8 @@ class Hud extends PositionComponent
       if (timeWalkSkillIndex == -1 || game.playerData.skillCountdown.value[timeWalkSkillIndex]) {
         game.playerData.isDead.value = true;
       } else {
-        game.playerData.sword.value =
-            game.getEquipments().firstWhere((e) => e is Sword && e.type == SwordType.time) as Sword;
         game.playerData.revertDead.trigger();
+        if (game.isMobile) castSkill(Skills.timeWalk);
       }
     }
   }

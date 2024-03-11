@@ -7,7 +7,6 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
-import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart' hide Image;
 import 'package:go_router/go_router.dart';
@@ -33,12 +32,7 @@ import 'game_world.dart';
 /// Note that both of the last are passed in to the super constructor, they
 /// could also be set inside of `onLoad` for example.
 class DestroyerGame extends FlameGame
-    with
-        HasCollisionDetection,
-        HasKeyboardHandlerComponents,
-        MouseMovementDetector,
-        LongPressDetector,
-        RiverpodGameMixin {
+    with HasCollisionDetection, HasKeyboardHandlerComponents, MouseMovementDetector, LongPressDetector {
   /// What the properties of the level that is played has.
 
   /// A helper for playing sound effects and background audio.
