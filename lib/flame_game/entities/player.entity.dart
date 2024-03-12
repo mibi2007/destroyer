@@ -179,8 +179,6 @@ class PlayerAnimationEntity extends RiveComponent
   // }
 
   void _onMousePositionChanged() {
-    print('_onMousePositionChanged');
-    if (joystickDelta == null) return;
     Vector2 mousePosition = game.camera.globalToLocal(game.playerData.currentMousePosition.value);
     game.playerData.angleToSigned.value = (mousePosition).angleToSigned(Vector2(0, 1));
     double angle = (mousePosition).angleToSigned(game.playerData.direction.value.direction) * 180 / pi;
@@ -194,6 +192,7 @@ class PlayerAnimationEntity extends RiveComponent
     if (game.playerData.casting.value == null) {
       game.playerData.aim.value =
           -game.playerData.direction.value.x * (mousePosition).angleToSigned(game.playerData.direction.value.direction);
+      print(game.playerData.aim.value);
       joystickDelta!.rotation = -game.playerData.direction.value.x * angle * pi / 180;
     }
   }
