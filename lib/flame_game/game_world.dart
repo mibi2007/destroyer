@@ -116,7 +116,7 @@ class DestroyerGameWorld extends World with HasGameReference<DestroyerGame> {
     customCamera.viewfinder.position = game.fixedResolution / 2;
     await game.add(customCamera);
     customCamera.backdrop.add(game.background);
-    // game.camera = customCamera;
+    if (game.isMobile) game.camera = customCamera;
 
     loadScene();
   }
