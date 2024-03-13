@@ -18,7 +18,7 @@ jobs:
           channel: stable
       - run: flutter doctor -v
       - run: flutter pub get
-      - run: flutter build web --release
+      - run: flutter build web --web-renderer canvaskit
 
       - name: Install web dependencies
         uses: actions/setup-node@v4.0.1
