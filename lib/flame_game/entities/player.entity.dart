@@ -192,7 +192,6 @@ class PlayerAnimationEntity extends RiveComponent
     if (game.playerData.casting.value == null) {
       game.playerData.aim.value =
           -game.playerData.direction.value.x * (mousePosition).angleToSigned(game.playerData.direction.value.direction);
-      print(game.playerData.aim.value);
       joystickDelta!.rotation = -game.playerData.direction.value.x * angle * pi / 180;
     }
   }

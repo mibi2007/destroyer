@@ -110,7 +110,7 @@ class CountdownComponent extends PositionComponent {
 }
 
 class SkillComponent extends PositionComponent
-    with HasGameReference<DestroyerGame>, Countdown, CollisionCallbacks, TapCallbacks, ParentIsA<Hud>, HoverCallbacks {
+    with HasGameReference<DestroyerGame>, Countdown, CollisionCallbacks, TapCallbacks, ParentIsA<Hud> {
   final Skill skill;
   late SpriteComponent iconComponent;
   late final Component tooltip;

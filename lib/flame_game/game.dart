@@ -72,9 +72,9 @@ class DestroyerGame extends FlameGame
 
   @override
   void onMouseMove(PointerHoverInfo info) {
-    // if (_timer > 0.045 && isMounted) {
-    if (isMounted) {
-      // _timer = 0;
+    if (_timer > 0.045 && isMounted) {
+      // if (isMounted) {
+      _timer = 0;
 
       // Fix bug where the mouse position is not correct with different screen sizes and resolutions
       double x = info.eventPosition.global.x;
@@ -212,7 +212,7 @@ class DestroyerGame extends FlameGame
   @override
   void update(double dt) {
     super.update(dt);
-    // _timer += dt;
+    _timer += dt;
 
     // camera.
   }
