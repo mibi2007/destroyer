@@ -49,14 +49,14 @@
         },
         "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map1.tmx": {
             "expandedObjectLayers": [
-                3,
-                2
+                2,
+                3
             ],
-            "scale": 0.5,
-            "selectedLayer": 2,
+            "scale": 0.33,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 800,
-                "y": 480
+                "x": 842.4242424242424,
+                "y": -187.878787878788
             }
         },
         "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map2.tmx": {
@@ -79,8 +79,8 @@
             "scale": 0.33,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 1600,
-                "y": 1599.9999999999998
+                "x": 1596.969696969697,
+                "y": 990.909090909091
             }
         },
         "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map2_2.tmx": {
@@ -90,14 +90,14 @@
             "scale": 0.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 836,
-                "y": 326
+                "x": 834,
+                "y": 324
             }
         },
         "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map3.tmx": {
             "expandedObjectLayers": [
-                3,
-                4
+                4,
+                3
             ],
             "scale": 0.75,
             "selectedLayer": 1,
@@ -230,8 +230,8 @@
             "scale": 0.25,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 956,
-                "y": 956
+                "x": 960,
+                "y": 960
             }
         }
     },

@@ -8,6 +8,7 @@ import 'package:destroyer/utils/utils.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+import 'package:flame/experimental.dart';
 import 'package:flame_rive/flame_rive.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/services.dart';
@@ -332,14 +333,6 @@ class SceneComponent extends Component
   /// NOTE: Call only after [_spawnActors].
   // void _setupCamera() {
   // parent.camera.follow(_player, maxSpeed: 200, snap: true);
-  // parent.camera.setBounds(
-  //   Rectangle.fromLTRB(
-  //     game.fixedResolution.x / 2,
-  //     game.fixedResolution.y / 2,
-  //     game.mapTiled.width - game.fixedResolution.x / 2,
-  //     game.mapTiled.height - game.fixedResolution.y / 4,
-  //   ),
-  // );
   // }
 
   // @override
@@ -402,6 +395,14 @@ class SceneComponent extends Component
     player.position = position + Vector2(30, -30);
     parent.customCamera.moveTo(player.position, speed: double.infinity);
     parent.customCamera.follow(player, maxSpeed: kCameraSpeed, snap: true);
+    parent.customCamera.setBounds(
+      Rectangle.fromLTRB(
+        100,
+        100,
+        mapTiled.width - 200,
+        mapTiled.height - 200,
+      ),
+    );
     player.animation.isOnGround = false;
   }
 }
