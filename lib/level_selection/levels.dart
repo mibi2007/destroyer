@@ -42,8 +42,8 @@ class GameLevel {
     Scene(1, mapTiled: 'map2_2.tmx'),
   ]);
   static GameLevel lv3 = GameLevel(number: 3, title: 'Lv2 but Full Swords ^_^', equipments: [
-    Sword.time(4),
     Sword.purifier(4),
+    Sword.time(4),
     Sword.flame(4),
     Sword.lightning(4),
   ], scenes: [
