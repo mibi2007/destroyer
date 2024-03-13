@@ -586,6 +586,7 @@ class PlayerAnimationEntity extends RiveComponent
   @override
   void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
     if (other is EquipmentComponent) {
+      if (!other.canPickedUp) return;
       game.addEquipment(other.item);
       if (other is SwordComponent) {
         final newSword = other.item as Sword;

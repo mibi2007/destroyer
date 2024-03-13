@@ -331,6 +331,7 @@ class Hud extends PositionComponent
           position: Vector2(game.fixedResolution.x - 105 + 26 * index.toDouble(), game.fixedResolution.y - 32),
           size: Vector2.all(36),
           sprite: Sprite(swordImage),
+          canPickedUp: false,
         );
         await add(swordComp);
         equipments.add(swordComp);
@@ -499,6 +500,7 @@ class Hud extends PositionComponent
           position: Vector2.zero(),
           size: Vector2.all(20),
           sprite: Sprite(armorImage, srcSize: Vector2.all(256)),
+          canPickedUp: false,
         );
         inventory.add(armorComp);
       }

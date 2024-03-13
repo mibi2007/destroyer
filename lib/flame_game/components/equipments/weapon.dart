@@ -8,6 +8,7 @@ class SwordComponent extends EquipmentComponent with CollisionCallbacks {
     required super.sprite,
     required super.size,
     required super.position,
+    super.canPickedUp,
   });
 
   @override
