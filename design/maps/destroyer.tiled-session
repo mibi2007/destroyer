@@ -55,8 +55,8 @@
             "scale": 0.5,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 878,
-                "y": 242
+                "x": 800,
+                "y": 480
             }
         },
         "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map2.tmx": {
@@ -79,19 +79,19 @@
             "scale": 0.33,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 1751.5151515151515,
-                "y": 1315.1515151515152
+                "x": 1600,
+                "y": 1599.9999999999998
             }
         },
         "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map2_2.tmx": {
             "expandedObjectLayers": [
                 3
             ],
-            "scale": 0.5556510416666666,
-            "selectedLayer": 2,
+            "scale": 0.5,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 1459.5491399915645,
-                "y": 728.8747246566999
+                "x": 836,
+                "y": 326
             }
         },
         "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map3.tmx": {
@@ -102,8 +102,8 @@
             "scale": 0.75,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 377.33333333333337,
-                "y": 688
+                "x": 512,
+                "y": 640
             }
         },
         "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map4.tmx": {
@@ -113,8 +113,8 @@
             "scale": 0.25,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 916,
-                "y": 1012
+                "x": 1600,
+                "y": 1600
             }
         },
         "D:/Documents/games/GlobalCitizenFestival2024/destroyer/assets/tiles/map5.tmx": {
@@ -230,8 +230,8 @@
             "scale": 0.25,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 962,
-                "y": 962
+                "x": 956,
+                "y": 956
             }
         }
     },
