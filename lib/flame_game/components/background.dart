@@ -64,7 +64,7 @@ class Background extends ParallaxComponent {
   }
 }
 
-getVelocity(GameLevel level, int sceneIndex) {
+double getVelocity(GameLevel level, int sceneIndex) {
   if (level == GameLevel.lv2) {
     return 0;
   } else {

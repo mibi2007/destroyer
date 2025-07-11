@@ -3,7 +3,8 @@ import 'package:flame/components.dart';
 import '../../models/equipments.dart';
 import '../game.dart';
 
-class EquipmentComponent extends SpriteComponent with HasGameRef<DestroyerGame> {
+class EquipmentComponent extends SpriteComponent
+    with HasGameReference<DestroyerGame> {
   final Equipment item;
   final bool canPickedUp;
   EquipmentComponent({

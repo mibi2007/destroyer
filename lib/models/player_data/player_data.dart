@@ -55,7 +55,7 @@ class PlayerData {
 class ValueNotifierList<T> extends ValueNotifier<List<T>> {
   ValueNotifierList(super.value);
 
-  addAll(Iterable<T> newValues) {
+  void addAll(Iterable<T> newValues) {
     for (final newValue in newValues) {
       if (!value.contains(newValue)) value.add(newValue);
     }

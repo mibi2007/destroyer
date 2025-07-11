@@ -15,7 +15,8 @@ import '../../entities/player.entity.dart';
 import '../../game.dart';
 import 'enemy_collision.dart';
 
-class HitBySlash extends CollisionBehavior<Slash, EntityMixin> with HasGameRef<DestroyerGame> {
+class HitBySlash extends CollisionBehavior<Slash, EntityMixin>
+    with HasGameReference<DestroyerGame> {
   static const String _asset = 'assets/animations/slash.png';
   static const _dimension = 192.0;
   static const _slashTime = 0.3;
@@ -45,9 +46,12 @@ class HitBySlash extends CollisionBehavior<Slash, EntityMixin> with HasGameRef<D
     final slash = SpriteAnimationComponent(
       animation: SpriteAnimation.spriteList(
         [
-          Sprite(game.images.fromCache(_asset), srcSize: srcSize, srcPosition: Vector2(_dimension * 0, 0)),
-          Sprite(game.images.fromCache(_asset), srcSize: srcSize, srcPosition: Vector2(_dimension * 1, 0)),
-          Sprite(game.images.fromCache(_asset), srcSize: srcSize, srcPosition: Vector2(_dimension * 2, 0)),
+          Sprite(game.images.fromCache(_asset),
+              srcSize: srcSize, srcPosition: Vector2(_dimension * 0, 0)),
+          Sprite(game.images.fromCache(_asset),
+              srcSize: srcSize, srcPosition: Vector2(_dimension * 1, 0)),
+          Sprite(game.images.fromCache(_asset),
+              srcSize: srcSize, srcPosition: Vector2(_dimension * 2, 0)),
         ],
         stepTime: 0.2, // Time each frame is displayed
       ),
@@ -71,12 +75,13 @@ class HitBySlash extends CollisionBehavior<Slash, EntityMixin> with HasGameRef<D
 }
 
 // The class merge the Fireball and Requiem of Souls effect
-class BurnSkill extends Component with HasGameRef<DestroyerGame> {
+class BurnSkill extends Component with HasGameReference<DestroyerGame> {
   final CollisionBehavior behavior;
 
   BurnSkill({required this.behavior});
 
-  factory BurnSkill.fromFireball(CollisionBehavior<Fireball, EntityMixin> behavior) {
+  factory BurnSkill.fromFireball(
+      CollisionBehavior<Fireball, EntityMixin> behavior) {
     return BurnSkill(behavior: behavior);
   }
 
@@ -102,8 +107,10 @@ class BurnSkill extends Component with HasGameRef<DestroyerGame> {
     parent.showDamage(dmg);
     behavior.add(
       ParticleSystemComponent(
-        scale: Vector2(rnd.nextDouble() * 0.5 + 0.5, rnd.nextDouble() * 0.5 + 0.5),
-        position: Vector2(rnd.nextDouble() * parent.width / 2 - parent.width / 4,
+        scale:
+            Vector2(rnd.nextDouble() * 0.5 + 0.5, rnd.nextDouble() * 0.5 + 0.5),
+        position: Vector2(
+            rnd.nextDouble() * parent.width / 2 - parent.width / 4,
             rnd.nextDouble() * parent.height / 2 - parent.height / 4),
         anchor: Anchor.center,
         particle: TranslatedParticle(
@@ -132,7 +139,8 @@ class BurnSkill extends Component with HasGameRef<DestroyerGame> {
   }
 }
 
-class HitByFireball extends CollisionBehavior<Fireball, EntityMixin> with HasGameRef<DestroyerGame> {
+class HitByFireball extends CollisionBehavior<Fireball, EntityMixin>
+    with HasGameReference<DestroyerGame> {
   static const _burnTime = 1.0;
   @override
   void onCollisionStart(Set<Vector2> intersectionPoints, Fireball other) {
@@ -155,15 +163,18 @@ class HitByFireball extends CollisionBehavior<Fireball, EntityMixin> with HasGam
   }
 }
 
-class HitByRequiemOfSouls extends CollisionBehavior<RequiemOfSoulsSkillComponent, EntityMixin>
-    with HasGameRef<DestroyerGame> {
+class HitByRequiemOfSouls
+    extends CollisionBehavior<RequiemOfSoulsSkillComponent, EntityMixin>
+    with HasGameReference<DestroyerGame> {
   static const _burnTime = 1.0;
   @override
-  void onCollisionStart(Set<Vector2> intersectionPoints, RequiemOfSoulsSkillComponent other) {
+  void onCollisionStart(
+      Set<Vector2> intersectionPoints, RequiemOfSoulsSkillComponent other) {
     if (parent is EnemyEntity) {
       final typeCast = parent as EnemyEntity;
       if (typeCast.isCursed) return;
-      final dmg = other.skill.damage * (game.playerData.souls.value + 1) - typeCast.enemy.armor;
+      final dmg = other.skill.damage * (game.playerData.souls.value + 1) -
+          typeCast.enemy.armor;
       final burnSkill = BurnSkill.fromRequiemOfSoulsSkillComponent(this);
       game.add(burnSkill);
       burnSkill.onCollisionStart(dmg, _burnTime);
@@ -171,7 +182,8 @@ class HitByRequiemOfSouls extends CollisionBehavior<RequiemOfSoulsSkillComponent
     if (parent is EnemyAnimationEntity) {
       final typeCast = parent as EnemyAnimationEntity;
       if (typeCast.isCursed) return;
-      final dmg = other.skill.damage * (game.playerData.souls.value + 1) - typeCast.enemy.armor;
+      final dmg = other.skill.damage * (game.playerData.souls.value + 1) -
+          typeCast.enemy.armor;
       final burnSkill = BurnSkill.fromRequiemOfSoulsSkillComponent(this);
       game.add(burnSkill);
       burnSkill.onCollisionStart(dmg, _burnTime);
@@ -179,7 +191,8 @@ class HitByRequiemOfSouls extends CollisionBehavior<RequiemOfSoulsSkillComponent
   }
 }
 
-class ElectricShockEffect extends Component with HasGameRef<DestroyerGame> {
+class ElectricShockEffect extends Component
+    with HasGameReference<DestroyerGame> {
   static const _dimension = 64.0;
 
   final String _asset = 'assets/animations/electric.png';
@@ -193,13 +206,17 @@ class ElectricShockEffect extends Component with HasGameRef<DestroyerGame> {
   });
 
   factory ElectricShockEffect.fromBallLightning(
-      CollisionBehavior<PlayerAnimationEntity, EntityMixin> behavior, double electricShockTime) {
-    return ElectricShockEffect(behavior: behavior, electricShockTime: electricShockTime);
+      CollisionBehavior<PlayerAnimationEntity, EntityMixin> behavior,
+      double electricShockTime) {
+    return ElectricShockEffect(
+        behavior: behavior, electricShockTime: electricShockTime);
   }
 
   factory ElectricShockEffect.fromThunderStrike(
-      CollisionBehavior<ThunderStrikeEffects, EntityMixin> behavior, double electricShockTime) {
-    return ElectricShockEffect(behavior: behavior, electricShockTime: electricShockTime);
+      CollisionBehavior<ThunderStrikeEffects, EntityMixin> behavior,
+      double electricShockTime) {
+    return ElectricShockEffect(
+        behavior: behavior, electricShockTime: electricShockTime);
   }
 
   void onCollisionStart<T extends EnemyCollision>(double dmg) {
@@ -213,10 +230,14 @@ class ElectricShockEffect extends Component with HasGameRef<DestroyerGame> {
     final electrict = SpriteAnimationComponent(
       animation: SpriteAnimation.spriteList(
         [
-          Sprite(game.images.fromCache(_asset), srcSize: srcSize, srcPosition: Vector2(_dimension * 0, 0)),
-          Sprite(game.images.fromCache(_asset), srcSize: srcSize, srcPosition: Vector2(_dimension * 1, 0)),
-          Sprite(game.images.fromCache(_asset), srcSize: srcSize, srcPosition: Vector2(_dimension * 2, 0)),
-          Sprite(game.images.fromCache(_asset), srcSize: srcSize, srcPosition: Vector2(_dimension * 3, 0)),
+          Sprite(game.images.fromCache(_asset),
+              srcSize: srcSize, srcPosition: Vector2(_dimension * 0, 0)),
+          Sprite(game.images.fromCache(_asset),
+              srcSize: srcSize, srcPosition: Vector2(_dimension * 1, 0)),
+          Sprite(game.images.fromCache(_asset),
+              srcSize: srcSize, srcPosition: Vector2(_dimension * 2, 0)),
+          Sprite(game.images.fromCache(_asset),
+              srcSize: srcSize, srcPosition: Vector2(_dimension * 3, 0)),
         ],
         stepTime: 0.2, // Time each frame is displayed
       ),
@@ -229,8 +250,8 @@ class ElectricShockEffect extends Component with HasGameRef<DestroyerGame> {
     add(TimerComponent(
       period: electricShockTime, // The period in seconds
       onTick: () {
-        electrict
-            .add(OpacityEffect.fadeOut(LinearEffectController(0.5), onComplete: () => electrict.removeFromParent()));
+        electrict.add(OpacityEffect.fadeOut(LinearEffectController(0.5),
+            onComplete: () => electrict.removeFromParent()));
         parent.isElectricShocked = false;
         parent.checkIfDead();
         removeFromParent();
@@ -240,15 +261,19 @@ class ElectricShockEffect extends Component with HasGameRef<DestroyerGame> {
   }
 }
 
-class HitByLightningBall extends CollisionBehavior<PlayerAnimationEntity, EntityMixin> with HasGameRef<DestroyerGame> {
+class HitByLightningBall
+    extends CollisionBehavior<PlayerAnimationEntity, EntityMixin>
+    with HasGameReference<DestroyerGame> {
   static const _electricShockTime = 1.0;
   @override
-  void onCollisionStart(Set<Vector2> intersectionPoints, PlayerAnimationEntity other) {
+  void onCollisionStart(
+      Set<Vector2> intersectionPoints, PlayerAnimationEntity other) {
     if (!other.isLightning) return;
     if (parent is EnemyEntity) {
       final typeCast = parent as EnemyEntity;
       if (typeCast.isCursed) return;
-      final electricShockEffect = ElectricShockEffect.fromBallLightning(this, _electricShockTime);
+      final electricShockEffect =
+          ElectricShockEffect.fromBallLightning(this, _electricShockTime);
       add(electricShockEffect);
       final dmg = Skills.ballLightning.damage - typeCast.enemy.armor;
       electricShockEffect.onCollisionStart(dmg);
@@ -256,7 +281,8 @@ class HitByLightningBall extends CollisionBehavior<PlayerAnimationEntity, Entity
     if (parent is EnemyAnimationEntity) {
       final typeCast = parent as EnemyAnimationEntity;
       if (typeCast.isCursed) return;
-      final electricShockEffect = ElectricShockEffect.fromBallLightning(this, _electricShockTime);
+      final electricShockEffect =
+          ElectricShockEffect.fromBallLightning(this, _electricShockTime);
       add(electricShockEffect);
       final dmg = Skills.ballLightning.damage - typeCast.enemy.armor;
       electricShockEffect.onCollisionStart(dmg);
@@ -264,14 +290,18 @@ class HitByLightningBall extends CollisionBehavior<PlayerAnimationEntity, Entity
   }
 }
 
-class HitByThunderStrike extends CollisionBehavior<ThunderStrikeEffects, EntityMixin> with HasGameRef<DestroyerGame> {
+class HitByThunderStrike
+    extends CollisionBehavior<ThunderStrikeEffects, EntityMixin>
+    with HasGameReference<DestroyerGame> {
   static const _electricShockTime = 2.0;
   @override
-  void onCollisionStart(Set<Vector2> intersectionPoints, ThunderStrikeEffects other) {
+  void onCollisionStart(
+      Set<Vector2> intersectionPoints, ThunderStrikeEffects other) {
     if (parent is EnemyEntity) {
       final typeCast = parent as EnemyEntity;
       if (typeCast.isCursed) return;
-      final electricShockEffect = ElectricShockEffect.fromThunderStrike(this, _electricShockTime);
+      final electricShockEffect =
+          ElectricShockEffect.fromThunderStrike(this, _electricShockTime);
       add(electricShockEffect);
       final dmg = Skills.thunderStrike.damage - typeCast.enemy.armor;
       electricShockEffect.onCollisionStart(dmg);
@@ -279,7 +309,8 @@ class HitByThunderStrike extends CollisionBehavior<ThunderStrikeEffects, EntityM
     if (parent is EnemyAnimationEntity) {
       final typeCast = parent as EnemyAnimationEntity;
       if (typeCast.isCursed) return;
-      final electricShockEffect = ElectricShockEffect.fromThunderStrike(this, _electricShockTime);
+      final electricShockEffect =
+          ElectricShockEffect.fromThunderStrike(this, _electricShockTime);
       add(electricShockEffect);
       final dmg = Skills.thunderStrike.damage - typeCast.enemy.armor;
       electricShockEffect.onCollisionStart(dmg);
@@ -300,7 +331,8 @@ SpriteAnimation getBoomAnimation(Images images) {
   const columns = 8;
   const rows = 8;
   const frames = columns * rows;
-  final spriteImage = images.fromCache('assets/images/skills-and-effects/boom.png');
+  final spriteImage =
+      images.fromCache('assets/images/skills-and-effects/boom.png');
   final spriteSheet = SpriteSheet.fromColumnsAndRows(
     image: spriteImage,
     columns: columns,

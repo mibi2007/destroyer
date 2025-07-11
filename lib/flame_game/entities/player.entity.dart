@@ -44,7 +44,11 @@ class PlayerEntity extends PositionComponent with ParentIsA<SceneComponent> {
   final Artboard artboard;
   late PlayerAnimationEntity animation;
 
-  PlayerEntity({required this.artboard, super.position, super.size, super.anchor = Anchor.center})
+  PlayerEntity(
+      {required this.artboard,
+      super.position,
+      super.size,
+      super.anchor = Anchor.center})
       : super(scale: Vector2.all(3), priority: 1);
 
   @override
@@ -64,7 +68,7 @@ class PlayerEntity extends PositionComponent with ParentIsA<SceneComponent> {
 
 class PlayerAnimationEntity extends RiveComponent
     with
-        HasGameRef<DestroyerGame>,
+        HasGameReference<DestroyerGame>,
         HasWorldReference<DestroyerGameWorld>,
         CollisionCallbacks,
         KeyboardHandler,
@@ -179,9 +183,14 @@ class PlayerAnimationEntity extends RiveComponent
   // }
 
   void _onMousePositionChanged() {
-    Vector2 mousePosition = game.camera.globalToLocal(game.playerData.currentMousePosition.value);
-    game.playerData.angleToSigned.value = (mousePosition).angleToSigned(Vector2(0, 1));
-    double angle = (mousePosition).angleToSigned(game.playerData.direction.value.direction) * 180 / pi;
+    Vector2 mousePosition =
+        game.camera.globalToLocal(game.playerData.currentMousePosition.value);
+    game.playerData.angleToSigned.value =
+        (mousePosition).angleToSigned(Vector2(0, 1));
+    double angle = (mousePosition)
+            .angleToSigned(game.playerData.direction.value.direction) *
+        180 /
+        pi;
     if (angle > 90 || angle < -90) {
       if (game.playerData.casting.value == null) {
         flipHorizontally();
@@ -190,9 +199,11 @@ class PlayerAnimationEntity extends RiveComponent
       }
     }
     if (game.playerData.casting.value == null) {
-      game.playerData.aim.value =
-          -game.playerData.direction.value.x * (mousePosition).angleToSigned(game.playerData.direction.value.direction);
-      joystickDelta!.rotation = -game.playerData.direction.value.x * angle * pi / 180;
+      game.playerData.aim.value = -game.playerData.direction.value.x *
+          (mousePosition)
+              .angleToSigned(game.playerData.direction.value.direction);
+      joystickDelta!.rotation =
+          -game.playerData.direction.value.x * angle * pi / 180;
     }
   }
 
@@ -201,9 +212,13 @@ class PlayerAnimationEntity extends RiveComponent
     if (joystickDelta == null) return;
     final mousePosition = game.playerData.joystickDelta.value;
     if (mousePosition != Vector2.zero()) {
-      game.playerData.angleToSigned.value = (mousePosition).angleToSigned(Vector2(0, 1));
+      game.playerData.angleToSigned.value =
+          (mousePosition).angleToSigned(Vector2(0, 1));
     }
-    double angle = (mousePosition).angleToSigned(game.playerData.direction.value.direction) * 180 / pi;
+    double angle = (mousePosition)
+            .angleToSigned(game.playerData.direction.value.direction) *
+        180 /
+        pi;
     if (angle > 90 || angle < -90) {
       if (game.playerData.casting.value == null) {
         flipHorizontally();
@@ -211,10 +226,13 @@ class PlayerAnimationEntity extends RiveComponent
         angle = -angle;
       }
     }
-    if (game.playerData.casting.value == null && mousePosition != Vector2.zero()) {
-      game.playerData.aim.value =
-          -game.playerData.direction.value.x * (mousePosition).angleToSigned(game.playerData.direction.value.direction);
-      joystickDelta!.rotation = -game.playerData.direction.value.x * angle * pi / 180;
+    if (game.playerData.casting.value == null &&
+        mousePosition != Vector2.zero()) {
+      game.playerData.aim.value = -game.playerData.direction.value.x *
+          (mousePosition)
+              .angleToSigned(game.playerData.direction.value.direction);
+      joystickDelta!.rotation =
+          -game.playerData.direction.value.x * angle * pi / 180;
     }
     _hAxisInput = 0;
     _vAxisInput = 0;
@@ -222,12 +240,10 @@ class PlayerAnimationEntity extends RiveComponent
       _hAxisInput += 1;
       _walkTrigger?.fire();
     }
-    ;
     if (mousePosition.x < -0.5) {
       _hAxisInput -= 1;
       _walkTrigger?.fire();
     }
-    ;
     _vAxisInput += mousePosition.y > 0.5 ? 1 : 0;
     _vAxisInput += mousePosition.y < -0.5 ? -1 : 0;
   }
@@ -250,7 +266,8 @@ class PlayerAnimationEntity extends RiveComponent
   Future<void> onLoad() async {
     // Player behaviors
     await addAll([
-      PropagatingCollisionBehavior(CircleHitbox(), key: ComponentKey.named('player')),
+      PropagatingCollisionBehavior(CircleHitbox(),
+          key: ComponentKey.named('player')),
       MoveOnPlatform(),
       HitByEnemy(),
     ]);
@@ -277,7 +294,8 @@ class PlayerAnimationEntity extends RiveComponent
     // rightClick.addListener(rightClickHandler);
     // add(CircleHitbox());
     // await add(PositionComponent(position: Vector2.all(x / 2), children: [CircleHitbox()]));
-    final controller = StateMachineController.fromArtboard(artboard, 'movesStateMachine');
+    final controller =
+        StateMachineController.fromArtboard(artboard, 'movesStateMachine');
     if (controller != null) {
       _movesController = controller;
       // _controller.isActive = true;
@@ -306,7 +324,13 @@ class PlayerAnimationEntity extends RiveComponent
       _flameTrigger = _swordsController.findSMI('flameTrigger');
       _lightningTrigger = _swordsController.findSMI('lightningTrigger');
       _sword = _swordsController.findSMI('sword');
-      _swordTriggers = [_desolatorTrigger, _purifierTrigger, _timeTrigger, _flameTrigger, _lightningTrigger];
+      _swordTriggers = [
+        _desolatorTrigger,
+        _purifierTrigger,
+        _timeTrigger,
+        _flameTrigger,
+        _lightningTrigger
+      ];
       // Init sword animation
       _sword?.value = game.playerData.sword.value.triggerIndex.toDouble();
       _swordTriggers[game.playerData.sword.value.triggerIndex]?.fire();
@@ -316,7 +340,8 @@ class PlayerAnimationEntity extends RiveComponent
       _guardianEngelTrigger = _swordsController.findSMI('GuardianEngelTrigger');
       _timeWalkTrigger = _swordsController.findSMI('TimeWalkTrigger');
       _cronosphereTrigger = _swordsController.findSMI('CronosphereTrigger');
-      _requiemOfSoulsTrigger = _swordsController.findSMI('RequiemOfSoulsTrigger');
+      _requiemOfSoulsTrigger =
+          _swordsController.findSMI('RequiemOfSoulsTrigger');
       _ballLightningTrigger = _swordsController.findSMI('BallLightningTrigger');
       _thunderStrikeTrigger = _swordsController.findSMI('ThunderStrikeTrigger');
       _skillsTriggers = [
@@ -332,7 +357,8 @@ class PlayerAnimationEntity extends RiveComponent
       throw Exception('Could not load StateMachineController');
     }
 
-    final controller3 = StateMachineController.fromArtboard(artboard, 'effectsStateMachine');
+    final controller3 =
+        StateMachineController.fromArtboard(artboard, 'effectsStateMachine');
     if (controller3 != null) {
       _effectsController = controller3;
       // _controller.isActive = true;
@@ -360,7 +386,8 @@ class PlayerAnimationEntity extends RiveComponent
 
     // For super hero landing animation
     gravity = 0;
-    final newSword = game.getEquipments().firstWhere((e) => e is Sword) as Sword;
+    final newSword =
+        game.getEquipments().firstWhere((e) => e is Sword) as Sword;
     // });
     add(TimerComponent(
       period: 1, // The period in seconds
@@ -374,7 +401,8 @@ class PlayerAnimationEntity extends RiveComponent
 
   @override
   void flipHorizontally() {
-    game.playerData.direction.value = Direction(Vector2(-game.playerData.direction.value.x, 0));
+    game.playerData.direction.value =
+        Direction(Vector2(-game.playerData.direction.value.x, 0));
     super.flipHorizontally();
   }
 
@@ -415,7 +443,8 @@ class PlayerAnimationEntity extends RiveComponent
       moveBackground(_velocity);
       game.playerData.position.value = position;
       return;
-    } else if (game.playerData.effects.value.contains(SkillEffects.timeWalk5s) &&
+    } else if (game.playerData.effects.value
+            .contains(SkillEffects.timeWalk5s) &&
         game.playerData.effects.value.contains(SkillEffects.chronosphere)) {
       _velocity.x = _hAxisInput * timeWalkSpeed;
       _velocity.y = _vAxisInput * timeWalkSpeed;
@@ -529,8 +558,11 @@ class PlayerAnimationEntity extends RiveComponent
         }
       }
       if (keysPressed.any((key) {
-        return [LogicalKeyboardKey.control, LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.controlRight]
-            .contains(key);
+        return [
+          LogicalKeyboardKey.control,
+          LogicalKeyboardKey.controlLeft,
+          LogicalKeyboardKey.controlRight
+        ].contains(key);
       })) {
         // print(keysPressed);
         if (keysPressed.contains(LogicalKeyboardKey.digit1) && has1) {
@@ -574,7 +606,9 @@ class PlayerAnimationEntity extends RiveComponent
       }
 
       if (keysPressed.contains(LogicalKeyboardKey.keyB)) {
-        for (var index = 0; index < game.playerData.skillCountdown.value.length; index++) {
+        for (var index = 0;
+            index < game.playerData.skillCountdown.value.length;
+            index++) {
           game.playerData.skillCountdown.updateAt(index, false);
         }
       }
@@ -584,7 +618,8 @@ class PlayerAnimationEntity extends RiveComponent
   }
 
   @override
-  void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
+  void onCollisionStart(
+      Set<Vector2> intersectionPoints, PositionComponent other) {
     if (other is EquipmentComponent) {
       if (!other.canPickedUp) return;
       game.addEquipment(other.item);
@@ -625,7 +660,9 @@ class PlayerAnimationEntity extends RiveComponent
   }
 
   void attack() {
-    if (onAttackDelay || game.playerData.casting.value != null || isLightning) return;
+    if (onAttackDelay || game.playerData.casting.value != null || isLightning) {
+      return;
+    }
     onAttackDelay = true;
     _attack1Trigger?.fire();
     final sword = game.playerData.sword.value;
@@ -647,7 +684,8 @@ class PlayerAnimationEntity extends RiveComponent
     if (game.playerData.effects.value.contains(SkillEffects.fireball)) {
       final firePosition = Vector2(position.x, position.y);
       final fireAngle = game.playerData.angleToSigned.value;
-      final fireballVelocity = Vector2(sin(fireAngle) * fireSpeed, cos(fireAngle) * fireSpeed);
+      final fireballVelocity =
+          Vector2(sin(fireAngle) * fireSpeed, cos(fireAngle) * fireSpeed);
       Fireball bullet = Fireball(
         position: firePosition,
         velocity: fireballVelocity,
@@ -668,7 +706,8 @@ class PlayerAnimationEntity extends RiveComponent
   void switchNextSword() {
     final sword = game.playerData.sword.value;
     final equipments = game.getEquipments();
-    final currentIndex = equipments.indexWhere((element) => (element as Sword).type == sword.type);
+    final currentIndex = equipments
+        .indexWhere((element) => (element as Sword).type == sword.type);
     final nextIndex = (currentIndex + 1) % equipments.length;
     final nextSword = equipments[nextIndex] as Sword;
     changeToSword(nextSword);
@@ -699,8 +738,12 @@ class PlayerAnimationEntity extends RiveComponent
     // test1.text = game.playerData.casting.value == null ? 'null' : game.playerData.casting.value!.name;
     if (game.playerData.casting.value != null) {
       final skill = game.playerData.casting.value!;
-      if (skill.swordType != null && skill.swordType != game.playerData.sword.value.type) {
-        final newSword = game.getEquipments().firstWhere((e) => e is Sword && e.type == skill.swordType) as Sword;
+      if (skill.swordType != null &&
+          skill.swordType != game.playerData.sword.value.type) {
+        final newSword = game
+                .getEquipments()
+                .firstWhere((e) => e is Sword && e.type == skill.swordType)
+            as Sword;
         final triggerIndex = newSword.triggerIndex;
         _sword?.value = triggerIndex.toDouble();
         _swordTriggers[newSword.triggerIndex]?.fire();
@@ -729,8 +772,9 @@ class PlayerAnimationEntity extends RiveComponent
         add(TimerComponent(
           period: 2, // The period in seconds
           onTick: () {
-            final visibleGarbageMonster =
-                parent.parent.children.whereType<GarbageMonsterEntity>().where((e) => world.customCamera.canSee(e));
+            final visibleGarbageMonster = parent.parent.children
+                .whereType<GarbageMonsterEntity>()
+                .where((e) => world.customCamera.canSee(e));
             for (final monster in visibleGarbageMonster) {
               monster.purge();
             }
@@ -746,11 +790,15 @@ class PlayerAnimationEntity extends RiveComponent
         final skillComponent = ChronosphereSkillComponent(
             duration: skill.duration,
             delayCast: skill.castTime,
-            position: selectedLocation != null ? position + selectedLocation / game.zoom : position);
+            position: selectedLocation != null
+                ? position + selectedLocation / game.zoom
+                : position);
         parent.parent.add(skillComponent);
       } else if (skill.name == 'Requiem of Souls') {
-        final skillComponent =
-            RequiemOfSoulsSkillComponent(duration: skill.duration, delayCast: skill.castTime, position: position);
+        final skillComponent = RequiemOfSoulsSkillComponent(
+            duration: skill.duration,
+            delayCast: skill.castTime,
+            position: position);
         add(TimerComponent(
           period: skill.castTime, // The period in seconds
           onTick: () {
@@ -787,7 +835,8 @@ class PlayerAnimationEntity extends RiveComponent
     for (var e in effects) {
       // print(e);
       if (e.name == 'purified' || e.name == 'guardianEngel') {
-        game.playerData.health.value = min(100, game.playerData.health.value + e.healPoint!);
+        game.playerData.health.value =
+            min(100, game.playerData.health.value + e.healPoint!);
       }
       if (e.triggerIndex != null) {
         _effectsTriggers[e.triggerIndex!]?.fire();
@@ -813,12 +862,14 @@ class PlayerAnimationEntity extends RiveComponent
     final selectedLocation = game.playerData.selectedLocation.value != null
         ? game.camera.globalToLocal(game.playerData.selectedLocation.value!)
         : null;
-    final end =
-        selectedLocation != null ? (position + selectedLocation / game.zoom) : position; // Ending point of the line
+    final end = selectedLocation != null
+        ? (position + selectedLocation / game.zoom)
+        : position; // Ending point of the line
     // final Vector2 start = Vector2(position.x, position.y);
     // final lightningParticle = ParticleSystemComponent(
     //     particle: LightningParticle(lifespan: 1, start: Vector2(position.x, position.y), end: position));
-    final lightningParticle = SmallLightningParticle(start: Vector2(position.x, position.y), end: position);
+    final lightningParticle = SmallLightningParticle(
+        start: Vector2(position.x, position.y), end: position);
     // final lightningParticle = ThunderStrikeParticle(start: Vector2(position.x, position.y), end: end);
     isLightning = true;
 
@@ -881,7 +932,9 @@ class PlayerAnimationEntity extends RiveComponent
   }
 
   void _revertDeadHandler() {
-    final newSword = game.getEquipments().firstWhere((e) => e is Sword && e.type == SwordType.time) as Sword;
+    final newSword = game
+        .getEquipments()
+        .firstWhere((e) => e is Sword && e.type == SwordType.time) as Sword;
     changeToSword(newSword);
   }
 
@@ -903,7 +956,9 @@ class PlayerAnimationEntity extends RiveComponent
     );
     if (skill.effects.isNotEmpty) {
       for (var effect in skill.effects) {
-        if (effect.triggerIndex != null) _effectsTriggers[effect.triggerIndex!]?.fire();
+        if (effect.triggerIndex != null) {
+          _effectsTriggers[effect.triggerIndex!]?.fire();
+        }
       }
     }
   }
@@ -928,7 +983,8 @@ class PlayerAnimationEntity extends RiveComponent
   }
 }
 
-class NightHighlightEffect extends PositionComponent with ParentIsA<SceneComponent> {
+class NightHighlightEffect extends PositionComponent
+    with ParentIsA<SceneComponent> {
   NightHighlightEffect({
     required super.position,
   }) : super(anchor: Anchor.center, size: Vector2.all(1000), priority: 0);
@@ -949,7 +1005,11 @@ class NightHighlightEffect extends PositionComponent with ParentIsA<SceneCompone
 class HalfCircleHitbox extends CircleComponent {
   final Sword sword;
   HalfCircleHitbox(
-      {required this.sword, required double super.radius, required Vector2 super.position, super.paint, super.angle})
+      {required this.sword,
+      required double super.radius,
+      required Vector2 super.position,
+      super.paint,
+      super.angle})
       : super(
           anchor: Anchor.centerLeft,
         );
@@ -974,7 +1034,8 @@ class Slash extends PolygonComponent with CollisionCallbacks {
       : super(
           // Generate points for the half-circle
           List.generate(numberOfPoints, (i) {
-            final theta = pi * i / (numberOfPoints - 1) - pi / 2; // Half-circle (180 degrees)
+            final theta = pi * i / (numberOfPoints - 1) -
+                pi / 2; // Half-circle (180 degrees)
             return Vector2(radius * cos(theta), radius * sin(theta));
           }),
           position: Vector2(-radius, radius),
@@ -985,7 +1046,8 @@ class Slash extends PolygonComponent with CollisionCallbacks {
   @override
   Future<void> onLoad() async {
     // Add a hitbox to the component
-    final hitbox = PolygonHitbox(vertices, position: Vector2(size.x / 2, size.y / 2), anchor: Anchor.center);
+    final hitbox = PolygonHitbox(vertices,
+        position: Vector2(size.x / 2, size.y / 2), anchor: Anchor.center);
     add(hitbox);
     add(MoveEffect.by(Vector2(30, 0), LinearEffectController(slashTime)));
   }

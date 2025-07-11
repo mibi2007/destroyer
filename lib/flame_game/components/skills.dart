@@ -32,9 +32,13 @@ mixin Countdown on PositionComponent {
 
   void startCountdown(double countdownTime) {
     countdownComponent = CountdownComponent(
-        countdownTime: countdownTime, size: size * 2, position: Vector2(24, 16), anchor: Anchor.center);
+        countdownTime: countdownTime,
+        size: size * 2,
+        position: Vector2(24, 16),
+        anchor: Anchor.center);
 
-    final clipComponent = ClipComponent.rectangle(position: Vector2(0, 0), size: size, children: [countdownComponent!]);
+    final clipComponent = ClipComponent.rectangle(
+        position: Vector2(0, 0), size: size, children: [countdownComponent!]);
     add(clipComponent);
     _timer = Timer(
       countdownTime, // The period in seconds
@@ -87,7 +91,8 @@ class CountdownComponent extends PositionComponent {
     Path path = Path()
       ..moveTo(position.x, position.y * 2)
       ..arcTo(
-        Rect.fromCenter(center: position.toOffset(), width: size.x * 2, height: size.y * 2),
+        Rect.fromCenter(
+            center: position.toOffset(), width: size.x * 2, height: size.y * 2),
         -pi / 2,
         angle,
         false,
@@ -110,7 +115,12 @@ class CountdownComponent extends PositionComponent {
 }
 
 class SkillComponent extends PositionComponent
-    with HasGameReference<DestroyerGame>, Countdown, CollisionCallbacks, TapCallbacks, ParentIsA<Hud> {
+    with
+        HasGameReference<DestroyerGame>,
+        Countdown,
+        CollisionCallbacks,
+        TapCallbacks,
+        ParentIsA<Hud> {
   final Skill skill;
   late SpriteComponent iconComponent;
   late final Component tooltip;
@@ -129,7 +139,9 @@ class SkillComponent extends PositionComponent
   FutureOr<void> onLoad() {
     super.onLoad();
     add(RectangleHitbox(collisionType: CollisionType.passive, isSolid: true));
-    iconComponent = SpriteComponent.fromImage(game.images.fromCache(skill.sprite), size: size);
+    iconComponent = SpriteComponent.fromImage(
+        game.images.fromCache(skill.sprite),
+        size: size);
     add(iconComponent);
     tooltip = RectangleComponent(
       size: Vector2(300, 150),
@@ -152,14 +164,16 @@ class SkillComponent extends PositionComponent
             ),
             boxConfig: TextBoxConfig(
               maxWidth: 300,
-              growingBox: true, // Set to true if you want the box to grow with the text
+              growingBox:
+                  true, // Set to true if you want the box to grow with the text
             ))
       ],
     );
   }
 
   @override
-  void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
+  void onCollisionStart(
+      Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollisionStart(intersectionPoints, other);
     if (other is HudCursor) {
       showTooltip();
@@ -199,7 +213,10 @@ class SkillComponent extends PositionComponent
 }
 
 class Fireball extends SpriteComponent
-    with HasGameReference<DestroyerGame>, ParentIsA<SceneComponent>, CollisionCallbacks {
+    with
+        HasGameReference<DestroyerGame>,
+        ParentIsA<SceneComponent>,
+        CollisionCallbacks {
   final Vector2 velocity;
   final double damage;
   Fireball(
@@ -209,7 +226,8 @@ class Fireball extends SpriteComponent
       required this.velocity,
       required this.damage})
       : super(
-          sprite: Sprite(Flame.images.fromCache('assets/images/equipments/swords/fireball.png')),
+          sprite: Sprite(Flame.images
+              .fromCache('assets/images/equipments/swords/fireball.png')),
           position: position,
           size: Vector2(10, 10), // Set the size of the bullet
           anchor: Anchor.center,
@@ -247,7 +265,8 @@ class Fireball extends SpriteComponent
               component: RectangleComponent(
                 size: Vector2(1, 1),
                 anchor: Anchor.center,
-                paint: Paint()..color = colorTween.transform(random.nextDouble())!,
+                paint: Paint()
+                  ..color = colorTween.transform(random.nextDouble())!,
               ),
             ),
           );
@@ -257,23 +276,30 @@ class Fireball extends SpriteComponent
     parent.add(particle);
 
     // Check if the bullet is off-screen and remove it if necessary
-    if (position.x < 0 || position.x > parent.mapTiled.width || position.y < 0 || position.y > parent.mapTiled.height) {
+    if (position.x < 0 ||
+        position.x > parent.mapTiled.width ||
+        position.y < 0 ||
+        position.y > parent.mapTiled.height) {
       particle.removeFromParent();
       removeFromParent();
     }
   }
 
   @override
-  void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
+  void onCollisionStart(
+      Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollisionStart(intersectionPoints, other);
-    if (other is Platform || other is EnemyEntity || other is EnemyAnimationEntity) {
+    if (other is Platform ||
+        other is EnemyEntity ||
+        other is EnemyAnimationEntity) {
       // TODO: play explosion
       removeFromParent();
     }
   }
 }
 
-class EffectComponent extends PositionComponent with HasGameRef<DestroyerGame>, Countdown {
+class EffectComponent extends PositionComponent
+    with HasGameReference<DestroyerGame>, Countdown {
   final SkillEffect effect;
   int? count;
   late SpriteComponent iconComponent;
@@ -290,7 +316,10 @@ class EffectComponent extends PositionComponent with HasGameRef<DestroyerGame>, 
 
   @override
   FutureOr<void> onLoad() {
-    iconComponent = SpriteComponent.fromImage(game.images.fromCache(effect.sprite), size: size, priority: 0);
+    iconComponent = SpriteComponent.fromImage(
+        game.images.fromCache(effect.sprite),
+        size: size,
+        priority: 0);
     add(iconComponent);
     if (count != null) {
       add(TextComponent(
@@ -306,17 +335,22 @@ class EffectComponent extends PositionComponent with HasGameRef<DestroyerGame>, 
   }
 }
 
-class Purifier extends PositionComponent with HasGameRef<DestroyerGame> {
-  Purifier(Vector2 position, Vector2 size) : super(position: position, size: size);
+class Purifier extends PositionComponent with HasGameReference<DestroyerGame> {
+  Purifier(Vector2 position, Vector2 size)
+      : super(position: position, size: size);
 
   @override
   FutureOr<void> onLoad() {
-    final clipping = ClipComponent.circle(position: Vector2.all(width / 2), size: size * 1.5, anchor: Anchor.center);
+    final clipping = ClipComponent.circle(
+        position: Vector2.all(width / 2),
+        size: size * 1.5,
+        anchor: Anchor.center);
     add(clipping);
     if (parent is GarbageMonsterEntity) {
       final typeCast = parent as GarbageMonsterEntity;
-      final image = game.images.fromCache(
-          rnd.nextDouble() * 2 < 1 ? 'assets/images/enemies/garbage1.png' : 'assets/images/enemies/garbage2.png');
+      final image = game.images.fromCache(rnd.nextDouble() * 2 < 1
+          ? 'assets/images/enemies/garbage1.png'
+          : 'assets/images/enemies/garbage2.png');
       clipping.add(SpriteComponent.fromImage(
           game.images.fromCache(
             'assets/images/skills-and-effects/purifier.png',
@@ -324,11 +358,15 @@ class Purifier extends PositionComponent with HasGameRef<DestroyerGame> {
           srcSize: Vector2.all(300),
           size: clipping.size,
           position: Vector2(0, 50))
-        ..add(MoveEffect.by(Vector2(0, -100), LinearEffectController(0.5), onComplete: () {
+        ..add(MoveEffect.by(Vector2(0, -100), LinearEffectController(0.5),
+            onComplete: () {
           if (parent is GarbageMonsterEntity) {
-            typeCast.add(OpacityEffect.fadeOut(LinearEffectController(1), onComplete: () {
-              typeCast.parent.add(GarbageEntity(Garbage.purgedFromMonster(typeCast.enemy), image,
-                  position: typeCast.position, targetPosition: typeCast.position));
+            typeCast.add(OpacityEffect.fadeOut(LinearEffectController(1),
+                onComplete: () {
+              typeCast.parent.add(GarbageEntity(
+                  Garbage.purgedFromMonster(typeCast.enemy), image,
+                  position: typeCast.position,
+                  targetPosition: typeCast.position));
               typeCast.removeFromParent();
             }));
           }

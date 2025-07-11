@@ -2,39 +2,39 @@ name: destroyer
 description: A Flame game template built with Flutter.
 
 # Prevent accidental publishing to pub.dev.
-publish_to: 'none'
+publish_to: "none"
 
 version: 0.1.0
 
 environment:
-  sdk: ^3.0.0
+  sdk: ^3.5.0
 
 dependencies:
-  audioplayers: ^5.2.1
+  audioplayers: ^6.5.0
   flame: ^1.16.0
-  flame_audio: ^2.10.0
+  flame_audio: ^2.11.7
   flame_behaviors: ^1.1.0
-  flame_rive: ^1.10.0
-  flame_steering_behaviors: ^0.1.0
-  flame_tiled: ^1.19.0
+  flame_rive: ^1.10.16
+  flame_steering_behaviors: ^0.2.0
+  flame_tiled: ^3.0.4
   flutter:
     sdk: flutter
-  go_router: ^13.2.0
+  go_router: ^16.0.0
   google_fonts: ^6.2.1
   hooks_riverpod: ^2.5.1
   logging: ^1.2.0
-  nes_ui: ^0.18.0
+  nes_ui: ^0.25.0
   provider: ^6.1.2
-  rive: ^0.12.4
+  rive: ^0.13.20
   shared_preferences: ^2.2.2
-  web: ^0.5.1
+  web: ^1.1.1
 
 dev_dependencies:
-  flame_test: ^1.15.4
-  flutter_launcher_icons: ^0.13.1
-  flutter_lints: ^3.0.1
-  # flutter_test:
-  #   sdk: flutter
+  flame_test: ^2.0.0
+  flutter_launcher_icons: ^0.14.4
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter
   # test: ^1.24.3
 
 flutter:
@@ -62,4 +62,4 @@ flutter:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: 'assets/icons/icon.png'
+  image_path: "assets/icons/icon.png"

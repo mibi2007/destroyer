@@ -8,7 +8,8 @@ import 'package:flame/effects.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
 
-class AttackButton extends PositionComponent with HasGameReference<DestroyerGame>, TapCallbacks {
+class AttackButton extends PositionComponent
+    with HasGameReference<DestroyerGame>, TapCallbacks {
   late final SpriteComponent imageBtn;
   late final CircleComponent shadow;
   final effectController = LinearEffectController(0.2);
@@ -56,7 +57,7 @@ class AttackButton extends PositionComponent with HasGameReference<DestroyerGame
     super.onTapDown(event);
   }
 
-  stop() {
+  void stop() {
     if (!game.playerData.autoAttack.value) return;
     game.playerData.autoAttack.value = false;
     add(shadow);

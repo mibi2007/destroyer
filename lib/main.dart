@@ -37,7 +37,8 @@ class MyGame extends StatelessWidget {
           ChangeNotifierProvider(create: (context) => PlayerProgress()),
           Provider(create: (context) => SettingsController()),
           // Set up audio.
-          ProxyProvider2<SettingsController, AppLifecycleStateNotifier, AudioController>(
+          ProxyProvider2<SettingsController, AppLifecycleStateNotifier,
+              AudioController>(
             // Ensures that music starts immediately.
             lazy: false,
             create: (context) => AudioController(),
@@ -56,7 +57,7 @@ class MyGame extends StatelessWidget {
             theme: flutterNesTheme().copyWith(
               colorScheme: ColorScheme.fromSeed(
                 seedColor: palette.seed.color,
-                background: palette.backgroundMain.color,
+                surface: palette.backgroundMain.color,
               ),
               textTheme: GoogleFonts.pressStart2pTextTheme().apply(
                 bodyColor: palette.text.color,

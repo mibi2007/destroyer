@@ -28,7 +28,10 @@ const effectSize = 32.0;
 const effectGap = -14.0;
 
 class Hud extends PositionComponent
-    with HasGameReference<DestroyerGame>, HasWorldReference<DestroyerGameWorld>, KeyboardHandler {
+    with
+        HasGameReference<DestroyerGame>,
+        HasWorldReference<DestroyerGameWorld>,
+        KeyboardHandler {
   late final TextComponent creditTextComponent;
   late final TextComponent healthTextComponent;
   late final RectangleComponent healthBarComponent;
@@ -64,10 +67,13 @@ class Hud extends PositionComponent
       position: Vector2(0, game.fixedResolution.y - 240 * 330 / 640),
       priority: 2,
     ));
-    final artboard = await loadArtboard(RiveFile.asset('assets/animations/character.riv'));
-    final controller = StateMachineController.fromArtboard(artboard, 'movesStateMachine');
+    final artboard =
+        await loadArtboard(RiveFile.asset('assets/animations/character.riv'));
+    final controller =
+        StateMachineController.fromArtboard(artboard, 'movesStateMachine');
     artboard.addController(controller!);
-    healthBarComponent = RectangleComponent.fromRect(const Rect.fromLTWH(0, 0, 150, 11),
+    healthBarComponent = RectangleComponent.fromRect(
+        const Rect.fromLTWH(0, 0, 150, 11),
         paint: Paint()..color = const Color(0xFF45c640));
     await add(RectangleComponent.fromRect(const Rect.fromLTWH(60, 20, 150, 11),
         paint: Paint()..color = const Color(0xFF1d2810))
@@ -93,7 +99,8 @@ class Hud extends PositionComponent
       )),
     );
     await add(healthTextComponent);
-    add(RectangleComponent(size: Vector2(width / 2, 10), position: Vector2(0, 0), priority: 0));
+    add(RectangleComponent(
+        size: Vector2(width / 2, 10), position: Vector2(0, 0), priority: 0));
     add(SpriteComponent.fromImage(
       game.images.fromCache('assets/images/hud/avatar-frame.png'),
       srcSize: Vector2(200, 200),
@@ -145,10 +152,13 @@ class Hud extends PositionComponent
             'assets/images/hud/pad.png',
           ),
           srcSize: Vector2.all(100),
-          size: Vector2(game.screenSize.height * 0.2, game.screenSize.height * 0.2)),
-      background: CircleComponent(radius: game.screenSize.height * 0.2, paint: backgroundPaint),
+          size: Vector2(
+              game.screenSize.height * 0.2, game.screenSize.height * 0.2)),
+      background: CircleComponent(
+          radius: game.screenSize.height * 0.2, paint: backgroundPaint),
       // margin: const EdgeInsets.only(left: 40, bottom: 40),
-      position: Vector2(game.screenSize.height * 0.2 + 20, game.screenSize.height - game.screenSize.height * 0.2 - 40),
+      position: Vector2(game.screenSize.height * 0.2 + 20,
+          game.screenSize.height - game.screenSize.height * 0.2 - 40),
       size: 200,
       priority: 3,
     );
@@ -157,12 +167,14 @@ class Hud extends PositionComponent
     if (game.isMobile) {
       add(joystick);
       attackButton = AttackButton(
-        position: Vector2(game.fixedResolution.x - 160, game.screenSize.height - 180),
+        position:
+            Vector2(game.fixedResolution.x - 160, game.screenSize.height - 180),
         size: Vector2.all(64),
       );
       add(attackButton!);
       add(JumpButton(
-        position: Vector2(game.fixedResolution.x - 230, game.screenSize.height - 130),
+        position:
+            Vector2(game.fixedResolution.x - 230, game.screenSize.height - 130),
         size: Vector2.all(64),
       ));
     }
@@ -190,10 +202,12 @@ class Hud extends PositionComponent
         game.pauseEngine();
         game.overlays.add(PauseMenu.id);
       } else if (keysPressed.contains(LogicalKeyboardKey.keyQ)) {
-        final skill = game.playerData.sword.value.skills.firstWhere((s) => s.keyboard == 'Q');
+        final skill = game.playerData.sword.value.skills
+            .firstWhere((s) => s.keyboard == 'Q');
         castSkill(skill);
       } else if (keysPressed.contains(LogicalKeyboardKey.keyE)) {
-        final skill = game.playerData.sword.value.skills.firstWhere((s) => s.keyboard == 'E');
+        final skill = game.playerData.sword.value.skills
+            .firstWhere((s) => s.keyboard == 'E');
         castSkill(skill);
         // } else if (keysPressed.contains(LogicalKeyboardKey.keyR)) {
         //   _castSkill('R');
@@ -217,7 +231,10 @@ class Hud extends PositionComponent
     // return;
     if (game.playerData.casting.value != null) return;
     if (skill.cooldown == 0 && !skill.autoCast) return;
-    final index = game.playerData.skills.value.where((s) => s.cooldown != 0).toList().indexWhere((s) => s == skill);
+    final index = game.playerData.skills.value
+        .where((s) => s.cooldown != 0)
+        .toList()
+        .indexWhere((s) => s == skill);
     // print(index);
     // print(game.playerData.skillCountdown);
 
@@ -307,8 +324,10 @@ class Hud extends PositionComponent
     if (game.playerData.health.value <= 0) {
       // AudioManager.stopBgm();
       // game.pauseEngine();
-      final timeWalkSkillIndex = skills.indexWhere((s) => s.skill == Skills.timeWalk);
-      if (timeWalkSkillIndex == -1 || game.playerData.skillCountdown.value[timeWalkSkillIndex]) {
+      final timeWalkSkillIndex =
+          skills.indexWhere((s) => s.skill == Skills.timeWalk);
+      if (timeWalkSkillIndex == -1 ||
+          game.playerData.skillCountdown.value[timeWalkSkillIndex]) {
         game.playerData.isDead.value = true;
       } else {
         game.playerData.revertDead.trigger();
@@ -328,7 +347,9 @@ class Hud extends PositionComponent
         final swordImage = game.images.fromCache(equipment.iconAsset);
         final swordComp = SwordComponent(
           item: equipment,
-          position: Vector2(game.fixedResolution.x - 105 + 26 * index.toDouble(), game.fixedResolution.y - 32),
+          position: Vector2(
+              game.fixedResolution.x - 105 + 26 * index.toDouble(),
+              game.fixedResolution.y - 32),
           size: Vector2.all(36),
           sprite: Sprite(swordImage),
           canPickedUp: false,
@@ -336,10 +357,11 @@ class Hud extends PositionComponent
         await add(swordComp);
         equipments.add(swordComp);
 
-        skills.addAll(
-            equipment.skills.map((skill) => SkillComponent(skill, size: Vector2.all(skillSize), position: position)));
+        skills.addAll(equipment.skills.map((skill) => SkillComponent(skill,
+            size: Vector2.all(skillSize), position: position)));
         game.playerData.skills.value.addAll(equipment.skills);
-        game.playerData.skillCountdown.value.addAll(equipment.skills.where((s) => s.cooldown != 0).map((_) => false));
+        game.playerData.skillCountdown.value.addAll(
+            equipment.skills.where((s) => s.cooldown != 0).map((_) => false));
         index++;
       }
     }
@@ -349,7 +371,8 @@ class Hud extends PositionComponent
   Future<void> onSwordChangeHandler() async {
     // print('update sword');
     final newSword = game.playerData.sword.value;
-    final newIndex = equipments.indexWhere(((c) => (c.item as Sword).type == newSword.type));
+    final newIndex =
+        equipments.indexWhere(((c) => (c.item as Sword).type == newSword.type));
 
     for (var i = 0; i < equipments.length; i++) {
       for (final e in equipments[i].children.whereType<Effect>()) {
@@ -374,14 +397,16 @@ class Hud extends PositionComponent
 
     updateSkill();
 
-    if (game.playerData.lastSword.value != null && game.playerData.lastSword.value!.skills.isNotEmpty) {
+    if (game.playerData.lastSword.value != null &&
+        game.playerData.lastSword.value!.skills.isNotEmpty) {
       final removeEffects = game.playerData.lastSword.value!.skills
           .map((s) => s.effects)
           .reduce((combine, effects) => [...combine, ...effects]);
       if (removeEffects.isNotEmpty) {
         for (var element in removeEffects) {
-          game.playerData.effects
-              .remove(element, shouldNotify: removeEffects.indexOf(element) == removeEffects.length - 1);
+          game.playerData.effects.remove(element,
+              shouldNotify:
+                  removeEffects.indexOf(element) == removeEffects.length - 1);
         }
       }
     }
@@ -389,13 +414,16 @@ class Hud extends PositionComponent
     if (newSword.skills.isNotEmpty) {
       final passiveSkills = newSword.skills.where((s) => s.passive);
       if (passiveSkills.isNotEmpty) {
-        final passiveEffects =
-            passiveSkills.map((e) => e.effects).reduce((combine, effects) => [...combine, ...effects]);
+        final passiveEffects = passiveSkills
+            .map((e) => e.effects)
+            .reduce((combine, effects) => [...combine, ...effects]);
         // print(passiveEffects);
         game.playerData.effects.addAll(passiveEffects);
       }
       if (!game.isMobile) {
-        final autoCasts = game.playerData.sword.value.skills.where((s) => s.autoCast).toList();
+        final autoCasts = game.playerData.sword.value.skills
+            .where((s) => s.autoCast)
+            .toList();
         // print(autoCasts);
         if (autoCasts.isNotEmpty) {
           for (final skill in autoCasts) {
@@ -411,15 +439,23 @@ class Hud extends PositionComponent
   Future<void> renderSkills() async {
     // print('remove skills');
     children.whereType<SkillFrame>().forEach((e) => remove(e));
-    final renderSkills = skills.where((s) => !(s.skill.cooldown == 0.0 && s.skill.passive)).toList();
+    final renderSkills = skills
+        .where((s) => !(s.skill.cooldown == 0.0 && s.skill.passive))
+        .toList();
     for (var i = 0; i < renderSkills.length; i++) {
       final com = renderSkills[i];
 
       // Position
-      final x = (game.fixedResolution.x - (renderSkills.length - 1) * skillGap - skillSize * renderSkills.length) / 2;
-      com.position = Vector2(x + i * (skillSize + skillGap), game.fixedResolution.y - skillSize / 2 - 7);
+      final x = (game.fixedResolution.x -
+              (renderSkills.length - 1) * skillGap -
+              skillSize * renderSkills.length) /
+          2;
+      com.position = Vector2(x + i * (skillSize + skillGap),
+          game.fixedResolution.y - skillSize / 2 - 7);
       // add(skillFrame..position = com.position);
-      add(SkillFrame(game.images.fromCache('assets/images/skills-and-effects/skill-frame.png'),
+      add(SkillFrame(
+              game.images.fromCache(
+                  'assets/images/skills-and-effects/skill-frame.png'),
               skillKey: com.skill.keyboard)
             ..position = com.position
           // ..priority = 1,
@@ -464,7 +500,8 @@ class Hud extends PositionComponent
         // if (effects.length < i + 1) {
         // final position = Vector2(x + i * (skillSize + skillGap), game.fixedResolution.y - skillSize / 2 - 7);
         final effectPosition = Vector2(76 + i * (effectSize + effectGap), 44);
-        final effectComp = EffectComponent(skillEffects[i], position: effectPosition, size: Vector2.all(effectSize));
+        final effectComp = EffectComponent(skillEffects[i],
+            position: effectPosition, size: Vector2.all(effectSize));
         if (skillEffects[i].name == 'Requiem of Souls') {
           effectComp.count = game.playerData.souls.value;
         }
@@ -479,11 +516,15 @@ class Hud extends PositionComponent
     _renderEquipments();
   }
 
-  _renderEquipments() {
+  void _renderEquipments() {
     final skillEffects = game.playerData.effects.value;
     final effectWidth = (effectSize + effectGap) * skillEffects.length;
     for (final item in inventory) {
-      item.position = Vector2(76 + effectWidth + (effectSize + effectGap) * inventory.indexOf(item).toDouble(), 44);
+      item.position = Vector2(
+          76 +
+              effectWidth +
+              (effectSize + effectGap) * inventory.indexOf(item).toDouble(),
+          44);
       add(item);
     }
   }
@@ -557,7 +598,7 @@ class SelectAndActiveEffect extends ColorEffect {
         );
 }
 
-class SkillFrame extends SpriteComponent with HasGameRef<DestroyerGame> {
+class SkillFrame extends SpriteComponent with HasGameReference<DestroyerGame> {
   final String? skillKey;
   SkillFrame(super.image, {this.skillKey})
       : super.fromImage(
@@ -632,7 +673,7 @@ class PlayerJoystick extends JoystickComponent with ParentIsA<Hud> {
       required super.priority});
 
   @override
-  Future<void> onLoad() {
+  FutureOr<void> onLoad() {
     _timer = Timer(
       0.045, // The period in seconds
       onTick: () {

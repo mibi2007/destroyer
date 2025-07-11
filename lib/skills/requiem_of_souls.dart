@@ -7,14 +7,18 @@ import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flutter/animation.dart';
 
-class RequiemOfSoulsSkillComponent extends SpriteComponent with CollisionCallbacks, HasGameRef<DestroyerGame> {
+class RequiemOfSoulsSkillComponent extends SpriteComponent
+    with CollisionCallbacks, HasGameReference<DestroyerGame> {
   // double radious = 100;
   final skill = Skills.requiemOfSouls;
   final double duration;
   final double delayCast;
 
   late ui.Image image;
-  RequiemOfSoulsSkillComponent({required this.duration, required this.delayCast, required super.position})
+  RequiemOfSoulsSkillComponent(
+      {required this.duration,
+      required this.delayCast,
+      required super.position})
       : super(priority: 3, anchor: Anchor.center);
 
   @override
@@ -22,8 +26,10 @@ class RequiemOfSoulsSkillComponent extends SpriteComponent with CollisionCallbac
 
   @override
   Future<void> onLoad() async {
-    sprite = Sprite(game.images.fromCache('assets/images/skills-and-effects/Requiem_of_Souls_effect.png'));
-    final animationController = CurvedEffectController(duration, Curves.easeOutCubic);
+    sprite = Sprite(game.images.fromCache(
+        'assets/images/skills-and-effects/Requiem_of_Souls_effect.png'));
+    final animationController =
+        CurvedEffectController(duration, Curves.easeOutCubic);
     size = Vector2(0, 0);
     add(CircleHitbox());
     add(SizeEffect.to(Vector2(1200, 1200), animationController));

@@ -8,12 +8,16 @@ import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flutter/animation.dart';
 
-class ChronosphereSkillComponent extends SpriteComponent with CollisionCallbacks, HasGameRef<DestroyerGame> {
+class ChronosphereSkillComponent extends SpriteComponent
+    with CollisionCallbacks, HasGameReference<DestroyerGame> {
   // double radious = 100;
   final double duration;
   final double delayCast;
 
-  ChronosphereSkillComponent({required this.duration, required this.delayCast, required super.position})
+  ChronosphereSkillComponent(
+      {required this.duration,
+      required this.delayCast,
+      required super.position})
       : super(priority: 3, anchor: Anchor.center);
 
   @override
@@ -22,10 +26,12 @@ class ChronosphereSkillComponent extends SpriteComponent with CollisionCallbacks
   @override
   Future<void> onLoad() async {
     super.onLoad();
-    final animationController = CurvedEffectController(delayCast, Curves.easeOutCubic);
+    final animationController =
+        CurvedEffectController(delayCast, Curves.easeOutCubic);
     size = Vector2(0, 0);
     add(CircleHitbox(isSolid: true));
-    final image = game.images.fromCache('assets/images/skills-and-effects/Chronosphere_effect.png');
+    final image = game.images
+        .fromCache('assets/images/skills-and-effects/Chronosphere_effect.png');
     sprite = Sprite(image, srcPosition: Vector2.all(width));
     // paint = ui.Paint()
     //   ..color = const ui.Color(0xcc000000)
@@ -37,7 +43,8 @@ class ChronosphereSkillComponent extends SpriteComponent with CollisionCallbacks
         add(OpacityEffect.fadeOut(
           animationController..duration = 2,
           onComplete: () {
-            game.playerData.effects.removeAll([SkillEffects.chronosphere, SkillEffects.invincible5s]);
+            game.playerData.effects.removeAll(
+                [SkillEffects.chronosphere, SkillEffects.invincible5s]);
             add(RemoveEffect());
           },
         ));
@@ -47,7 +54,8 @@ class ChronosphereSkillComponent extends SpriteComponent with CollisionCallbacks
   }
 
   @override
-  void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
+  void onCollisionStart(
+      Set<Vector2> intersectionPoints, PositionComponent other) {
     if (other is PlayerAnimationEntity) {
       game.playerData.effects.add(SkillEffects.timeWalk5s, shouldNotify: true);
     }
@@ -66,7 +74,8 @@ class ChronosphereSkillComponent extends SpriteComponent with CollisionCallbacks
   @override
   void onCollisionEnd(PositionComponent other) {
     if (other is PlayerAnimationEntity) {
-      game.playerData.effects.remove(SkillEffects.timeWalk5s, shouldNotify: true);
+      game.playerData.effects
+          .remove(SkillEffects.timeWalk5s, shouldNotify: true);
     }
     if (other is EnemyEntity) {
       other.isInsideChronosphere = false;

@@ -7,7 +7,7 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
-import 'package:flutter/foundation.dart';
+
 import 'package:flutter/widgets.dart' hide Image;
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -32,7 +32,11 @@ import 'game_world.dart';
 /// Note that both of the last are passed in to the super constructor, they
 /// could also be set inside of `onLoad` for example.
 class DestroyerGame extends FlameGame
-    with HasCollisionDetection, HasKeyboardHandlerComponents, MouseMovementDetector, LongPressDetector {
+    with
+        HasCollisionDetection,
+        HasKeyboardHandlerComponents,
+        MouseMovementDetector,
+        LongPressDetector {
   /// What the properties of the level that is played has.
 
   /// A helper for playing sound effects and background audio.
@@ -48,7 +52,8 @@ class DestroyerGame extends FlameGame
   late final double zoom;
   late final bool isMobile;
 
-  DestroyerGame(this.level, this.sceneIndex, {required this.screenSize, this.isTesting = false}) {
+  DestroyerGame(this.level, this.sceneIndex,
+      {required this.screenSize, this.isTesting = false}) {
     images.prefix = '';
     // print(screenSize.height);
     // print(fixedResolution.x);
@@ -101,15 +106,16 @@ class DestroyerGame extends FlameGame
   void rightClickHandler() {
     final clickPosition = playerData.currentMousePosition.value;
     playerData.selectedLocation.value = clickPosition;
-    final enemyList =
-        componentsAtPoint(clickPosition).where((com) => (com is EnemyEntity) || com is EnemyAnimationEntity).toList();
+    final enemyList = componentsAtPoint(clickPosition)
+        .where((com) => (com is EnemyEntity) || com is EnemyAnimationEntity)
+        .toList();
     // [
     //   ...componentsAtPoint(clickPosition).whereType<EnemyEntity>(),
     //   ...componentsAtPoint(clickPosition).whereType<EnemyAnimationEntity>()
     // ];
     if (enemyList.isNotEmpty) {
       playerData.selectedTarget.value = enemyList.first as PositionComponent;
-      print(objectRuntimeType(playerData.selectedTarget.value, 'selectedTarget'));
+      // Debug: print(objectRuntimeType(playerData.selectedTarget.value, 'selectedTarget'));
     }
   }
 
@@ -171,24 +177,33 @@ class DestroyerGame extends FlameGame
     await images.load('assets/images/skills-and-effects/skill-frame.png');
     await images.load('assets/images/skills-and-effects/boom.png');
     await images.load('assets/images/skills-and-effects/Repel_icon.webp');
-    await images.load('assets/images/skills-and-effects/Guardian_Angel_icon.webp');
+    await images
+        .load('assets/images/skills-and-effects/Guardian_Angel_icon.webp');
     await images.load('assets/images/skills-and-effects/Time_Walk_icon.webp');
-    await images.load('assets/images/skills-and-effects/Chronosphere_icon.webp');
+    await images
+        .load('assets/images/skills-and-effects/Chronosphere_icon.webp');
     await images.load('assets/images/skills-and-effects/Fireblast_icon.webp');
     await images.load('assets/images/skills-and-effects/Flame_Cloak_icon.webp');
-    await images.load('assets/images/skills-and-effects/Requiem_of_Souls_icon.webp');
-    await images.load('assets/images/skills-and-effects/Ball_Lightning_icon.webp');
-    await images.load('assets/images/skills-and-effects/Thunder_Strike_icon.webp');
+    await images
+        .load('assets/images/skills-and-effects/Requiem_of_Souls_icon.webp');
+    await images
+        .load('assets/images/skills-and-effects/Ball_Lightning_icon.webp');
+    await images
+        .load('assets/images/skills-and-effects/Thunder_Strike_icon.webp');
     await images.load('assets/images/skills-and-effects/Cold_Feet_icon.webp');
-    await images.load('assets/images/skills-and-effects/Spell_Immunity_icon.webp');
-    await images.load('assets/images/skills-and-effects/Requiem_of_Souls_effect.png');
-    await images.load('assets/images/skills-and-effects/Chronosphere_effect.png');
+    await images
+        .load('assets/images/skills-and-effects/Spell_Immunity_icon.webp');
+    await images
+        .load('assets/images/skills-and-effects/Requiem_of_Souls_effect.png');
+    await images
+        .load('assets/images/skills-and-effects/Chronosphere_effect.png');
     await images.load('assets/images/skills-and-effects/night.png');
     await images.load('assets/images/skills-and-effects/electrict.png');
     await images.load('assets/images/skills-and-effects/purifier.png');
 
     // Negative effects
-    await images.load('assets/images/skills-and-effects/Kinetic_Field_icon.webp');
+    await images
+        .load('assets/images/skills-and-effects/Kinetic_Field_icon.webp');
 
     // Other images
     await images.load('assets/images/hand-hold-dark-shard.png');
@@ -218,16 +233,16 @@ class DestroyerGame extends FlameGame
   }
 
   void navigate(String path) {
-    print('Navigating to $path');
+    // Debug: print('Navigating to $path');
     context.go(path + (isTesting ? '?test=true' : ''));
   }
 
-  setLevelFinished(int level, int time) {
+  void setLevelFinished(int level, int time) {
     final playerProgress = context.read<PlayerProgress>();
     playerProgress.setLevelFinished(level, time);
   }
 
-  setCredits(int newCredits) {
+  void setCredits(int newCredits) {
     final playerProgress = context.read<PlayerProgress>();
     playerProgress.setCredits(newCredits);
     // Notify the playerData that the credits have changed
@@ -239,14 +254,14 @@ class DestroyerGame extends FlameGame
     return playerProgress.credits;
   }
 
-  setEquipments(List<Equipment> newEquipments) {
+  void setEquipments(List<Equipment> newEquipments) {
     final playerProgress = context.read<PlayerProgress>();
     final success = playerProgress.setEquipments(newEquipments);
     // Notify the playerData that the credits have changed
     if (success) playerData.equipments.change();
   }
 
-  addEquipment(Equipment equipment) {
+  void addEquipment(Equipment equipment) {
     final playerProgress = context.read<PlayerProgress>();
     final success = playerProgress.addEquipment(equipment);
     // Notify the playerData that the credits have changed

@@ -113,7 +113,8 @@ class EnemyEntity extends SpriteComponent
       add(OpacityEffect.fadeOut(LinearEffectController(0.5), onComplete: () {
         removeFromParent();
 
-        if (game.playerData.sword.value.type == SwordType.flame && game.playerData.sword.value.level >= 3) {
+        if (game.playerData.sword.value.type == SwordType.flame &&
+            game.playerData.sword.value.level >= 3) {
           game.playerData.souls.value += 1;
         }
       }));
@@ -132,7 +133,7 @@ class EnemyEntity extends SpriteComponent
 
 class EnemyAnimationEntity extends SpriteAnimationComponent
     with
-        HasGameRef<DestroyerGame>,
+        HasGameReference<DestroyerGame>,
         HasWorldReference<DestroyerGameWorld>,
         HealthBar,
         CollisionCallbacks,
@@ -146,7 +147,11 @@ class EnemyAnimationEntity extends SpriteAnimationComponent
 
   bool isActivated = false;
 
-  EnemyAnimationEntity({required this.enemy, required super.size, required super.position, required super.priority}) {
+  EnemyAnimationEntity(
+      {required this.enemy,
+      required super.size,
+      required super.position,
+      required super.priority}) {
     initHealthBar(enemy.maxHealth, width);
   }
 
@@ -159,9 +164,9 @@ class EnemyAnimationEntity extends SpriteAnimationComponent
     ]);
   }
 
-  move() {}
+  void move() {}
 
-  attack() {}
+  void attack() {}
 
   @override
   bool checkIfDead() {
@@ -169,7 +174,8 @@ class EnemyAnimationEntity extends SpriteAnimationComponent
       add(OpacityEffect.fadeOut(LinearEffectController(0.5), onComplete: () {
         removeFromParent();
 
-        if (game.playerData.sword.value.type == SwordType.flame && game.playerData.sword.value.level >= 3) {
+        if (game.playerData.sword.value.type == SwordType.flame &&
+            game.playerData.sword.value.level >= 3) {
           game.playerData.souls.value += 1;
         }
       }));

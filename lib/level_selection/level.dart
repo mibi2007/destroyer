@@ -70,8 +70,10 @@ class SceneComponent extends Component
     _setupStartLevel(game.isTesting);
     _startScript();
 
-    artboard = await loadArtboard(RiveFile.asset('assets/animations/character.riv'));
-    garbageArtboard = await loadArtboard(RiveFile.asset('assets/animations/garbage_monster.riv'));
+    artboard =
+        await loadArtboard(RiveFile.asset('assets/animations/character.riv'));
+    garbageArtboard = await loadArtboard(
+        RiveFile.asset('assets/animations/garbage_monster.riv'));
     mapTiled = await TiledComponent.load(
       level.scenes[sceneIndex!].mapTiled,
       Vector2.all(32),
@@ -98,7 +100,7 @@ class SceneComponent extends Component
     });
   }
 
-  _onLeftClickHander() {
+  void _onLeftClickHander() {
     player.animation.isAutoAttack = false;
     player.animation.attack();
   }
@@ -160,7 +162,8 @@ class SceneComponent extends Component
       add(platform);
     }
 
-    final spawnPointsLayer = mapTiled.tileMap.getLayer<ObjectGroup>('SpawnPoints');
+    final spawnPointsLayer =
+        mapTiled.tileMap.getLayer<ObjectGroup>('SpawnPoints');
 
     for (final TiledObject spawnPoint in spawnPointsLayer!.objects) {
       final position = Vector2(spawnPoint.x, spawnPoint.y - spawnPoint.height);
@@ -220,7 +223,8 @@ class SceneComponent extends Component
           // Find the target object.
           final targetObjectId = spawnPoint.properties.getValue<int>('Target');
           final type = spawnPoint.properties.getValue<String>('Type');
-          TiledObject? target = getObjectFromTargetById(spawnPointsLayer.objects, targetObjectId);
+          TiledObject? target =
+              getObjectFromTargetById(spawnPointsLayer.objects, targetObjectId);
           Enemy enemy;
           Vector2 enemySize = Vector2.all(32);
           PositionComponent enemyComponent;
@@ -273,8 +277,10 @@ class SceneComponent extends Component
             onPlayerEnter: () {
               player.animation.isOnGround = false;
               if (nextDoor != null) {
-                final targetObjectId = spawnPoint.properties.getValue<int>('Target');
-                TiledObject target = getObjectFromTargetById(spawnPointsLayer.objects, targetObjectId)!;
+                final targetObjectId =
+                    spawnPoint.properties.getValue<int>('Target');
+                TiledObject target = getObjectFromTargetById(
+                    spawnPointsLayer.objects, targetObjectId)!;
                 movePlayerToPosition(Vector2(target.x, target.y));
               }
               if (nextScene == true) parent.nextScene();
@@ -314,12 +320,21 @@ class SceneComponent extends Component
           final offsetX = spawnPoint.properties.getValue<int>('TileOffsetX');
           final offsetY = spawnPoint.properties.getValue<int>('TileOffsetY');
           final brick = BrickComponent(game.spriteSheet,
-              offsetX: offsetX, offsetY: offsetY, position: position, size: size, priority: 0);
+              offsetX: offsetX,
+              offsetY: offsetY,
+              position: position,
+              size: size,
+              priority: 0);
           add(brick);
 
         case 'Oracle':
-          final oracle = SpriteComponent.fromImage(game.images.fromCache('assets/images/npcs/oracle.png'),
-              position: position, size: size, priority: 0, srcPosition: Vector2.zero(), srcSize: Vector2(64, 64));
+          final oracle = SpriteComponent.fromImage(
+              game.images.fromCache('assets/images/npcs/oracle.png'),
+              position: position,
+              size: size,
+              priority: 0,
+              srcPosition: Vector2.zero(),
+              srcSize: Vector2(64, 64));
           if (level == GameLevel.lv1) {
             (script as IntroScript).oracle = oracle;
           }
@@ -368,9 +383,11 @@ class SceneComponent extends Component
       script = IntroScript();
       onBossKilled = (script as IntroScript).onBossKilled;
       onRewardPicked = (script as IntroScript).onRewardPicked;
-    } else if ((level == GameLevel.lv2 || level == GameLevel.lv3) && sceneIndex == 0) {
+    } else if ((level == GameLevel.lv2 || level == GameLevel.lv3) &&
+        sceneIndex == 0) {
       script = Level1AScript();
-    } else if ((level == GameLevel.lv2 || level == GameLevel.lv3) && sceneIndex == 1) {
+    } else if ((level == GameLevel.lv2 || level == GameLevel.lv3) &&
+        sceneIndex == 1) {
       script = Level1BScript();
       onBossKilled = (script as Level1BScript).onBossKilled;
       onRewardPicked = (script as Level1BScript).onRewardPicked;
