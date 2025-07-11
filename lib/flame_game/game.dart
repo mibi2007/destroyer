@@ -36,7 +36,8 @@ class DestroyerGame extends FlameGame
         HasCollisionDetection,
         HasKeyboardHandlerComponents,
         MouseMovementDetector,
-        LongPressDetector {
+        LongPressDetector,
+        TapCallbacks {
   /// What the properties of the level that is played has.
 
   /// A helper for playing sound effects and background audio.
@@ -99,11 +100,13 @@ class DestroyerGame extends FlameGame
   }
 
   void leftClickHandler() {
+    print('Left click handler called');
     playerData.selectedLocation.value = null;
     playerData.selectedTarget.value = null;
   }
 
   void rightClickHandler() {
+    print('Right click handler called');
     final clickPosition = playerData.currentMousePosition.value;
     playerData.selectedLocation.value = clickPosition;
     final enemyList = componentsAtPoint(clickPosition)
@@ -278,5 +281,21 @@ class DestroyerGame extends FlameGame
     rightClick.removeListener(rightClickHandler);
     leftClick.removeListener(leftClickHandler);
     super.onRemove();
+  }
+
+  @override
+  bool onTapDown(TapDownEvent event) {
+    // Handle left click
+    print('Left click detected at: ${event.localPosition}');
+    leftClick.update();
+    return true;
+  }
+
+  @override
+  bool onSecondaryTapDown(TapDownEvent event) {
+    // Handle right click  
+    print('Right click detected at: ${event.localPosition}');
+    rightClick.update();
+    return true;
   }
 }
