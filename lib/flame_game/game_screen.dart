@@ -55,18 +55,17 @@ class GameScreen extends StatelessWidget {
       backgroundColor: Colors.black,
       body: SafeArea(
         child: Center(
-          child: Listener(
-            onPointerDown: kIsWeb || MediaQuery.of(context).size.height < 500
-                ? null
-                : (PointerDownEvent event) {
-                    if (event.kind == PointerDeviceKind.mouse) {
-                      if (event.buttons == kPrimaryMouseButton) {
-                        leftClick.update();
-                      } else if (event.buttons == kSecondaryMouseButton) {
-                        rightClick.update();
-                      }
-                    }
-                  },
+          child: Listener(        onPointerDown: MediaQuery.of(context).size.height < 500
+            ? null
+            : (PointerDownEvent event) {
+                if (event.kind == PointerDeviceKind.mouse) {
+                  if (event.buttons == kPrimaryMouseButton) {
+                    leftClick.update();
+                  } else if (event.buttons == kSecondaryMouseButton) {
+                    rightClick.update();
+                  }
+                }
+              },
             child: GameWidget<DestroyerGame>(
               game: myGame,
               overlayBuilderMap: {
